@@ -1,0 +1,112 @@
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Dynamic;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Runtime.Serialization.Json;
+using System.Text;
+using System.Xml.Linq;
+
+namespace EpgTimer
+{
+    public class JsonUtil : DynamicObject
+    {
+        private enum JsonType
+        {
+            @string, number, boolean, @object, array, @null
+        }
+        public static string Serialize(object obj)
+        {
+            return CreateJsonString(new XStreamingElement("root", CreateTypeAttr(GetJsonType(obj)), CreateJsonNode(obj)));
+        }
+        private static object CreateJsonNode(object obj)
+        {
+            var type = GetJsonType(obj);
+            switch (type)
+            {
+                case JsonType.@string:
+                case JsonType.number:
+                    return (Type.GetTypeCode(obj.GetType()) == TypeCode.DateTime) ? ((DateTime)obj).ToString() : obj;
+                case JsonType.boolean:
+                    return obj.ToString().ToLower();
+                case JsonType.@object:
+                    return CreateXObject(obj);
+                case JsonType.array:
+                    return CreateXArray(obj as IEnumerable);
+                case JsonType.@null:
+                default:
+                    return null;
+            }
+        }
+        private static JsonType GetJsonType(object obj)
+        {
+            if (obj == null) return JsonType.@null;
+
+            switch (Type.GetTypeCode(obj.GetType()))
+            {
+                case TypeCode.Boolean:
+                    return JsonType.boolean;
+                case TypeCode.String:
+                case TypeCode.Char:
+                case TypeCode.DateTime:
+                    return JsonType.@string;
+                
+                case TypeCode.Int16:
+                case TypeCode.Int32:
+                case TypeCode.Int64:
+                case TypeCode.UInt16:
+                case TypeCode.UInt32:
+                case TypeCode.UInt64:
+                case TypeCode.Single:
+                case TypeCode.Double:
+                case TypeCode.Decimal:
+                case TypeCode.SByte:
+                case TypeCode.Byte:
+                    return JsonType.number;
+                case TypeCode.Object:
+                    return (obj is IEnumerable) ? JsonType.array : JsonType.@object;
+                case TypeCode.DBNull:
+                case TypeCode.Empty:
+                default:
+                    return JsonType.@null;
+            }
+        }
+        private static XAttribute CreateTypeAttr(JsonType Type){
+            return new XAttribute("type", Type.ToString());
+        }
+        private static IEnumerable<XStreamingElement> CreateXArray<T>(T obj) where T : IEnumerable
+        {
+            return obj.Cast<object>()
+                .Select(o => new XStreamingElement("item", CreateTypeAttr(GetJsonType(o)), CreateJsonNode(o)));
+        }
+        private static IEnumerable<XStreamingElement> CreateXObject(object obj)
+        {
+            return obj.GetType()
+                .GetProperties(BindingFlags.Public | BindingFlags.Instance)
+                .Select(pi => new { Name = pi.Name, Value = pi.GetValue(obj, null) })
+                .Select(a => new XStreamingElement(a.Name, CreateTypeAttr(GetJsonType(a.Value)), CreateJsonNode(a.Value)));
+        }
+        private static string CreateJsonString(XStreamingElement element)
+        {
+            using (var ms = new MemoryStream())
+            using (var writer = JsonReaderWriterFactory.CreateJsonWriter(ms, Encoding.Unicode))
+            {
+                element.WriteTo(writer);
+                writer.Flush();
+                return Encoding.Unicode.GetString(ms.ToArray());
+            }
+        }
+        readonly XElement xml;
+        readonly JsonType jsonType;
+        private JsonUtil(XElement element, JsonType type)
+        {
+            Debug.Assert(type == JsonType.array || type == JsonType.@object);
+
+            xml = element;
+            jsonType = type;
+        }
+    }
+}
