@@ -53,6 +53,7 @@ namespace EpgTimer
                         Response = WebSocket.WebSocketMask(
                                     Encoding.UTF8.GetBytes("+LOK " + Sess.SessionKey), 0x1);
                         IsAuth = true;
+                        Info.IsAuth = true;
                     }
                     Info.IsWsSend = true;
                     HttpResponseGenerater.SendResponseBody(Info, Response);
@@ -70,7 +71,7 @@ namespace EpgTimer
                                     Encoding.UTF8.GetBytes("+LOK " + Sess), 0x1);
                         _sess = HttpSession.Search(Sess, Info.IpAddress);
                         IsAuth = true;
-
+                        Info.IsAuth = true;
                     }
                     Info.IsWsSend = true;
                     HttpResponseGenerater.SendResponseBody(Info, Response);
@@ -82,6 +83,7 @@ namespace EpgTimer
                         PrivateSetting.Instance.Sessions.Remove(_sess);
                     _sess = null;
                     IsAuth = false;
+                    Info.IsAuth = false;
                 }
                 else
                 {
@@ -104,6 +106,7 @@ namespace EpgTimer
                 foreach (var Con in a)
                 {
                     if (!Con.Client.Connected) Sockets.Remove(Con);
+                    if (!Con.IsAuth) continue;
                     while (Con.IsWsSend) ;
                     HttpResponseGenerater.SendResponseBody(Con, Response);
                 }

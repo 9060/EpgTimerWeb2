@@ -19,20 +19,12 @@ namespace EpgTimer
             {
                 Context.Response.Headers.Add("Content-Length", Bytes.LongLength.ToString());
             }
-            HttpResponseGenerater.SendResponseCode(Context);
-            HttpResponseGenerater.SendResponseHeader(Context, Context.Response.Headers);
-            HttpResponseGenerater.SendResponseBody(Context, Bytes);
+            Context.Response.OutputStream.Write(Bytes, 0, Bytes.Length);
+            Context.Response.Send();
         }
         private void SendResponse(HttpContext Context, string Str)
         {
-            if (!Context.Response.Headers.ContainsKey("Content-Length"))
-            {
-                Context.Response.Headers.Add("Content-Length", 
-                    Encoding.UTF8.GetByteCount(Str).ToString());
-            }
-            HttpResponseGenerater.SendResponseCode(Context);
-            HttpResponseGenerater.SendResponseHeader(Context, Context.Response.Headers);
-            HttpResponseGenerater.SendResponseBody(Context, Encoding.UTF8.GetBytes(Str));
+            SendResponse(Context, Encoding.UTF8.GetBytes(Str));
         }
         public static string HTMLAutoIndent(string HTML)
         {
@@ -65,9 +57,8 @@ namespace EpgTimer
             }
             Context.Response.StatusCode = 301;
             Context.Response.StatusText = "Moved Permanently";
-            HttpResponseGenerater.SendResponseCode(Context);
             Context.Response.Headers["Location"] = "http://" + Domain + Url;
-            HttpResponseGenerater.SendResponseHeader(Context, Context.Response.Headers);
+            Context.Response.Send();
         }
         public bool RequestUrl(HttpContext Context)
         {

@@ -109,8 +109,8 @@
     <Compile Include="WebServer\Request.cs" />
     <Compile Include="WebServer\Mime.cs" />
     <Compile Include="WebServer\Server.cs" />
-    <Compile Include="WebServer\ServerAction.cs" />
-    <Compile Include="WebServer\SocketAction.cs" />
+    <Compile Include="WebContent\ServerAction.cs" />
+    <Compile Include="WebContent\SocketAction.cs" />
     <Compile Include="WebServer\WebSocket.cs" />
   </ItemGroup>
   <ItemGroup>

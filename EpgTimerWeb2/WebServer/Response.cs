@@ -10,7 +10,7 @@ namespace EpgTimer
 {
     public class HttpResponse
     {
-        public HttpResponse()
+        public HttpResponse(HttpContext c)
         {
             StatusCode = 200;
             StatusText = "OK";
@@ -18,11 +18,17 @@ namespace EpgTimer
             Headers = new Dictionary<string, string>()
             {
             };
+            context = c;
+        }
+        public void Send()
+        {
+            HttpResponseGenerater.SendResponse(context);
         }
         public MemoryStream OutputStream { get; set; }
         public Dictionary<string, string> Headers { get; set; }
         public int StatusCode { get; set; }
         public string StatusText { get; set; }
+        private HttpContext context;
     }
     public class HttpResponseGenerater
     {

@@ -18,12 +18,7 @@ namespace EpgTimer
         static Regex r2 = new Regex(@"^\/auth\/(.*)\=(.*)$");
         public static void Process(TcpClient Client)
         {
-            var Info = new HttpContext()
-            {
-                Client = Client,
-                IpAddress = ((IPEndPoint)Client.Client.RemoteEndPoint).Address.ToString()
-            };
-            Info.Request = HttpRequestParser.Parse(Info.HttpStream);
+            var Info = new HttpContext(Client);
             if (Info.Request.Url == "/") Info.Request.Url = "/index.html";
             if (Info.Request.Url == "/ws") //WebSocket
             {
@@ -50,7 +45,7 @@ namespace EpgTimer
                     Info.Response.StatusCode = 400;
                     Info.Response.StatusText = "Fail Auth";
                 }
-                HttpResponseGenerater.SendResponse(Info);
+                Info.Response.Send();
                 Info.Close();
                 return;
             }
@@ -69,7 +64,7 @@ namespace EpgTimer
                     Info.Response.StatusCode = 400;
                     Info.Response.StatusText = "Fail Auth";
                 }
-                HttpResponseGenerater.SendResponse(Info);
+                Info.Response.Send(); //HttpResponseGenerater.SendResponse(Info);
                 Info.Close();
                 return;
             }
@@ -88,7 +83,7 @@ namespace EpgTimer
                     byte[] Res = Encoding.UTF8.GetBytes("{\"sess\":\"\", \"error\":true}");
                     Info.Response.OutputStream.Write(Res, 0, Res.Length);
                 }
-                HttpResponseGenerater.SendResponse(Info);
+                Info.Response.Send();
                 Info.Close();
                 return;
             }
@@ -107,7 +102,8 @@ EpgTimerWeb(v2) by YUKI
                     Info.Response.StatusCode = 404;
                     Info.Response.StatusText = "Not Found";
                     Info.Response.OutputStream.Write(NotFound, 0, NotFound.Length);
-                    HttpResponseGenerater.SendResponse(Info);
+                    //HttpResponseGenerater.SendResponse(Info);
+                    Info.Response.Send();
                 }
             }
             catch (Exception ex)
@@ -120,7 +116,8 @@ EpgTimerWeb(v2) by YUKI
                 Info.Response.StatusCode = 500;
                 Info.Response.StatusText = "Error";
                 Info.Response.OutputStream.Write(NotFound, 0, NotFound.Length);
-                HttpResponseGenerater.SendResponse(Info);
+                //HttpResponseGenerater.SendResponse(Info);
+                Info.Response.Send();
                 Console.WriteLine("!!!! Exception !!!!");
             }
             if (Info.Request.Headers.ContainsKey("connection") &&
