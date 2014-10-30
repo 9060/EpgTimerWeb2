@@ -136,7 +136,7 @@ namespace EpgTimer
                 }
                 else if (Command == "AddReserve")
                 {
-                    if(Arg.ContainsKey("eventname") && Arg.ContainsKey("starttime") 
+                    if (Arg.ContainsKey("eventname") && Arg.ContainsKey("starttime")
                         && Arg.ContainsKey("durationsec") && Arg.ContainsKey("tsid")
                         && Arg.ContainsKey("onid") && Arg.ContainsKey("sid")
                         && Arg.ContainsKey("eid")) //最低限必要
@@ -145,7 +145,7 @@ namespace EpgTimer
                         ushort SID = ushort.Parse(Arg["sid"]);
                         ushort TSID = ushort.Parse(Arg["tsid"]);
                         ushort EventID = ushort.Parse(Arg["eid"]);
-                        ulong Key = CommonManager.Create64Key(ONID, TSID,SID);
+                        ulong Key = CommonManager.Create64Key(ONID, TSID, SID);
                         ReserveData rd = new ReserveData()
                         {
                             StartTime = UnixTime.FromUnixTime(long.Parse(Arg["starttime"])),
@@ -161,6 +161,136 @@ namespace EpgTimer
                         if (Arg["durationsec"] != "") rd.DurationSecond = uint.Parse(Arg["durationsec"]);
                         RecSettingData setInfo = new RecSettingData();
                     }
+                }
+                else if (Command == "EpgSearch")
+                {
+                    if (!Arg.ContainsKey("srvlist")) return JsonData;
+                    List<EpgEventInfo> EpgResult = new List<EpgEventInfo>();
+                    List<EpgSearchKeyInfo> Search = new List<EpgSearchKeyInfo>();
+
+                    var e = new EpgSearchKeyInfo();
+                    if (Arg["srvlist"].IndexOf(",") > 0)
+                    {
+                        e.serviceList = Arg["srvlist"].Split(',').Select(s => long.Parse(s)).ToList();
+                    }
+                    else
+                    {
+                        if (Arg["srvlist"] == "*")
+                        {
+                            foreach (var ch in ChSet5.Instance.ChList)
+                            {
+                                e.serviceList.Add((long)ch.Value.Key);
+                            }
+                        }
+                        else
+                        {
+                            e.serviceList.Add(long.Parse(Arg["srvlist"]));
+                        }
+                    }
+                    if (Arg.ContainsKey("content") && Arg["content"].IndexOf(".") > 0)
+                    {
+                        if (Arg["content"].IndexOf(",") > 0)
+                        {
+                            e.contentList.AddRange(Arg["content"].Split(',').Select(s =>
+                            {
+                                string[] c = s.Split('.');
+                                if (c.Length != 4) return null;
+                                return new EpgContentData()
+                                {
+                                    content_nibble_level_1 = byte.Parse(c[0]),
+                                    content_nibble_level_2 = byte.Parse(c[1]),
+                                    user_nibble_1 = byte.Parse(c[2]),
+                                    user_nibble_2 = byte.Parse(c[3])
+                                };
+                            }).Where(s => s != null));
+                        }
+                        else
+                        {
+                            string[] c = Arg["content"].Split('.');
+                            if (c.Length == 4)
+                            {
+                                e.contentList.Add(new EpgContentData()
+                                {
+                                    content_nibble_level_1 = byte.Parse(c[0]),
+                                    content_nibble_level_2 = byte.Parse(c[1]),
+                                    user_nibble_1 = byte.Parse(c[2]),
+                                    user_nibble_2 = byte.Parse(c[3])
+                                });
+                            }
+                        }
+                    }
+                    else
+                    {
+                        e.notContetFlag = 1;
+                    }
+                    if (Arg.ContainsKey("notcontent")) e.notContetFlag = 1;
+                    if (Arg.ContainsKey("useregex")) e.regExpFlag = 1;
+                    if (Arg.ContainsKey("useregex")) e.aimaiFlag = 0;
+                    if (Arg.ContainsKey("aimai")) e.aimaiFlag = 1;
+                    if (Arg.ContainsKey("aimai")) e.regExpFlag = 0;
+                    if (Arg.ContainsKey("tonly")) e.titleOnlyFlag = 1;
+                    if (Arg.ContainsKey("kw"))
+                    {
+                        e.andKey = Arg["kw"];
+                    }
+                    if (Arg.ContainsKey("notkw"))
+                    {
+                        e.notKey = Arg["notkw"];
+                    }
+                    if (Arg.ContainsKey("freeca"))
+                    {
+                        e.freeCAFlag = byte.Parse(Arg["freeca"]);
+                    }
+                    if (Arg.ContainsKey("date"))
+                    {
+                        if (Arg["date"].IndexOf(",") > 0)
+                        {
+                            e.dateList.AddRange(Arg["date"].Split(',').Select(s =>
+                            {
+                                if (s.IndexOf("-") < 0) return null;
+                                if (s.Split('-')[0].IndexOf(".") < 0 || s.Split('-')[1].IndexOf(".") < 0) return null;
+                                string[] a = s.Split('-');
+                                string[] b = a[0].Split('.');
+                                string[] c = a[1].Split('.');
+                                if(uint.Parse(a[1]) > 24 || uint.Parse(b[1]) > 24 || uint.Parse(a[2]) > 60 || uint.Parse(b[2]) > 60 || uint.Parse(a[0]) > 7 || uint.Parse(b[0]) > 7) return null;
+                                return new EpgSearchDateInfo()
+                                {
+                                    startDayOfWeek = byte.Parse(a[0]),
+                                    startHour = ushort.Parse(a[1]),
+                                    startMin = ushort.Parse(a[2]),
+                                    endDayOfWeek = byte.Parse(b[0]),
+                                    endHour = ushort.Parse(b[1]),
+                                    endMin = ushort.Parse(b[2])
+                                };
+                            }).Where(p => p != null));
+                        }
+                        else
+                        {
+                            string s = Arg["date"];
+                            if (s.IndexOf("-") < 0) return null;
+                            if (s.Split('-')[0].IndexOf(".") < 0 || s.Split('-')[1].IndexOf(".") < 0) return null;
+                            string[] a = s.Split('-');
+                            string[] b = a[0].Split('.');
+                            string[] c = a[1].Split('.');
+                            if (uint.Parse(c[1]) > 24 || uint.Parse(b[1]) > 24 || uint.Parse(c[2]) > 60 || uint.Parse(b[2]) > 60 || uint.Parse(c[0]) > 7 || uint.Parse(b[0]) > 7) return null;
+                            e.dateList.Add( new EpgSearchDateInfo()
+                            {
+                                startDayOfWeek = byte.Parse(b[0]),
+                                startHour = ushort.Parse(b[1]),
+                                startMin = ushort.Parse(b[2]),
+                                endDayOfWeek = byte.Parse(c[0]),
+                                endHour = ushort.Parse(c[1]),
+                                endMin = ushort.Parse(c[2])
+                            });
+                        }
+                    }
+                    if (Arg.ContainsKey("notdate"))
+                    {
+                        e.notDateFlag = 1;
+                    }
+                    Search.Add(e);
+                    CommonManager.Instance.CtrlCmd.SendSearchPg(Search, ref EpgResult);
+                    JsonData = JsonUtil.Serialize(EpgResult);
                 }
             }
             catch (Exception ex)

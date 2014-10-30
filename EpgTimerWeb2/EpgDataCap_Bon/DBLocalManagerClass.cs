@@ -12,8 +12,6 @@ namespace EpgTimer
     //ローカルモードでのみ使う。録画ファイルDL用
     public class DBLocalManager
     {
-        private bool updateExistRecFileInfo = true;
-        private bool updateNoExistRecFileInfo = true;
         private Dictionary<UInt32, RecFileInfo> _existRecFileInfo;
         private Dictionary<UInt32, RecFileInfo> _noExistRecFileInfo;
 

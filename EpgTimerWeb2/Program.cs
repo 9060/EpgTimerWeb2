@@ -18,7 +18,7 @@ namespace EpgTimerWeb2
             Default = Console.ForegroundColor;
             if (args.Length == 0)
             {
-                Console.WriteLine("Usage: EpgTimerWeb2 [-http=8080] [-host=127.0.0.1] [-port=4510] [-cb=4521] [-local] [-auth=file.txt]");
+                Console.WriteLine("Usage: EpgTimerWeb2.EXE [-http=8080] [-host=127.0.0.1] [-port=4510] [-cb=4521] [-local] [-auth=file.txt]");
                 Console.WriteLine(" -auth Option: File Format -> user:pass");
                 Environment.Exit(1);
                 return;
@@ -123,76 +123,7 @@ namespace EpgTimerWeb2
                 else
                     Console.WriteLine("Error Disconect EpgTimer");
             };
-            var r = new Regex("^ShowPassword (.*)$");
-            var r2 = new Regex("^Login (.*) (.*)$");
-            HttpSession sess = null;
-            while (true)
-            {
-                string CmdText = ((sess != null && HttpSession.IsMatch(sess.SessionKey, "127.0.0.1")) ? sess.SessionKey.Substring(0, 8) + "@127.0.0.1~# " : "unknown@127.0.0.1~$ ");
-                if (HttpSession.IsMatch("", "")) CmdText = "user@127.0.0.1~# ";
-                Console.Write(CmdText);
-                string ApiStr = Console.ReadLine();
-                if (ApiStr == null) return;
-                if (r2.IsMatch(ApiStr) && PrivateSetting.Instance.Passwords != null && sess == null)
-                {
-                    var match = r2.Match(ApiStr);
-                    string Pass = match.Groups[2].Value;
-                    string Id = match.Groups[1].Value;
-                    sess = new HttpSession(Id, Pass, "127.0.0.1");
-                    if (sess.CheckAuth(sess.SessionKey, "127.0.0.1"))
-                    {
-                        Console.WriteLine("OK {0}", sess.SessionKey);
-                        continue;
-                    }
-                }
-                if (r2.IsMatch(ApiStr) && sess != null)
-                {
-                    Console.WriteLine("....");
-                    continue;
-                }
-                if (ApiStr == "Logout" && PrivateSetting.Instance.Passwords != null)
-                {
-                    if(PrivateSetting.Instance.Sessions.Remove(sess) && !HttpSession.IsMatch(sess.SessionKey, "127.0.0.1"))
-                        Console.WriteLine("OK {0}....", sess.SessionKey.Substring(0, 12));
-                    sess = null;
-                    continue;
-                }
-                if (ApiStr == "Exit")
-                {
-                    Setting.Instance.Server.Stop();
-                    Console.WriteLine("Disconecting EpgTimer...");
-                    if (Setting.Instance.CmdConnect.StopConnect())
-                        Console.WriteLine("Disconected EpgTimer");
-                    else
-                        Console.WriteLine("Error Disconect EpgTimer");
-                    Environment.Exit(0);
-                }
-                if ((sess != null && HttpSession.IsMatch(sess.SessionKey, "127.0.0.1")) || HttpSession.IsMatch("", ""))
-                {
-                    if ((ApiStr == "ShowSession" || ApiStr == "ShowPassword") && PrivateSetting.Instance.Passwords == null) continue;
-                    if (ApiStr == "ShowSession")
-                    {
-                        foreach (var Sess in PrivateSetting.Instance.Sessions)
-                        {
-                            Console.WriteLine("+ {0}", Sess.SessionKey);
-                        }
-                        continue;
-                    }
-                    if (ApiStr == "ShowPassword")
-                    {
-                        foreach (var Pass in PrivateSetting.Instance.Passwords)
-                        {
-                            Console.WriteLine("+ {0} : {1}", Pass.UserId, Pass.Password);
-                        }
-                        continue;
-                    }
-                    Console.WriteLine(Api.Call(ApiStr));
-                }
-                else
-                {
-                    Console.WriteLine("Error: No auth");
-                }
-            }
+            Shell.Run();
         }
     }
 }

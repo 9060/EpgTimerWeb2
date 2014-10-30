@@ -114,9 +114,11 @@ namespace EpgTimer
                         Notify.NotifyInfo = Status;
                         if (Notify.Title != "")
                         {
-                            Console.WriteLine((Notify.Title + Notify.LogText).Replace("\n", ""));
+                            SocketAction.SendAllMessage("EVENT " + JsonUtil.Serialize(Notify));
+                            //Console.WriteLine("\n" + (Notify.Title + Notify.LogText).Replace("\n", ""));
+                            EventStore.Instance.AddMessage(Notify);
                         }
-                        SocketAction.SendAllMessage("EVENT " + JsonUtil.Serialize(Notify));
+                        
                         //Console.WriteLine("Sending Msg...");
                     }
                     break;

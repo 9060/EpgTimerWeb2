@@ -12,16 +12,11 @@ namespace EpgTimer
             get;
             set;
         }
-        public String Time
+        public DateTime Time
         {
             get
             {
-                String text = "";
-                if (NotifyInfo != null)
-                {
-                    text = NotifyInfo.time.ToString("yyyy/MM/dd HH:mm:ss.fff");
-                }
-                return text;
+                return NotifyInfo.time;
             }
         }
         public String Title

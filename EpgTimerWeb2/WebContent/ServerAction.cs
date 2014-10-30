@@ -80,6 +80,7 @@ namespace EpgTimer
                 }
                 else
                 {
+                    
                     byte[] Res = Encoding.UTF8.GetBytes("{\"sess\":\"\", \"error\":true}");
                     Info.Response.OutputStream.Write(Res, 0, Res.Length);
                 }
@@ -111,6 +112,8 @@ EpgTimerWeb(v2) by YUKI
                 byte[] NotFound = Encoding.UTF8.GetBytes(@"<html>
 <body>
 <h1>500</h1><p>詳細: " + ex.Message + @"</p>
+<hr />
+EpgTimerWeb(v2) by YUKI
 </body>
 </html>");
                 Info.Response.StatusCode = 500;
@@ -118,10 +121,10 @@ EpgTimerWeb(v2) by YUKI
                 Info.Response.OutputStream.Write(NotFound, 0, NotFound.Length);
                 //HttpResponseGenerater.SendResponse(Info);
                 Info.Response.Send();
-                Console.WriteLine("!!!! Exception !!!!");
+                Console.WriteLine("\n!!!! Exception !!!!");
             }
             if (Info.Request.Headers.ContainsKey("connection") &&
-                Info.Request.Headers["connection"].ToLower() == "keep-alive") Process(Client); //KeepAlive対応
+                Info.Request.Headers["connection"].ToLower() == "keep-alive") Process(Client); //KeepAlive対応(適当)
             Info.Close();
         }
         

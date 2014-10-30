@@ -96,12 +96,14 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="Shell.cs" />
+    <Compile Include="Util\EventStore.cs" />
     <Compile Include="Util\JsonUtil.cs" />
     <Compile Include="Util\Setting.cs" />
     <Compile Include="Util\UnixTime.cs" />
     <Compile Include="WebContent\HttpContent.cs" />
     <Compile Include="WebContent\HttpSession.cs" />
-    <Compile Include="WebServer\Api.cs" />
+    <Compile Include="WebContent\Api.cs" />
     <Compile Include="WebServer\Common.cs" />
     <Compile Include="WebServer\Header.cs" />
     <Compile Include="WebServer\Context.cs" />
