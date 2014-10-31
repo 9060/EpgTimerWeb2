@@ -3,6 +3,7 @@ using EpgTimer;
 using EpgTimerWeb2;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -139,7 +140,7 @@ namespace EpgTimer
                     if (Arg.ContainsKey("eventname") && Arg.ContainsKey("starttime")
                         && Arg.ContainsKey("durationsec") && Arg.ContainsKey("tsid")
                         && Arg.ContainsKey("onid") && Arg.ContainsKey("sid")
-                        && Arg.ContainsKey("eid")) //最低限必要
+                        && Arg.ContainsKey("eid") && Arg.ContainsKey("preset")) //最低限必要
                     {
                         ushort ONID = ushort.Parse(Arg["onid"]);
                         ushort SID = ushort.Parse(Arg["sid"]);
@@ -161,6 +162,10 @@ namespace EpgTimer
                         if (Arg["durationsec"] != "") rd.DurationSecond = uint.Parse(Arg["durationsec"]);
                         RecSettingData setInfo = new RecSettingData();
                     }
+                }
+                else if (Command == "EnumPresets")
+                {
+                    JsonData = JsonUtil.Serialize(PresetDb.Instance.Presets);
                 }
                 else if (Command == "EpgSearch")
                 {
@@ -282,6 +287,7 @@ namespace EpgTimer
                                 endHour = ushort.Parse(c[1]),
                                 endMin = ushort.Parse(c[2])
                             });
+                            Debug.Print("OK");
                         }
                     }
                     if (Arg.ContainsKey("notdate"))
