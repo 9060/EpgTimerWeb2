@@ -22,6 +22,7 @@ namespace EpgTimer
         }
         public void Send()
         {
+            OutputStream.Flush();
             HttpResponseGenerater.SendResponse(context);
         }
         public MemoryStream OutputStream { get; set; }
@@ -34,7 +35,7 @@ namespace EpgTimer
     {
         public static bool SendResponseHeader(HttpContext Context, IDictionary<string,string> Input)
         {
-            if (!Input.ContainsKey("Connection")) Input.Add("Connection", "close");
+            //if (!Input.ContainsKey("Connection")) Input.Add("Connection", "close");
             var HeaderText = Encoding.UTF8.GetBytes(HttpHeader.Generate(Input) + "\r\n");
             return SendResponseBody(Context, HeaderText);
         }

@@ -60,5 +60,12 @@ namespace EpgTimerWeb2
         public bool LocalMode { get; set; }
         public CtrlCmdConnect CmdConnect { get; set; }
         public WebServer Server { get; set; }
+        public bool ReqAuth
+        {
+            get
+            {
+                return PrivateSetting.Instance.Passwords != null;
+            }
+        }
     }
 }

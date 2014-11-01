@@ -404,6 +404,7 @@ namespace EpgTimer
                 }
                 else if (Command == "EnumPresets")
                 {
+                    
                     JsonData = JsonUtil.Serialize(PresetDb.Instance.Presets);
                 }
                 else if (Command == "AddPreset")

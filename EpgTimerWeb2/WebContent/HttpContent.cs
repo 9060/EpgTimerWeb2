@@ -1,4 +1,5 @@
-﻿using EpgTimerWeb2.Properties;
+﻿using EpgTimerWeb2;
+using EpgTimerWeb2.Properties;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -74,6 +75,11 @@ namespace EpgTimer
                 case "/dashboard":
                     Context.Response.Headers.Add("Content-Type", "text/html; charset=utf8");
                     SendResponse(Context,  File.ReadAllText(".\\www\\index.html", Encoding.UTF8));
+                    Ret = true;
+                    break;
+                case "/meta":
+                    Context.Response.Headers.Add("Content-Type", "application/javascript");
+                    SendResponse(Context, "var meta = " + JsonUtil.Serialize(Setting.Instance));
                     Ret = true;
                     break;
                 case "/css/bootstrap.css":

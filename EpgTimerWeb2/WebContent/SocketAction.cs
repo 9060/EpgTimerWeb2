@@ -17,7 +17,7 @@ namespace EpgTimer
         static Regex r3 = new Regex(@"^LOGIN (.*)$");
         public static void Process(HttpContext Info)
         {
-            bool IsAuth = false;
+            bool IsAuth = PrivateSetting.Instance.Passwords == null;
             HttpSession _sess = null;
             Sockets.Add(Info);
             while (Info.Client.Connected)
@@ -30,7 +30,7 @@ namespace EpgTimer
                 {
                     var match = r2.Match(UnMask);
                     byte[] Response = WebSocket.WebSocketMask(
-                                    Encoding.UTF8.GetBytes("ERR General"), 0x1);
+                                    Encoding.UTF8.GetBytes("ERR InvalidPass"), 0x1);
                     string Command = match.Groups[2].Value;
                     string Id = match.Groups[1].Value;
                     string JsonData = Api.Call(Command);

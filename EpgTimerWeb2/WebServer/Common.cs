@@ -14,12 +14,13 @@ namespace EpgTimer
         {
             int Next;
             string Data = "";
+            int To = 0;
             while (true)
             {
                 Next = Input.ReadByte();
                 if (Next == '\n') break;
                 if (Next == '\r') { continue; }
-                if (Next == -1) { Thread.Sleep(1); continue; }
+                if (Next == -1) { Thread.Sleep(1); To++; if (To > 300) throw new TimeoutException(); continue; }
                 Data += Convert.ToChar(Next);
             }
             return Data;
