@@ -27,7 +27,7 @@ namespace EpgTimer
         }
         public UInt32 AddPreset(RecSettingData Data, string Name)
         {
-            UInt32 NextID = Presets.OrderByDescending(s => s.Key).Last().Key + 1;
+            UInt32 NextID = Presets.Count == 0 ? 0 : Presets.OrderByDescending(s => s.Key).Last().Key + 1;
             if (Presets.ContainsKey(NextID)) return 0xFFFFFFFF;
             RecPresetItem ItemInfo = new RecPresetItem()
             {

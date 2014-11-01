@@ -76,9 +76,9 @@ namespace EpgTimerWeb2
         }
         public bool CheckAuth(string SessionKey, string IpAddr)
         {
-            if (_IsAuth && BitConverter.ToString(new SHA1CryptoServiceProvider().ComputeHash(Encoding.UTF8.GetBytes(_SessionKey2 + IpAddr))).Replace("-", "") == SessionKey) return true;
+            if (_IsAuth && BitConverter.ToString(new SHA1CryptoServiceProvider().ComputeHash(Encoding.UTF8.GetBytes(SessionKey + IpAddr))).Replace("-", "") == _SessionKey) return true;
             return false;
         }
-        public string SessionKey { get { return _SessionKey; } }
+        public string SessionKey { get { return _SessionKey2; } }
     }
 }
