@@ -16,7 +16,7 @@ namespace EpgTimer
         private static RecSettingData GetPreset(Dictionary<string, string> Arg)
         {
             RecSettingData pInfo = new RecSettingData();
-            pInfo.ServiceMode = (byte)(Arg.ContainsKey("savedata") || Arg.ContainsKey("savecaption") ? 1 : 0);
+            pInfo.ServiceMode = (byte)((Arg.ContainsKey("savedata") || Arg.ContainsKey("savecaption")) || Arg.ContainsKey("nousedata") ? 1 : 0);
             if (Arg.ContainsKey("savecaption"))
                 pInfo.ServiceMode |= 0x10;
             if (Arg.ContainsKey("savedata"))
@@ -39,18 +39,18 @@ namespace EpgTimer
                 string[] startArray = Arg["marginestart"].Split(':');
                 if (startArray.Length == 2)
                 {
-                    startSec = Convert.ToInt32(startArray[0]) * 60;
-                    startSec += Convert.ToInt32(startArray[1]) * startMinus;
+                    startSec = int.Parse(startArray[0]) * 60;
+                    startSec += int.Parse(startArray[1]) * startMinus;
                 }
                 else if (startArray.Length == 3)
                 {
-                    startSec = Convert.ToInt32(startArray[0]) * 60 * 60;
-                    startSec += Convert.ToInt32(startArray[1]) * 60 * startMinus;
-                    startSec += Convert.ToInt32(startArray[2]) * startMinus;
+                    startSec = int.Parse(startArray[0]) * 60 * 60;
+                    startSec += int.Parse(startArray[1]) * 60 * startMinus;
+                    startSec += int.Parse(startArray[2]) * startMinus;
                 }
                 else
                 {
-                    startSec = Convert.ToInt32(startArray[0]);
+                    startSec = int.Parse(startArray[0]);
                 }
 
                 int endSec = 0;
@@ -62,18 +62,18 @@ namespace EpgTimer
                 string[] endArray = Arg["margineend"].Split(':');
                 if (endArray.Length == 2)
                 {
-                    endSec = Convert.ToInt32(endArray[0]) * 60;
-                    endSec += Convert.ToInt32(endArray[1]) * endMinus;
+                    endSec = int.Parse(endArray[0]) * 60;
+                    endSec += int.Parse(endArray[1]) * endMinus;
                 }
                 else if (endArray.Length == 3)
                 {
-                    endSec = Convert.ToInt32(endArray[0]) * 60 * 60;
-                    endSec += Convert.ToInt32(endArray[1]) * 60 * endMinus;
-                    endSec += Convert.ToInt32(endArray[2]) * endMinus;
+                    endSec = int.Parse(endArray[0]) * 60 * 60;
+                    endSec += int.Parse(endArray[1]) * 60 * endMinus;
+                    endSec += int.Parse(endArray[2]) * endMinus;
                 }
                 else
                 {
-                    endSec = Convert.ToInt32(endArray[0]);
+                    endSec = int.Parse(endArray[0]);
                 }
 
                 pInfo.StartMargine = startSec;
@@ -180,10 +180,6 @@ namespace EpgTimer
                         });
                     }
                 }
-            }
-            else
-            {
-                e.notContetFlag = 1;
             }
             if (Arg.ContainsKey("notcontent")) e.notContetFlag = 1;
             if (Arg.ContainsKey("useregex")) e.regExpFlag = 1;
@@ -419,8 +415,7 @@ namespace EpgTimer
                             Reserve.EventID = Event.event_id;
                             RecSettingData Setting = GetPreset(Arg);
                             Reserve.RecSetting = Setting;
-                            List<ReserveData> ResList = new List<ReserveData> { Reserve };
-                            ErrCode err = (ErrCode)CommonManager.Instance.CtrlCmd.SendAddReserve(ResList);
+                            ErrCode err = (ErrCode)CommonManager.Instance.CtrlCmd.SendAddReserve(new List<ReserveData> { Reserve });
                             JsonData = "{\"result\":true, \"cmd\":\"" + err.ToString() + "\", \"res\":" + JsonUtil.Serialize(Reserve) + "}";
                         }
                         else
@@ -428,6 +423,29 @@ namespace EpgTimer
                             JsonData = "{\"result\":false}";
                         }
                     }
+                }
+                else if (Command == "AddAutoReserve")
+                {
+                    var Preset = GetPreset(Arg);
+                    var Search = GetEpgSKey(Arg);
+                    if (Arg.ContainsKey("overlap_check") && Arg.ContainsKey("overlap_day"))
+                    {
+                        Search.chkRecDay = ushort.Parse(Arg["overlap_day"]);
+                        Search.chkRecEnd = 1;
+                    }
+
+                    ErrCode err = (ErrCode)CommonManager.Instance.CtrlCmd.SendAddEpgAutoAdd(new List<EpgAutoAddData>{
+                        new EpgAutoAddData(){
+                            searchInfo = Search,
+                            recSetting = Preset
+                        }
+                    });
+                    if(err == ErrCode.CMD_SUCCESS) 
+                        JsonData = JsonUtil.Serialize(new EpgAutoAddData()
+                        {
+                            searchInfo = Search,
+                            recSetting = Preset
+                        });
                 }
                 else if (Command == "EnumPresets")
                 {
@@ -443,9 +461,7 @@ namespace EpgTimer
                 {
                     if (!Arg.ContainsKey("srvlist")) return JsonData;
                     List<EpgEventInfo> EpgResult = new List<EpgEventInfo>();
-                    List<EpgSearchKeyInfo> Search = new List<EpgSearchKeyInfo>();
-                    Search.Add(GetEpgSKey(Arg));
-                    CommonManager.Instance.CtrlCmd.SendSearchPg(Search, ref EpgResult);
+                    CommonManager.Instance.CtrlCmd.SendSearchPg(new List<EpgSearchKeyInfo> { GetEpgSKey(Arg) }, ref EpgResult);
                     JsonData = JsonUtil.Serialize(EpgResult);
                 }
                 else if (Command == "Hello")
