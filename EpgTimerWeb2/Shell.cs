@@ -32,6 +32,7 @@ namespace EpgTimerWeb2
                         Console.WriteLine("OK {0}", sess.SessionKey);
                         continue;
                     }
+                    sess = null;
                 }
                 if (r2.IsMatch(ApiStr) && sess != null)
                 {
