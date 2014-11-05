@@ -1,4 +1,5 @@
-﻿using System;
+﻿using EpgTimerWeb2;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -19,7 +20,7 @@ namespace EpgTimer
             Response = new HttpResponse(this);
             IpAddress = "0.0.0.0";
             IsWsSend = false;
-            IsAuth = false;
+            IsAuth = PrivateSetting.Instance.Passwords == null;
             Request = HttpRequestParser.Parse(this.HttpStream);
             IpAddress = ((IPEndPoint)Client.Client.RemoteEndPoint).Address.ToString();
         }

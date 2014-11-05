@@ -112,6 +112,11 @@ namespace EpgTimer
                     SendResponse(Context, File.ReadAllText(".\\www\\js\\api.js", Encoding.UTF8));
                     Ret = true;
                     break;
+                case "/js/epg.js":
+                    Context.Response.Headers.Add("Content-Type", "application/javascript");
+                    SendResponse(Context, File.ReadAllText(".\\www\\js\\epg.js", Encoding.UTF8));
+                    Ret = true;
+                    break;
                 case "/img/not_thumb.png":
                     Context.Response.Headers.Add("Content-Type", "image/png");
                     var Stream = new MemoryStream();

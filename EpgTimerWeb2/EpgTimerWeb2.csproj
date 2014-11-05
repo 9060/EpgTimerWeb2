@@ -103,6 +103,7 @@
     <Compile Include="Util\PresetDb.cs" />
     <Compile Include="Util\Setting.cs" />
     <Compile Include="Util\UnixTime.cs" />
+    <Compile Include="Util\VersionInfo.cs" />
     <Compile Include="WebContent\HttpContent.cs" />
     <Compile Include="WebContent\HttpSession.cs" />
     <Compile Include="WebContent\Api.cs" />

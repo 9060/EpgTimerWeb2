@@ -80,5 +80,7 @@ namespace EpgTimerWeb2
             return false;
         }
         public string SessionKey { get { return _SessionKey2; } }
+        private long _time = 0;
+        public long Time { get { return _time; } }
     }
 }

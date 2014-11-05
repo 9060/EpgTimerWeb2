@@ -17,7 +17,6 @@ namespace EpgTimer
         static Regex r3 = new Regex(@"^LOGIN (.*)$");
         public static void Process(HttpContext Info)
         {
-            bool IsAuth = PrivateSetting.Instance.Passwords == null;
             HttpSession _sess = null;
             Sockets.Add(Info);
             while (Info.Client.Connected)
@@ -26,7 +25,7 @@ namespace EpgTimer
                 if (UnMaskBuf == null) continue;
                 string UnMask = Encoding.UTF8.GetString(UnMaskBuf);
                 Debug.Print(UnMask);
-                if (r2.IsMatch(UnMask) && IsAuth)
+                if (r2.IsMatch(UnMask) && Info.IsAuth)
                 {
                     var match = r2.Match(UnMask);
                     byte[] Response = WebSocket.WebSocketMask(
@@ -40,7 +39,7 @@ namespace EpgTimer
                     HttpResponseGenerater.SendResponseBody(Info, Response);
                     Info.IsWsSend = false;
                 }
-                else if (r.IsMatch(UnMask) && !IsAuth)
+                else if (r.IsMatch(UnMask) && !Info.IsAuth)
                 {
                     var match = r.Match(UnMask);
                     string Pass = match.Groups[2].Value;
@@ -52,14 +51,13 @@ namespace EpgTimer
                     {
                         Response = WebSocket.WebSocketMask(
                                     Encoding.UTF8.GetBytes("+LOK " + Sess.SessionKey), 0x1);
-                        IsAuth = true;
                         Info.IsAuth = true;
                     }
                     Info.IsWsSend = true;
                     HttpResponseGenerater.SendResponseBody(Info, Response);
                     Info.IsWsSend = false;
                 }
-                else if (r3.IsMatch(UnMask) && !IsAuth)
+                else if (r3.IsMatch(UnMask) && !Info.IsAuth)
                 {
                     var match = r3.Match(UnMask);
                     string Sess = match.Groups[1].Value;
@@ -70,7 +68,6 @@ namespace EpgTimer
                         Response = WebSocket.WebSocketMask(
                                     Encoding.UTF8.GetBytes("+LOK " + Sess), 0x1);
                         _sess = HttpSession.Search(Sess, Info.IpAddress);
-                        IsAuth = true;
                         Info.IsAuth = true;
                     }
                     Info.IsWsSend = true;
@@ -82,7 +79,6 @@ namespace EpgTimer
                     if(_sess != null)
                         PrivateSetting.Instance.Sessions.Remove(_sess);
                     _sess = null;
-                    IsAuth = false;
                     Info.IsAuth = false;
                 }
                 else

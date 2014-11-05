@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading;
+using System.Windows.Forms;
 
 namespace EpgTimer
 {
@@ -122,6 +123,7 @@ namespace EpgTimer
             pInfo.Priority = 2;
             if (Arg.ContainsKey("priority") && byte.Parse(Arg["priority"]) >= 1 && byte.Parse(Arg["priority"]) <= 5)
                 pInfo.Priority = byte.Parse(Arg["priority"]);
+            pInfo.RecMode = 1;
             if (Arg.ContainsKey("recmode") && CommonManager.Instance.RecModeDictionary.Keys.Where(s => byte.Parse(Arg["recmode"]) == s).Count() > 0)
                 pInfo.RecMode = byte.Parse(Arg["recmode"]);
             return pInfo;
@@ -310,12 +312,12 @@ namespace EpgTimer
                             Start = DateTime.Now.AddMinutes(-1 * DateTime.Now.Minute).AddSeconds(-1 * DateTime.Now.Second); //変な時間対策
                         }
                     }
-                    var Out = new Dictionary<ulong, List<EventInfoItem>>();
+                    var Out = new Dictionary<string, List<EventInfoItem>>();
                     foreach (var a in CommonManager.Instance.DB.ServiceEventList)
                     {
                         if (Key != 0 && a.Key != Key) continue;
                         Out.Add(
-                            a.Key,
+                            a.Key.ToString(),
                             //1: 指定された時間よりも前にある
                             //2: 終わっていない
                             a.Value.eventList.Where(b => b.start_time.AddSeconds(b.start_time.Second * -1) < Start.AddHours(MaxHour))
@@ -376,35 +378,59 @@ namespace EpgTimer
                 }
                 else if (Command == "AddReserve")
                 {
-                    if (Arg.ContainsKey("eventname") && Arg.ContainsKey("starttime")
-                        && Arg.ContainsKey("durationsec") && Arg.ContainsKey("tsid")
+                    if (Arg.ContainsKey("tsid")
                         && Arg.ContainsKey("onid") && Arg.ContainsKey("sid")
-                        && Arg.ContainsKey("eid") && Arg.ContainsKey("preset")) //最低限必要
+                        && Arg.ContainsKey("eid")) //最低限必要
                     {
                         ushort ONID = ushort.Parse(Arg["onid"]);
                         ushort SID = ushort.Parse(Arg["sid"]);
                         ushort TSID = ushort.Parse(Arg["tsid"]);
                         ushort EventID = ushort.Parse(Arg["eid"]);
                         ulong Key = CommonManager.Create64Key(ONID, TSID, SID);
-                        ReserveData rd = new ReserveData()
+                        ulong PGKey = CommonManager.Create64PgKey(ONID, TSID, SID, EventID);
+                        EpgEventInfo Event = null;
+                        if (!CommonManager.Instance.DB.ServiceEventList.ContainsKey(Key)) JsonData = "{\"result\":false}";
+                        if (CommonManager.Instance.DB.ServiceEventList[Key].eventList.Count(e => e.event_id == EventID) == 1)
                         {
-                            StartTime = UnixTime.FromUnixTime(long.Parse(Arg["starttime"])),
-                            StartTimeEpg = UnixTime.FromUnixTime(long.Parse(Arg["starttime"])),
-                            OriginalNetworkID = ONID,
-                            ServiceID = SID,
-                            TransportStreamID = TSID,
-                            EventID = EventID,
-                            DurationSecond = 10 * 60
-                        };
-                        if (ChSet5.Instance.ChList.ContainsKey(Key)) rd.StationName = ChSet5.Instance.ChList[Key].ServiceName;
-                        if (Arg["eventname"] != "") rd.Title = Arg["eventname"];
-                        if (Arg["durationsec"] != "") rd.DurationSecond = uint.Parse(Arg["durationsec"]);
-                        RecSettingData setInfo = new RecSettingData();
+                            Event = CommonManager.Instance.DB.ServiceEventList[Key].eventList.Where(e => e.event_id == EventID).First();
+                        }
+                        else
+                        {
+                            CommonManager.Instance.CtrlCmd.SendGetPgInfo(PGKey, ref Event);
+                        }
+                        if (Event != null)
+                        {
+                            ReserveData Reserve = new ReserveData();
+                            if (Event.ShortInfo != null) Reserve.Title = Event.ShortInfo.event_name;
+                            Reserve.StartTime = Event.start_time;
+                            Reserve.StartTimeEpg = Event.start_time;
+                            if (Event.DurationFlag == 0)
+                            {
+                                Reserve.DurationSecond = 10 * 60;
+                            }
+                            else
+                            {
+                                Reserve.DurationSecond = Event.durationSec;
+                            }
+                            if (ChSet5.Instance.ChList.ContainsKey(Key)) Reserve.StationName = ChSet5.Instance.ChList[Key].ServiceName;
+                            Reserve.OriginalNetworkID = Event.original_network_id;
+                            Reserve.TransportStreamID = Event.transport_stream_id;
+                            Reserve.ServiceID = Event.service_id;
+                            Reserve.EventID = Event.event_id;
+                            RecSettingData Setting = GetPreset(Arg);
+                            Reserve.RecSetting = Setting;
+                            List<ReserveData> ResList = new List<ReserveData> { Reserve };
+                            ErrCode err = (ErrCode)CommonManager.Instance.CtrlCmd.SendAddReserve(ResList);
+                            JsonData = "{\"result\":true, \"cmd\":\"" + err.ToString() + "\", \"res\":" + JsonUtil.Serialize(Reserve) + "}";
+                        }
+                        else
+                        {
+                            JsonData = "{\"result\":false}";
+                        }
                     }
                 }
                 else if (Command == "EnumPresets")
                 {
-                    
                     JsonData = JsonUtil.Serialize(PresetDb.Instance.Presets);
                 }
                 else if (Command == "AddPreset")
@@ -421,6 +447,10 @@ namespace EpgTimer
                     Search.Add(GetEpgSKey(Arg));
                     CommonManager.Instance.CtrlCmd.SendSearchPg(Search, ref EpgResult);
                     JsonData = JsonUtil.Serialize(EpgResult);
+                }
+                else if (Command == "Hello")
+                {
+                    JsonData = JsonUtil.Serialize(VersionInfo.Instance);
                 }
             }
             catch (Exception ex)

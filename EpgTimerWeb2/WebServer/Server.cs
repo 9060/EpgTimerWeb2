@@ -70,6 +70,10 @@ namespace EpgTimer
             {
                 ServerAction.Process(Client);
             }
+            catch (TimeoutException to)
+            {
+                Client.Close();
+            }
             catch (Exception ex)
             {
                 Client.Close();
