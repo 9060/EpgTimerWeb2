@@ -65,6 +65,21 @@ namespace EpgTimer
                 return false;
             }
         }
+        public static bool SendResponseBodyWS(HttpContext Context, byte[] Input)
+        {
+            try
+            {
+                if (!Context.Client.Connected) return false;
+                Context.IsWsSend = true;
+                Context.HttpStream.Write(Input, 0, Input.Length);
+                Context.IsWsSend = false;
+                return true;
+            }
+            catch (Exception e)
+            {
+                return false;
+            }
+        }
         public static bool SendResponseCode(HttpContext Context)
         {
             var ResHeader = Encoding.UTF8.GetBytes(

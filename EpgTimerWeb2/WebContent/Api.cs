@@ -308,6 +308,7 @@ namespace EpgTimer
                             Start = DateTime.Now.AddMinutes(-1 * DateTime.Now.Minute).AddSeconds(-1 * DateTime.Now.Second); //変な時間対策
                         }
                     }
+                    DateTime End = Start.AddHours(MaxHour);
                     var Out = new Dictionary<string, List<EventInfoItem>>();
                     foreach (var a in CommonManager.Instance.DB.ServiceEventList)
                     {
@@ -317,7 +318,7 @@ namespace EpgTimer
                             //1: 指定された時間よりも前にある
                             //2: 終わっていない
                             a.Value.eventList.Where(b => b.start_time.AddSeconds(b.start_time.Second * -1) < Start.AddHours(MaxHour))
-                                .Where(c => c.start_time.AddSeconds(c.durationSec - 1) > Start)
+                                .Where(c => c.start_time.AddSeconds(c.durationSec) > Start)
                                 .OrderBy(d => d.start_time)
                                 .Select(e => new EventInfoItem(e))
                                 .ToList()
@@ -463,6 +464,10 @@ namespace EpgTimer
                     List<EpgEventInfo> EpgResult = new List<EpgEventInfo>();
                     CommonManager.Instance.CtrlCmd.SendSearchPg(new List<EpgSearchKeyInfo> { GetEpgSKey(Arg) }, ref EpgResult);
                     JsonData = JsonUtil.Serialize(EpgResult);
+                }
+                else if (Command == "EnumEvents")
+                {
+                    JsonData = JsonUtil.Serialize(EventStore.Instance.Events);
                 }
                 else if (Command == "Hello")
                 {

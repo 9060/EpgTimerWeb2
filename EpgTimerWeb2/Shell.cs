@@ -75,14 +75,6 @@ namespace EpgTimerWeb2
                         }
                         continue;
                     }
-                    if (ApiStr == "ShowEvent")
-                    {
-                        foreach (var Ev in EventStore.Instance.Events)
-                        {
-                            Console.WriteLine("+ {0} - {1}", Ev.Title, Ev.LogText);
-                        }
-                        continue;
-                    }
                     Console.WriteLine(Api.Call(ApiStr));
                 }
                 else

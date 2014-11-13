@@ -28,16 +28,11 @@ namespace EpgTimer
                 if (r2.IsMatch(UnMask) && Info.IsAuth)
                 {
                     var match = r2.Match(UnMask);
-                    byte[] Response = WebSocket.WebSocketMask(
-                                    Encoding.UTF8.GetBytes("ERR InvalidPass"), 0x1);
                     string Command = match.Groups[2].Value;
                     string Id = match.Groups[1].Value;
                     string JsonData = Api.Call(Command);
-                    Response = WebSocket.WebSocketMask(
-                                Encoding.UTF8.GetBytes("+OK" + Id + " " + JsonData), 0x1);
-                    Info.IsWsSend = true;
-                    HttpResponseGenerater.SendResponseBody(Info, Response);
-                    Info.IsWsSend = false;
+                    HttpResponseGenerater.SendResponseBodyWS(Info, WebSocket.WebSocketMask(
+                                Encoding.UTF8.GetBytes("+OK" + Id + " " + JsonData), 0x1));
                 }
                 else if (r.IsMatch(UnMask) && !Info.IsAuth)
                 {
@@ -45,49 +40,56 @@ namespace EpgTimer
                     string Pass = match.Groups[2].Value;
                     string Id = match.Groups[1].Value;
                     byte[] Response = WebSocket.WebSocketMask(
-                                    Encoding.UTF8.GetBytes("ERR No Auth"), 0x1);
+                                    Encoding.UTF8.GetBytes("LERR No Auth"), 0x1);
                     var Sess = _sess = new HttpSession(Id, Pass, Info.IpAddress);
-                    if (Sess.CheckAuth(Sess.SessionKey, Info.IpAddress))
+                    if ((Info.IsAuth = Sess.CheckAuth(Sess.SessionKey, Info.IpAddress)))
                     {
                         Response = WebSocket.WebSocketMask(
                                     Encoding.UTF8.GetBytes("+LOK " + Sess.SessionKey), 0x1);
-                        Info.IsAuth = true;
                     }
-                    Info.IsWsSend = true;
-                    HttpResponseGenerater.SendResponseBody(Info, Response);
-                    Info.IsWsSend = false;
+                    HttpResponseGenerater.SendResponseBodyWS(Info, Response);
                 }
                 else if (r3.IsMatch(UnMask) && !Info.IsAuth)
                 {
-                    var match = r3.Match(UnMask);
-                    string Sess = match.Groups[1].Value;
+                    string Sess = r3.Match(UnMask).Groups[1].Value;
                     byte[] Response = WebSocket.WebSocketMask(
-                                    Encoding.UTF8.GetBytes("ERR No Auth"), 0x1);
+                                    Encoding.UTF8.GetBytes("LERR No Auth"), 0x1);
                     if (HttpSession.IsMatch(Sess, Info.IpAddress))
                     {
                         Response = WebSocket.WebSocketMask(
                                     Encoding.UTF8.GetBytes("+LOK " + Sess), 0x1);
                         _sess = HttpSession.Search(Sess, Info.IpAddress);
-                        Info.IsAuth = true;
+                        if(_sess != null) Info.IsAuth = true;
                     }
-                    Info.IsWsSend = true;
-                    HttpResponseGenerater.SendResponseBody(Info, Response);
-                    Info.IsWsSend = false;
+                    HttpResponseGenerater.SendResponseBodyWS(Info, Response);
                 }
                 else if (UnMask.StartsWith("LOGOUT"))
                 {
-                    if(_sess != null)
+                    if (_sess != null)
                         PrivateSetting.Instance.Sessions.Remove(_sess);
                     _sess = null;
                     Info.IsAuth = false;
+                    byte[] Response = WebSocket.WebSocketMask(
+                                Encoding.UTF8.GetBytes("-LOK"), 0x1);
+                    HttpResponseGenerater.SendResponseBodyWS(Info, Response);
+                }
+                else if (UnMask.StartsWith("L-CHECK"))
+                {
+                    byte[] Response = WebSocket.WebSocketMask(
+                        Encoding.UTF8.GetBytes(Setting.Instance.ReqAuth ? "-LA" : "-LN"), 0x1);
+                    HttpResponseGenerater.SendResponseBodyWS(Info, Response);
+                }
+                else if (!Info.IsAuth)
+                {
+                    byte[] Response = WebSocket.WebSocketMask(
+                                Encoding.UTF8.GetBytes("LERR"), 0x1);
+                    HttpResponseGenerater.SendResponseBodyWS(Info, Response);
                 }
                 else
                 {
                     byte[] Response = WebSocket.WebSocketMask(
                                 Encoding.UTF8.GetBytes("ERR"), 0x1);
-                    Info.IsWsSend = true;
-                    HttpResponseGenerater.SendResponseBody(Info, Response);
-                    Info.IsWsSend = false;
+                    HttpResponseGenerater.SendResponseBodyWS(Info, Response);
                 }
             }
             Sockets.Remove(Info);
