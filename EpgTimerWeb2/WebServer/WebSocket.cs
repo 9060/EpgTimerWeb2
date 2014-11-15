@@ -96,17 +96,15 @@ namespace EpgTimer
         }
         public static UInt64 WebSocketGetHdrLen(byte[] Frame)
         {
-            var Mask = (Frame[1] & 0x80) == 0x80;
             var PayloadLen = (UInt64)(Frame[1] & 0x7f);
             UInt64 Len = 2;
             if (PayloadLen == 126) Len += 2;
             if (PayloadLen == 127) Len += 8;
-            if (Mask) Len += 4;
+            if ((Frame[1] & 0x80) == 0x80) Len += 4;
             return Len;
         }
         public static UInt64 WebSocketGetLen(byte[] Frame)
         {
-            var Mask = (Frame[1] & 0x80) == 0x80;
             var PayloadLen = (UInt64)(Frame[1] & 0x7f);
             int Offset = 2;
             if (PayloadLen == 126)
@@ -125,7 +123,7 @@ namespace EpgTimer
                 PayloadLen = BitConverter.ToUInt64(RevArray, 0);
                 Offset += 8;
             }
-            if (Mask)
+            if ((Frame[1] & 0x80) == 0x80)
             {
                 Offset += 4;
             }
