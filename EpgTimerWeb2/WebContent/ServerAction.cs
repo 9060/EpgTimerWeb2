@@ -2,13 +2,15 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-
+using System.Web;
+using System.Windows.Forms;
 namespace EpgTimer
 {
     public class ServerAction
@@ -16,10 +18,96 @@ namespace EpgTimer
         static Regex r = new Regex(@"^\/api\/(.*)\/json\/(.*)\/run\/(.*)$");
         static Regex r1 = new Regex(@"^\/api\/(.*)\/run\/(.*)$");
         static Regex r2 = new Regex(@"^\/auth\/(.*)\=(.*)$");
-        public static void Process(TcpClient Client)
+        public static void SetupProcess(HttpContext Context)
+        {
+            if (Context.Request.Url.StartsWith("/do"))
+            {
+                bool OK = false;
+                var Param = HttpUtility.ParseQueryString(Context.Request.GetParam);
+                byte[] Form;
+                if (Param["code"] == PrivateSetting.Instance.SetupCode)
+                {
+                    try
+                    {
+                        if(Param["ctrlhost"] == null || Param["ctrlport"] == null ||
+                           Param["cbport"] == null || Param["http"] == null ||
+                           Param["authfile"] == null) throw new Exception("Bad Param");
+                        string Host = Param["ctrlhost"];
+                        int CtrlPort = int.Parse(Param["ctrlport"]);
+                        int CbPort = int.Parse(Param["cbport"]);
+                        int HttpPort = int.Parse(Param["http"]);
+                        string Auth = Param["authfile"];
+                        if (PrivateSetting.Instance.CmdConnect.StartConnect(Host, CbPort, CtrlPort) && File.Exists(Auth))
+                        {
+                            Setting.Instance.HttpPort = (uint)HttpPort;
+                            Setting.Instance.CtrlHost = Host;
+                            Setting.Instance.CtrlPort = (uint)CtrlPort;
+                            Setting.Instance.CallbackPort = (uint)CbPort;
+                            Setting.Instance.AuthFilePath = Auth;
+                            Form = Encoding.UTF8.GetBytes("Success please restart");
+                            OK = true;
+                        }
+                        else
+                        {
+                            throw new Exception("Bad Connect or Auth File Not Found");
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Form = Encoding.Default.GetBytes(ex.Message);
+                    }
+                }
+                else
+                {
+                    Form = Encoding.UTF8.GetBytes("Invalid Code");
+                }
+                Context.Response.OutputStream.Write(Form, 0, Form.Length);
+                Context.Response.Headers["Content-Type"] = "text/html";
+                Context.Response.Send();
+                Context.Close();
+                if (OK)
+                {
+                    PrivateSetting.Instance.CmdConnect.StopConnect();
+                    Setting.SaveToXmlFile(PrivateSetting.Instance.ConfigPath);
+                    PrivateSetting.Instance.SetupMode = false;
+                }
+            }
+            else
+            {
+                byte[] Form = Encoding.UTF8.GetBytes(@"
+<html>
+ <head>
+  <title>Setup</title>
+ </head>
+ <body>
+  <h1>EpgTimerWeb2 Setup</h1>
+  <form action='/do' method='get'>
+   <p>EDCB Server:<input name='ctrlhost' placeholder='127.0.0.1' value='127.0.0.1' /></p>
+   <p>EDCB Port:<input name='ctrlport' placeholder='4510' value='4510' /></p>
+   <p>Callback Port:<input name='cbport' placeholder='4521' value='4521' /></p>
+   <p>Auth File:<input name='authfile' placeholder='auth.txt'  /></p>
+   <p>Http Port:<input name='http' placeholder='8080' value='8080' /></p>
+   <p>Code:<input name='code' /></p>
+   <p><input type='submit' value='SAVE' /></p>
+  </form>
+ </body>
+</html>
+".Replace("'", "\""));
+                Context.Response.OutputStream.Write(Form, 0, Form.Length);
+                Context.Response.Headers["Content-Type"] = "text/html";
+                Context.Response.Send();
+                Context.Close();
+            }
+        }
+        public static void DoProcess(TcpClient Client)
         {
             var Info = new HttpContext(Client);
             if (Info.Request.Url == "/") Info.Request.Url = "/index.html";
+            if (PrivateSetting.Instance.SetupMode)
+            {
+                SetupProcess(Info);
+                return;
+            }
             if (Info.Request.Url == "/ws") //WebSocket
             {
                 WebSocket.HandshakeResponseSend(Info);
@@ -27,7 +115,6 @@ namespace EpgTimer
                 Info.Close();
                 return;
             }
-            //Console.WriteLine("{0} & {1}", Info.Request.GetParam, Info.Request.PostParam);
             if (r.IsMatch(Info.Request.Url))
             {
                 string Sess = r.Match(Info.Request.Url).Groups[3].Value;
@@ -122,9 +209,10 @@ EpgTimerWeb(v2) by YUKI
                 //HttpResponseGenerater.SendResponse(Info);
                 Info.Response.Send();
                 Console.WriteLine("\n!!!! Exception !!!!");
+                
             }
             if (Info.Request.Headers.ContainsKey("connection") &&
-                Info.Request.Headers["connection"].ToLower() == "keep-alive") Process(Client); //KeepAlive対応(適当)
+                Info.Request.Headers["connection"].ToLower() == "keep-alive") DoProcess(Client); //KeepAlive対応(適当)
             Info.Close();
         }
         

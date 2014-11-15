@@ -48,9 +48,9 @@ namespace EpgTimerWeb2
                 }
                 if (ApiStr == "Exit")
                 {
-                    Setting.Instance.Server.Stop();
+                    PrivateSetting.Instance.Server.Stop();
                     Console.WriteLine("Disconecting EpgTimer...");
-                    if (Setting.Instance.CmdConnect.StopConnect())
+                    if (PrivateSetting.Instance.CmdConnect.StopConnect())
                         Console.WriteLine("Disconected EpgTimer");
                     else
                         Console.WriteLine("Error Disconect EpgTimer");

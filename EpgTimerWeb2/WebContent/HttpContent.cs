@@ -27,29 +27,7 @@ namespace EpgTimer
         {
             SendResponse(Context, Encoding.UTF8.GetBytes(Str));
         }
-        public static string HTMLAutoIndent(string HTML)
-        {
-            //return HTML;
-            var doc = new XmlDocument();
-            doc.LoadXml(HTML);
-            var sb = new StringBuilder();
-            var xw = XmlTextWriter.Create(sb, new XmlWriterSettings() { Indent = true , OmitXmlDeclaration = true, NewLineHandling = NewLineHandling.Replace});
-            doc.WriteTo(xw);
-            xw.Flush();
-            xw.Close();
-            return sb.ToString();
-        }
-        public static string HTMLAutoIndent(XmlDocument HTML)
-        {
-            //return HTML;
-            var sb = new StringBuilder();
-            var xw = XmlTextWriter.Create(sb, new XmlWriterSettings() { Indent = true, OmitXmlDeclaration = true, NewLineHandling = NewLineHandling.Replace });
-            HTML.WriteTo(xw);
-            xw.Flush();
-            xw.Close();
-            return sb.ToString();
-        }
-        private void Redirect(HttpContext Context, string Url)
+        public static void Redirect(HttpContext Context, string Url)
         {
             var Domain = "localhost:8080";
             if (Context.Request.Headers.ContainsKey("host"))

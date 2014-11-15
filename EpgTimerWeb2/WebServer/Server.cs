@@ -68,7 +68,7 @@ namespace EpgTimer
             
             try
             {
-                ServerAction.Process(Client);
+                ServerAction.DoProcess(Client);
             }
             catch (TimeoutException to)
             {
