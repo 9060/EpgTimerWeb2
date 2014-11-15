@@ -12,6 +12,7 @@ using System.Xml.Linq;
 
 namespace EpgTimer
 {
+    // by DynamicJson
     public class JsonUtil : DynamicObject
     {
         private enum JsonType
