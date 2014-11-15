@@ -100,6 +100,11 @@ namespace EpgTimer
                     SendResponse(Context, File.ReadAllText(".\\www\\js\\reserve.js", Encoding.UTF8));
                     Ret = true;
                     break;
+                case "/css/site.css":
+                    Context.Response.Headers.Add("Content-Type", "text/css");
+                    SendResponse(Context, Resources.Style);
+                    Ret = true;
+                    break;
                 case "/img/not_thumb.png":
                     Context.Response.Headers.Add("Content-Type", "image/png");
                     var Stream = new MemoryStream();

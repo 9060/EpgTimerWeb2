@@ -229,5 +229,38 @@ namespace EpgTimerWeb2.Properties {
                 return ResourceManager.GetString("Respond", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   body {
+        ///            padding-top: 100px;
+        ///        }
+        ///
+        ///        #records, #reserves {
+        ///            max-height: 300px;
+        ///            overflow: auto;
+        ///        }
+        ///
+        ///        #inner table {
+        ///            max-width: 150px;
+        ///        }
+        ///
+        ///        #refresh {
+        ///            cursor: pointer;
+        ///        }
+        ///
+        ///        #loading {
+        ///            position: fixed;
+        ///            top: 0px;
+        ///            left: 0px;
+        ///            background: rgba(0, 0, 0, 0.30);
+        ///            width: 100%;
+        ///            height: 100%;
+        ///            z-index: 9999; [残りの文字列は切り詰められました]&quot;; に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string Style {
+            get {
+                return ResourceManager.GetString("Style", resourceCulture);
+            }
+        }
     }
 }
