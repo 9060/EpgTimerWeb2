@@ -17,7 +17,7 @@ namespace EpgTimerWeb2
             while (true)
             {
                 string CmdText = ((sess != null && HttpSession.IsMatch(sess.SessionKey, "127.0.0.1")) ? sess.SessionKey.Substring(0, 8) + "@127.0.0.1~# " : "unknown@127.0.0.1~$ ");
-                if (HttpSession.IsMatch("", "")) CmdText = "user@127.0.0.1~# ";
+                if (HttpSession.IsMatch("", "")) CmdText = "root@127.0.0.1~# ";
                 Console.Write(CmdText);
                 string ApiStr = Console.ReadLine();
                 if (ApiStr == null) return;
