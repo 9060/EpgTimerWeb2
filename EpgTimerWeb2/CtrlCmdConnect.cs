@@ -16,34 +16,33 @@ namespace EpgTimer
     {
         public static void Connect()
         {
-            if (!PrivateSetting.Instance.SetupMode)
+
+            Console.WriteLine("Connecting...");
+            if (!PrivateSetting.Instance.CmdConnect.
+                StartConnect(Setting.Instance.CtrlHost, (int)Setting.Instance.CallbackPort, (int)Setting.Instance.CtrlPort))
             {
-                Console.WriteLine("Connecting...");
-                if (!PrivateSetting.Instance.CmdConnect.
-                    StartConnect(Setting.Instance.CtrlHost, (int)Setting.Instance.CallbackPort, (int)Setting.Instance.CtrlPort))
+                Console.WriteLine("Server {0}:{1} ({2}) Connect Failed", Setting.Instance.CtrlHost, Setting.Instance.CtrlPort, Setting.Instance.CallbackPort);
+                Environment.Exit(1);
+            }
+            Console.WriteLine("Loading Data...");
+            CommonManager.Instance.DB.ClearAllDB();
+            CommonManager.Instance.DB.ReloadEpgAutoAddInfo();
+            CommonManager.Instance.DB.ReloadEpgData();
+            CommonManager.Instance.DB.ReloadManualAutoAddInfo();
+            CommonManager.Instance.DB.ReloadPlugInFile();
+            CommonManager.Instance.DB.ReloadrecFileInfo();
+            CommonManager.Instance.DB.ReloadReserveInfo();
+            Console.WriteLine("Loaded Data");
+            if (PrivateSetting.Instance.AuthFilePath != "")
+            {
+                PrivateSetting.Instance.Passwords = PasswordPair.LoadFile(PrivateSetting.Instance.AuthFilePath);
+                if (PrivateSetting.Instance.Passwords == null)
                 {
-                    Console.WriteLine("Server {0}:{1} ({2}) Connect Failed", Setting.Instance.CtrlHost, Setting.Instance.CtrlPort, Setting.Instance.CallbackPort);
+                    Console.WriteLine("Invalid Auth Data");
                     Environment.Exit(1);
                 }
-                Console.WriteLine("Loading Data...");
-                CommonManager.Instance.DB.ClearAllDB();
-                CommonManager.Instance.DB.ReloadEpgAutoAddInfo();
-                CommonManager.Instance.DB.ReloadEpgData();
-                CommonManager.Instance.DB.ReloadManualAutoAddInfo();
-                CommonManager.Instance.DB.ReloadPlugInFile();
-                CommonManager.Instance.DB.ReloadrecFileInfo();
-                CommonManager.Instance.DB.ReloadReserveInfo();
-                Console.WriteLine("Loaded Data");
-                if (PrivateSetting.Instance.AuthFilePath != "")
-                {
-                    PrivateSetting.Instance.Passwords = PasswordPair.LoadFile(PrivateSetting.Instance.AuthFilePath);
-                    if (PrivateSetting.Instance.Passwords == null)
-                    {
-                        Console.WriteLine("Invalid Auth Data");
-                        Environment.Exit(1);
-                    }
-                }
             }
+
         }
         private int OutsideCmdCallback(object pParam, CMD_STREAM pCmdParam, ref CMD_STREAM pResParam)
         {
@@ -131,13 +130,13 @@ namespace EpgTimer
                         }
                         else
                         {
-                            
+
                         }
 
                     }
                     break;
                 case CtrlCmd.CMD_TIMER_GUI_SRV_STATUS_NOTIFY2:
-                    {       
+                    {
                         pResParam.uiParam = (uint)ErrCode.CMD_SUCCESS;
                         var Status = new NotifySrvInfo();
                         CmdStreamUtil.ReadStreamData(ref Status, pCmdParam);
@@ -149,7 +148,7 @@ namespace EpgTimer
                             //Console.WriteLine("\n" + (Notify.Title + Notify.LogText).Replace("\n", ""));
                             EventStore.Instance.AddMessage(Notify);
                         }
-                        
+
                         //Console.WriteLine("Sending Msg...");
                     }
                     break;

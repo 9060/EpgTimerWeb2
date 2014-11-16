@@ -188,7 +188,7 @@
                 position: relative;
                 border: 1px solid #404040;
                 border-radius: 4px;
-                background: url(img/loader.gif);
+                background: url(/img/loader.gif);
                 top: 50%;
                 left: 50%;
             }

@@ -64,17 +64,16 @@ namespace EpgTimer
                 if (OK)
                 {
                     Setting.SaveToXmlFile(PrivateSetting.Instance.ConfigPath);
-                    PrivateSetting.Instance.SetupMode = false;
                     PrivateSetting.Instance.CmdConnect.StopConnect();
                     CtrlCmdConnect.Connect();
                     Context.Response.OutputStream.Write(Form, 0, Form.Length);
                     Context.Response.Headers["Content-Type"] = "text/html";
                     Context.Response.Send();
                     Context.Close();
+                    PrivateSetting.Instance.SetupMode = false;
                     PrivateSetting.Instance.Server.Stop();
                     PrivateSetting.Instance.Server = new WebServer((int)Setting.Instance.HttpPort);
-                    PrivateSetting.Instance.Server.Start();
-                    Shell.Run();
+                    PrivateSetting.Instance.Server.Start(); 
                 }
                 else
                 {

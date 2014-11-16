@@ -62,7 +62,10 @@ namespace EpgTimerWeb2
                 PrivateSetting.Instance.SetupMode = true;
             }
             Console.ForegroundColor = Default;
-            CtrlCmdConnect.Connect();
+            if (!PrivateSetting.Instance.SetupMode)
+            {
+                CtrlCmdConnect.Connect();
+            }
             var r = new Random(new Random().Next(100));
             for (int i = 0; i < 5; i++)
             {
@@ -87,12 +90,9 @@ namespace EpgTimerWeb2
             {
                 Console.WriteLine("Please access to http://localhost:" + Setting.Instance.HttpPort);
                 Console.WriteLine("Code: {0}", PrivateSetting.Instance.SetupCode);
-                while (true) Thread.Sleep(1);
+                while (PrivateSetting.Instance.SetupMode) Thread.Sleep(1);
             }
-            else
-            {
-                Shell.Run();
-            }
+            Shell.Run();
         }
     }
 }
