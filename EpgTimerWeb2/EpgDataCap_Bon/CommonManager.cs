@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using CtrlCmdCLI;
 using CtrlCmdCLI.Def;
 using System.Windows.Forms;
-
 namespace EpgTimer
 {
 

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using CtrlCmdCLI.Def;
+using System.Drawing;
 namespace EpgTimer
 {
     public class EventInfoItem
@@ -172,5 +173,6 @@ namespace EpgTimer
                 return CommonManager.Instance.ConvertProgramText(EventInfo, EventInfoTextMode.ExtOnly);
             }
         }
+        
     }
 }

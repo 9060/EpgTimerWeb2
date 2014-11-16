@@ -303,9 +303,10 @@ namespace EpgTimer
                     if (Arg.ContainsKey("unixstart"))
                     {
                         Start = UnixTime.FromUnixTime(long.Parse(Arg["unixstart"]));
-                        if (long.Parse(Arg["unixstart"]) < UnixTime.ToUnixTime(DateTime.Now) - (DateTime.Now.Minute * 60) - DateTime.Now.Second)
+                        if (Start < DateTime.Now.AddMinutes(DateTime.Now.Minute * -1).AddSeconds(DateTime.Now.Second * -1).AddSeconds(-1))
                         {
                             Start = DateTime.Now.AddMinutes(-1 * DateTime.Now.Minute).AddSeconds(-1 * DateTime.Now.Second); //変な時間対策
+                            Debug.Print("変な時間帯策発動");
                         }
                     }
                     DateTime End = Start.AddHours(MaxHour);
