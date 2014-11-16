@@ -1,12 +1,14 @@
 ﻿using EpgTimer;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Xml.Serialization;
 
 namespace EpgTimerWeb2
 {
@@ -42,6 +44,24 @@ namespace EpgTimerWeb2
         public string ConfigPath { set; get; }
         public string SetupCode { set; get; }
     }
+    public class ContentColorItem
+    {
+        [XmlAttribute("id")]
+        public uint ContentLevel1 { set; get; }
+        [XmlAttribute("color")]
+        public string Color { set; get; }
+        public ContentColorItem()
+        {
+            ContentLevel1 = 15;
+            Color = "#f0f0f0";
+        }
+        public ContentColorItem(uint Content, string color)
+        {
+            Color = color;
+            ContentLevel1 = Content;
+        }
+    }
+    [XmlRoot("setting")]
     public class Setting
     {
         private static Setting _instance;
@@ -63,13 +83,35 @@ namespace EpgTimerWeb2
             HttpPort = 8080;
             LocalMode = false;
             AuthFilePath = "";
+            ContentToColorTable = new List<ContentColorItem>(){
+                new ContentColorItem(0, "#ffffe0"),
+                new ContentColorItem(1, "#e0e0ff"),
+                new ContentColorItem(2, "#ffe0f0"),
+                new ContentColorItem(3, "#ffe0e0"),
+                new ContentColorItem(4, "#e0ffe0"),
+                new ContentColorItem(5, "#e0ffff"),
+                new ContentColorItem(6, "#fff0e0"),
+                new ContentColorItem(7, "#ffe0ff"),
+                new ContentColorItem(8, "#ffffe0"),
+                new ContentColorItem(9, "#fff0e0"),
+                new ContentColorItem(10, "#e0f0ff"),
+                new ContentColorItem(11, "#e0f0ff"),
+                new ContentColorItem(15, "#f0f0f0")
+            };
         }
+        [XmlElement("host")]
         public string CtrlHost { get; set; }
+        [XmlAttribute("port")]
         public UInt32 CtrlPort { get; set; }
+        [XmlAttribute("callback")]
         public UInt32 CallbackPort { get; set; }
+        [XmlAttribute("http")]
         public UInt32 HttpPort { get; set; }
+        [XmlAttribute("local")]
         public bool LocalMode { get; set; }
+        [XmlElement("auth")]
         public string AuthFilePath { set; get; }
+        public List<ContentColorItem> ContentToColorTable { set; get; }
         public bool ReqAuth
         {
             get
@@ -82,25 +124,25 @@ namespace EpgTimerWeb2
         {
             try
             {
-                if (System.IO.File.Exists(path) == true)
+                
+                if (File.Exists(path) == true)
                 {
                     string backPath = path + ".back";
-                    System.IO.File.Copy(path, backPath, true);
+                    File.Copy(path, backPath, true);
+                    File.Delete(path);
                 }
 
                 FileStream fs = new FileStream(path,
                     FileMode.Create,
                     FileAccess.Write, FileShare.None);
-                System.Xml.Serialization.XmlSerializer xs =
-                    new System.Xml.Serialization.XmlSerializer(
-                    typeof(Setting));
+                XmlSerializer xs = new XmlSerializer(typeof(Setting));
                 //シリアル化して書き込む
                 xs.Serialize(fs, Instance);
                 fs.Close();
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message + "\r\n" + ex.StackTrace);
+                //MessageBox.Show(ex.Message + "\r\n" + ex.StackTrace);
             }
         }
         public static void LoadFromXmlFile(string path)

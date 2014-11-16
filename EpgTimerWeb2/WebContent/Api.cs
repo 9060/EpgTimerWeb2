@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Forms;
 
@@ -306,7 +307,7 @@ namespace EpgTimer
                         if (Start < DateTime.Now.AddMinutes(DateTime.Now.Minute * -1).AddSeconds(DateTime.Now.Second * -1).AddSeconds(-1))
                         {
                             Start = DateTime.Now.AddMinutes(-1 * DateTime.Now.Minute).AddSeconds(-1 * DateTime.Now.Second); //変な時間対策
-                            Debug.Print("変な時間帯策発動");
+                            Debug.Print("変な時間発動");
                         }
                     }
                     DateTime End = Start.AddHours(MaxHour);
@@ -426,6 +427,30 @@ namespace EpgTimer
                         }
                     }
                 }
+                else if (Command == "RemoveReserve")
+                {
+                    if (Arg.ContainsKey("id"))
+                    {
+                        ErrCode err = (ErrCode)CommonManager.Instance.CtrlCmd.SendDelReserve(new List<uint> { uint.Parse(Arg["id"]) });
+                        JsonData = "{\"result\":true, \"cmd\":\"" + err.ToString() + "\"}";
+                    }
+                    else
+                    {
+                        JsonData = "{\"result\":false}";
+                    }
+                }
+                else if (Command == "RemoveAutoReserve")
+                {
+                    if (Arg.ContainsKey("id"))
+                    {
+                        ErrCode err = (ErrCode)CommonManager.Instance.CtrlCmd.SendDelEpgAutoAdd(new List<uint> { uint.Parse(Arg["id"]) });
+                        JsonData = "{\"result\":true, \"cmd\":\"" + err.ToString() + "\"}";
+                    }
+                    else
+                    {
+                        JsonData = "{\"result\":false}";
+                    }
+                }
                 else if (Command == "AddAutoReserve")
                 {
                     var Preset = GetPreset(Arg);
@@ -469,6 +494,28 @@ namespace EpgTimer
                 else if (Command == "EnumEvents")
                 {
                     JsonData = JsonUtil.Serialize(EventStore.Instance.Events);
+                }
+                else if (Command == "GetContentColorTable")
+                {
+                    JsonData = JsonUtil.Serialize(Setting.Instance.ContentToColorTable);
+                }
+                else if (Command == "SetContentColorTable")
+                {
+                    JsonData = "{\"result\":false}";
+                    Regex ColorRegex = new Regex(@"#[0-9a-fA-F]{6}");
+                    if (Arg.ContainsKey("id") && Arg.ContainsKey("color") && uint.Parse(Arg["id"]) >= 0 && ColorRegex.IsMatch(Arg["color"]))
+                    {
+                        if (Setting.Instance.ContentToColorTable.Count(s => s.ContentLevel1 == uint.Parse(Arg["id"])) == 0)
+                        {
+                            Setting.Instance.ContentToColorTable.Add(new ContentColorItem(uint.Parse(Arg["id"]), Arg["color"]));
+                        }
+                        else
+                        {
+                            Setting.Instance.ContentToColorTable.RemoveAll(s => s.ContentLevel1 == uint.Parse(Arg["id"]));
+                            Setting.Instance.ContentToColorTable.Add(new ContentColorItem(uint.Parse(Arg["id"]), Arg["color"]));
+                        }
+                        JsonData = "{\"result\":true}";
+                    }
                 }
                 else if (Command == "Hello")
                 {
