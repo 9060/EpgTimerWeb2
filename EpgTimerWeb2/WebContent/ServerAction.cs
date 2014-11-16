@@ -37,14 +37,14 @@ namespace EpgTimer
                         int CbPort = int.Parse(Param["cbport"]);
                         int HttpPort = int.Parse(Param["http"]);
                         string Auth = Param["authfile"];
-                        if (PrivateSetting.Instance.CmdConnect.StartConnect(Host, CbPort, CtrlPort) && File.Exists(Auth))
+                        if (PrivateSetting.Instance.CmdConnect.StartConnect(Host, CbPort, CtrlPort) && (Auth == "" || File.Exists(Auth)))
                         {
                             Setting.Instance.HttpPort = (uint)HttpPort;
                             Setting.Instance.CtrlHost = Host;
                             Setting.Instance.CtrlPort = (uint)CtrlPort;
                             Setting.Instance.CallbackPort = (uint)CbPort;
                             Setting.Instance.AuthFilePath = Auth;
-                            Form = Encoding.UTF8.GetBytes("Success please restart");
+                            Form = Encoding.UTF8.GetBytes("<html><head></head><body onload=\"setTimeout(function(){location.href = 'http://' + location.host;}, 1500);\">please wait....</body></html>");
                             OK = true;
                         }
                         else
@@ -61,15 +61,27 @@ namespace EpgTimer
                 {
                     Form = Encoding.UTF8.GetBytes("Invalid Code");
                 }
-                Context.Response.OutputStream.Write(Form, 0, Form.Length);
-                Context.Response.Headers["Content-Type"] = "text/html";
-                Context.Response.Send();
-                Context.Close();
                 if (OK)
                 {
-                    PrivateSetting.Instance.CmdConnect.StopConnect();
                     Setting.SaveToXmlFile(PrivateSetting.Instance.ConfigPath);
                     PrivateSetting.Instance.SetupMode = false;
+                    PrivateSetting.Instance.CmdConnect.StopConnect();
+                    CtrlCmdConnect.Connect();
+                    Context.Response.OutputStream.Write(Form, 0, Form.Length);
+                    Context.Response.Headers["Content-Type"] = "text/html";
+                    Context.Response.Send();
+                    Context.Close();
+                    PrivateSetting.Instance.Server.Stop();
+                    PrivateSetting.Instance.Server = new WebServer((int)Setting.Instance.HttpPort);
+                    PrivateSetting.Instance.Server.Start();
+                    Shell.Run();
+                }
+                else
+                {
+                    Context.Response.OutputStream.Write(Form, 0, Form.Length);
+                    Context.Response.Headers["Content-Type"] = "text/html";
+                    Context.Response.Send();
+                    Context.Close();
                 }
             }
             else

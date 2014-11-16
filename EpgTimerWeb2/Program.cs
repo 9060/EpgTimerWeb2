@@ -62,34 +62,7 @@ namespace EpgTimerWeb2
                 PrivateSetting.Instance.SetupMode = true;
             }
             Console.ForegroundColor = Default;
-            if (!PrivateSetting.Instance.SetupMode)
-            {
-                Console.WriteLine("Connecting...");
-                if (!PrivateSetting.Instance.CmdConnect.
-                    StartConnect(Setting.Instance.CtrlHost, (int)Setting.Instance.CallbackPort, (int)Setting.Instance.CtrlPort))
-                {
-                    Console.WriteLine("Server {0}:{1} ({2}) Connect Failed", Setting.Instance.CtrlHost, Setting.Instance.CtrlPort, Setting.Instance.CallbackPort);
-                    Environment.Exit(1);
-                }
-                Console.WriteLine("Loading Data...");
-                CommonManager.Instance.DB.ClearAllDB();
-                CommonManager.Instance.DB.ReloadEpgAutoAddInfo();
-                CommonManager.Instance.DB.ReloadEpgData();
-                CommonManager.Instance.DB.ReloadManualAutoAddInfo();
-                CommonManager.Instance.DB.ReloadPlugInFile();
-                CommonManager.Instance.DB.ReloadrecFileInfo();
-                CommonManager.Instance.DB.ReloadReserveInfo();
-                Console.WriteLine("Loaded Data");
-                if (PrivateSetting.Instance.AuthFilePath != "")
-                {
-                    PrivateSetting.Instance.Passwords = PasswordPair.LoadFile(PrivateSetting.Instance.AuthFilePath);
-                    if (PrivateSetting.Instance.Passwords == null)
-                    {
-                        Console.WriteLine("Invalid Auth Data");
-                        Environment.Exit(1);
-                    }
-                }
-            }
+            CtrlCmdConnect.Connect();
             var r = new Random(new Random().Next(100));
             for (int i = 0; i < 5; i++)
             {
