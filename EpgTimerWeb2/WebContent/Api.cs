@@ -14,9 +14,9 @@ namespace EpgTimer
 {
     public class Api
     {
-        private static RecSettingData GetPreset(Dictionary<string, string> Arg)
+        private static RecSettingData GetPreset(Dictionary<string, string> Arg, RecSettingData Old)
         {
-            RecSettingData pInfo = new RecSettingData();
+            RecSettingData pInfo = Old;
             pInfo.ServiceMode = (byte)((Arg.ContainsKey("savedata") || Arg.ContainsKey("savecaption")) || Arg.ContainsKey("nousedata") ? 1 : 0);
             if (Arg.ContainsKey("savecaption"))
                 pInfo.ServiceMode |= 0x10;
@@ -416,7 +416,7 @@ namespace EpgTimer
                             Reserve.TransportStreamID = Event.transport_stream_id;
                             Reserve.ServiceID = Event.service_id;
                             Reserve.EventID = Event.event_id;
-                            RecSettingData Setting = GetPreset(Arg);
+                            RecSettingData Setting = GetPreset(Arg, new RecSettingData());
                             Reserve.RecSetting = Setting;
                             ErrCode err = (ErrCode)CommonManager.Instance.CtrlCmd.SendAddReserve(new List<ReserveData> { Reserve });
                             JsonData = "{\"result\":true, \"cmd\":\"" + err.ToString() + "\", \"res\":" + JsonUtil.Serialize(Reserve) + "}";
@@ -427,33 +427,10 @@ namespace EpgTimer
                         }
                     }
                 }
-                else if (Command == "RemoveReserve")
-                {
-                    if (Arg.ContainsKey("id"))
-                    {
-                        ErrCode err = (ErrCode)CommonManager.Instance.CtrlCmd.SendDelReserve(new List<uint> { uint.Parse(Arg["id"]) });
-                        JsonData = "{\"result\":true, \"cmd\":\"" + err.ToString() + "\"}";
-                    }
-                    else
-                    {
-                        JsonData = "{\"result\":false}";
-                    }
-                }
-                else if (Command == "RemoveAutoReserve")
-                {
-                    if (Arg.ContainsKey("id"))
-                    {
-                        ErrCode err = (ErrCode)CommonManager.Instance.CtrlCmd.SendDelEpgAutoAdd(new List<uint> { uint.Parse(Arg["id"]) });
-                        JsonData = "{\"result\":true, \"cmd\":\"" + err.ToString() + "\"}";
-                    }
-                    else
-                    {
-                        JsonData = "{\"result\":false}";
-                    }
-                }
+                
                 else if (Command == "AddAutoReserve")
                 {
-                    var Preset = GetPreset(Arg);
+                    var Preset = GetPreset(Arg, new RecSettingData());
                     var Search = GetEpgSKey(Arg);
                     if (Arg.ContainsKey("overlap_check") && Arg.ContainsKey("overlap_day"))
                     {
@@ -473,6 +450,7 @@ namespace EpgTimer
                             searchInfo = Search,
                             recSetting = Preset
                         });
+                    
                 }
                 else if (Command == "EnumPresets")
                 {
@@ -481,7 +459,7 @@ namespace EpgTimer
                 else if (Command == "AddPreset")
                 {
                     if (!Arg.ContainsKey("name")) return JsonData;
-                    uint ID = PresetDb.Instance.AddPreset(GetPreset(Arg), Arg["name"]);
+                    uint ID = PresetDb.Instance.AddPreset(GetPreset(Arg, new RecSettingData()), Arg["name"]);
                     JsonData = JsonUtil.Serialize(PresetDb.Instance.Presets[ID]);
                 }
                 else if (Command == "EpgSearch")
@@ -515,6 +493,65 @@ namespace EpgTimer
                             Setting.Instance.ContentToColorTable.Add(new ContentColorItem(uint.Parse(Arg["id"]), Arg["color"]));
                         }
                         JsonData = "{\"result\":true}";
+                    }
+                }
+                else if (Command == "RemoveReserve")
+                {
+                    if (Arg.ContainsKey("id"))
+                    {
+                        ErrCode err = (ErrCode)CommonManager.Instance.CtrlCmd.SendDelReserve(new List<uint> { uint.Parse(Arg["id"]) });
+                        JsonData = "{\"result\":true, \"cmd\":\"" + err.ToString() + "\"}";
+                    }
+                    else
+                    {
+                        JsonData = "{\"result\":false}";
+                    }
+                }
+                else if (Command == "RemoveAutoReserve")
+                {
+                    if (Arg.ContainsKey("id"))
+                    {
+                        ErrCode err = (ErrCode)CommonManager.Instance.CtrlCmd.SendDelEpgAutoAdd(new List<uint> { uint.Parse(Arg["id"]) });
+                        JsonData = "{\"result\":true, \"cmd\":\"" + err.ToString() + "\"}";
+                    }
+                    else
+                    {
+                        JsonData = "{\"result\":false}";
+                    }
+                }
+                else if (Command == "RemoveManualReserve")
+                {
+                    if (Arg.ContainsKey("id"))
+                    {
+                        ErrCode err = (ErrCode)CommonManager.Instance.CtrlCmd.SendDelManualAdd(new List<uint> { uint.Parse(Arg["id"]) });
+                        JsonData = "{\"result\":true, \"cmd\":\"" + err.ToString() + "\"}";
+                    }
+                    else
+                    {
+                        JsonData = "{\"result\":false}";
+                    }
+                }
+                else if (Command == "RemoveRecFile")
+                {
+                    if (Arg.ContainsKey("id"))
+                    {
+                        ErrCode err = (ErrCode)CommonManager.Instance.CtrlCmd.SendDelRecInfo(new List<uint> { uint.Parse(Arg["id"]) });
+                        JsonData = "{\"result\":true, \"cmd\":\"" + err.ToString() + "\"}";
+                    }
+                    else
+                    {
+                        JsonData = "{\"result\":false}";
+                    }
+                }
+                else if (Command == "UpdateReserve")
+                {
+                    if (Arg.ContainsKey("id") &&
+                        CommonManager.Instance.DB.ReserveList.ContainsKey(uint.Parse(Arg["id"])))
+                    {
+                        ReserveData Target = CommonManager.Instance.DB.ReserveList[uint.Parse(Arg["id"])];
+                        Target.RecSetting = GetPreset(Arg, Target.RecSetting);
+                        ErrCode err = (ErrCode)CommonManager.Instance.CtrlCmd.SendChgReserve(new List<ReserveData> { Target });
+                        JsonData = "{\"result\":true, \"cmd\":\"" + err.ToString() + "\"}";
                     }
                 }
                 else if (Command == "Hello")
