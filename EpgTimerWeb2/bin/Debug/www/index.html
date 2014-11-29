@@ -1,0 +1,327 @@
+﻿<html>
+<head>
+    <meta name="viewport" content="width=device-width, user-scalable=no">
+    <title>EpgDataCap_Bon Web Interface</title>
+    <link href="css/bootstrap.css" rel="stylesheet" />
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+        <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <script src="/meta"></script>
+    <script src="js/jquery.js"></script>
+    <script src="js/bootstrap.js"></script>
+    <script src="js/respond.js"></script>
+    <script src="js/epg.js"></script>
+    <script src="js/reserve.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/main.js"></script>
+    <link rel="stylesheet" href="css/site.css" />
+</head>
+<body>
+    <div id="loading">
+        <div>
+        </div>
+    </div>
+    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+        <div class="container">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-main">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="#">EpgDataCap Bon</a>
+            </div>
+
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="navbar-main">
+                <ul class="nav navbar-nav">
+                    <li><a href="#/epg"><span class="glyphicon glyphicon-th"></span> 番組表</a></li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="glyphicon glyphicon-record"></span> 録画メニュー<span class="caret"></span></a>
+                        <ul class="dropdown-menu" role="menu">
+                            <li><a href="#"><span class="glyphicon glyphicon-hdd"></span> 録画一覧</a></li>
+                            <li class="divider"></li>
+                            <li><a href="#"><span class="glyphicon glyphicon-search"></span> 自動検索予約</a></li>
+                            <li><a href="#"><span class="glyphicon glyphicon-time"></span> 録画予約一覧</a></li>
+                        </ul>
+                    </li>
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="glyphicon glyphicon-wrench"></span> 管理<span class="caret"></span></a>
+                        <ul class="dropdown-menu" role="menu">
+                            <li><a href="#/config"><span class="glyphicon glyphicon-cog"></span> 設定</a></li>
+                            <li class="divider"></li>
+                            <li><a href="#/about"><span class="glyphicon glyphicon-info-sign"></span> このソフトについて</a></li>
+                        </ul>
+                    </li>
+                </ul>
+                <form class="navbar-form navbar-left" role="search" id="searchForm">
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="検索" />
+                        <span class="input-group-btn">
+                            <button type="button" class="btn btn-default" id="searchBtn">
+                                Go
+                            </button>
+                        </span>
+                    </div>
+                </form>
+            </div><!-- /.navbar-collapse -->
+        </div><!-- /.container-fluid -->
+    </nav>
+    <div class="container" style="margin-left: 100px;">
+        <button class="btn btn-default" data-toggle="tooltip" data-target="#infoInner" data-placement="right" data-title="予約一覧、録画一覧の表示/非表示を切り替えます。">
+            <span class="glyphicon glyphicon-chevron-up"></span>
+        </button>
+        <div class="modal" id="formLogin">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">ログイン</h4>
+                    </div>
+                    <div class="modal-body">
+                        <form class="form-horizontal" role="form" onsubmit="return false;">
+                            <ul class="nav nav-tabs" role="tablist">
+                                <li class="active"><a href="#user" data-toggle="tab">ユーザー名&パスワード</a></li>
+                                <li><a href="#sess" data-toggle="tab">セッション</a></li>
+                            </ul>
+                            <div class="tab-content">
+                                <div class="tab-pane fade in active" id="user">
+                                    <br />
+                                    <div class="form-group">
+                                        <label class="control-label col-xs-3">ユーザー名</label>
+                                        <div class="col-xs-9">
+                                            <input class="form-control" type="text" placeholder="User Name" id="username" />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-xs-3">パスワード</label>
+                                        <div class="col-xs-9">
+                                            <input class="form-control" type="password" placeholder="Password" id="password" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="tab-pane fade" id="sess">
+                                    <br />
+                                    <div class="form-group">
+                                        <label class="control-label col-xs-3">セッションコード</label>
+                                        <div class="col-xs-9">
+                                            <input class="form-control" type="text" placeholder="Session Code" id="sess_code" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" id="authsubmit">ログイン</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal" id="recChange">
+            <div class="modal-dialog" style="max-width: 80%;overflow-y: auto;">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">
+                            <span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+                        </button>
+                        <h4 class="modal-title">予約変更</h4>
+                    </div>
+                    <div class="modal-body">
+                        <form class="form-horizontal" role="form" onsubmit="return false;">
+                            <div class="form-group">
+                                <label class="control-label col-xs-3">プリセット</label>
+                                <div class="col-xs-9 form-inline">
+                                    <select class="form-control">
+                                        <option selected>デフォルト</option>
+                                        <option>アニメ、映画、ドラマ</option>
+                                    </select>
+                                    <div class="btn-group">
+                                        <button class="btn btn-default">追加</button>
+                                        <button class="btn btn-default">変更</button>
+                                        <button class="btn btn-default">削除</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <ul class="nav nav-tabs" role="tablist">
+                                <li class="active"><a href="#config" data-toggle="tab">基本設定</a></li>
+                            </ul>
+                            <div class="tab-content">
+                                <div class="tab-pane fade in active" id="config">
+                                    <br />
+                                    <div class="form-group">
+                                        <label class="control-label col-xs-2">録画モード</label>
+                                        <div class="col-xs-4 form-inline">
+                                            <select class="form-control">
+                                                <option value="0">全サービス</option>
+                                                <option value="1" selected>指定サービス</option>
+                                                <option value="2">全サービス(デコードなし)</option>
+                                                <option value="3">指定サービス(デコードなし)</option>
+                                                <option value="4">視聴</option>
+                                                <option value="5">無効</option>
+                                            </select>
+                                        </div>
+                                        <label class="control-label col-xs-2">追従</label>
+                                        <div class="col-xs-4 form-inline">
+                                            <select class="form-control">
+                                                <option value="1" selected>はい</option>
+                                                <option value="0">いいえ</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-xs-2">優先度</label>
+                                        <div class="col-xs-3 form-inline">
+                                            <select class="form-control">
+                                                <option value="1">1</option>
+                                                <option value="2" selected>2</option>
+                                                <option value="3">3</option>
+                                                <option value="4">4</option>
+                                                <option value="5">5</option>
+                                            </select>
+                                        </div>
+                                        <label class="control-label col-xs-3">ぴったり(?)録画</label>
+                                        <div class="col-xs-4 form-inline">
+                                            <select class="form-control">
+                                                <option value="1" selected>はい</option>
+                                                <option value="0">いいえ</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-xs-2">録画後動作</label>
+                                        <div class="col-xs-6">
+                                            <select class="form-control">
+                                                <option value="0" selected>デフォルト</option>
+                                                <option value="1">何もしない</option>
+                                                <option value="2">スタンバイ</option>
+                                                <option value="3">休止</option>
+                                                <option value="4">シャットダウン</option>
+                                            </select>
+                                            <div class="checkbox-inline">
+                                                <input type="checkbox">
+                                                <label>復帰後再起動する</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <hr />
+                                    <div class="form-group">
+                                        <label class="control-label col-xs-2">録画マージン</label>
+                                        <div class="col-xs-10 form-inline">
+                                            <div class="checkbox-inline">
+                                                <input type="checkbox" checked>
+                                                <label>デフォルト設定</label>
+                                            </div>
+                                            <span>&nbsp;</span>
+                                            <label>開始</label>
+                                            <input type="text" placeholder="sec" class="form-control" size="3" value="5">
+                                            <span>&nbsp;</span>
+                                            <label>終了</label>
+                                            <input type="text" placeholder="sec" class="form-control" size="3" value="2">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-xs-2">対象データ</label>
+                                        <div class="col-xs-10 form-inline">
+                                            <div class="checkbox-inline">
+                                                <input type="checkbox" checked>
+                                                <label>デフォルト設定</label>
+                                                <span>&nbsp;</span>
+                                            </div>
+                                            <div class="checkbox-inline">
+                                                <input type="checkbox">
+                                                <label>字幕データ</label>
+                                                <span>&nbsp;</span>
+                                            </div>
+                                            <div class="checkbox-inline">
+                                                <input type="checkbox">
+                                                <label>データカルーセル</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-xs-2">連続録画設定</label>
+                                        <div class="col-xs-10 form-horizontal">
+                                            <div class="checkbox-inline">
+                                                <input type="checkbox">
+                                                <label>後ろの予約を同一ファイルで出力</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-xs-2">チューナー</label>
+                                        <div class="col-xs-6">
+                                            <select class="form-control">
+                                                <option value="0" selected>自動</option>
+                                                <option value="1">1</option>
+                                                <option value="2">2</option>
+                                                <option value="3">3</option>
+                                                <option value="4">4</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary">変更</button>
+                        <button type="button" class="btn btn-danger">削除</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">キャンセル</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row row-fluid">
+            <div class="col-md-3 in" id="infoInner" style="min-width: 300px;">
+                <div>
+                    <div class="panel panel-default" id="reserves">
+                        <div class="panel-heading">
+                            <h4>
+                                <a data-toggle="collapse" href="#reserves .list-group">
+                                    <span class="glyphicon glyphicon-time"></span> 予約一覧
+                                </a>
+                            </h4>
+                        </div>
+                        <div class="list-group in">
+                        </div>
+                    </div>
+                    <div class="panel panel-default" id="records">
+                        <div class="panel-heading">
+                            <h4>
+                                <a data-toggle="collapse" href="#records .list-group">
+                                    <span class="glyphicon glyphicon-save"></span> 録画一覧
+                                </a>
+                            </h4>
+                        </div>
+                        <div class="list-group in">
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="btn-group">
+                <h3 id="refresh" class="btn btn-default">
+                    <span class="glyphicon glyphicon-refresh"></span> 更新
+                </h3>
+                <h3 id="epgcap" class="btn btn-default">
+                    EPG取得
+                </h3>
+                <h3 id="epgreload" class="btn btn-default">
+                    EPG再読み込み（サーバー）
+                </h3>
+            </div>
+            <div class="col-md-8" id="inner">
+                <h3 id="title"><span class="glyphicon glyphicon-th"></span> 番組表</h3>
+
+                <div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
