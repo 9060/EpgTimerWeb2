@@ -8,10 +8,46 @@ using System.IO;
 using System.Linq;
 using System.Net.NetworkInformation;
 using System.Text;
+using System.Threading;
 using System.Windows.Forms;
 
 namespace EpgTimer
 {
+    public class Reader
+    {
+        private static Thread inputThread;
+        private static AutoResetEvent getInput, gotInput;
+        private static string input;
+
+        public Reader()
+        {
+            getInput = new AutoResetEvent(false);
+            gotInput = new AutoResetEvent(false);
+            inputThread = new Thread(reader);
+            inputThread.IsBackground = true;
+            inputThread.Start();
+        }
+
+        private static void reader()
+        {
+            while (true)
+            {
+                getInput.WaitOne();
+                input = Console.ReadLine();
+                gotInput.Set();
+            }
+        }
+
+        public static string ReadLine(int timeOutMillisecs)
+        {
+            getInput.Set();
+            bool success = gotInput.WaitOne(timeOutMillisecs);
+            if (success)
+                return input;
+            else
+                return null;
+        }
+    }
     public class CtrlCmdConnect
     {
         public static void Connect()
@@ -33,16 +69,6 @@ namespace EpgTimer
             CommonManager.Instance.DB.ReloadrecFileInfo();
             CommonManager.Instance.DB.ReloadReserveInfo();
             Console.WriteLine("Loaded Data");
-            if (PrivateSetting.Instance.AuthFilePath != "")
-            {
-                PrivateSetting.Instance.Passwords = PasswordPair.LoadFile(PrivateSetting.Instance.AuthFilePath);
-                if (PrivateSetting.Instance.Passwords == null)
-                {
-                    Console.WriteLine("Invalid Auth Data");
-                    Environment.Exit(1);
-                }
-            }
-
         }
         private int OutsideCmdCallback(object pParam, CMD_STREAM pCmdParam, ref CMD_STREAM pResParam)
         {
@@ -170,7 +196,10 @@ namespace EpgTimer
             var ping = new Ping();
             if (ping.Send(IP).Status != IPStatus.Success)
             {
-                if (MessageBox.Show("EpgTimerサーバーがPingに応答しません。本当に接続しますか?", "警告", MessageBoxButtons.YesNo) != DialogResult.Yes) return false;
+                Console.WriteLine("Ping can not be sent. Do you want to connect? \nCancel after 10 seconds.(y/n):");
+                string Res = Reader.ReadLine(10000);
+                if(Res == null || !Res.ToLower().StartsWith("y"))
+                    return false;
             }
             CommonManager.Instance.NWMode = true;
             if (!CommonManager.Instance.NW.ConnectServer(IP, (uint)CtrlPort

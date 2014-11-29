@@ -377,6 +377,7 @@ namespace EpgTimer
                 }
                 else if (Command == "AddReserve")
                 {
+                    JsonData = "{\"result\":false}";
                     if (Arg.ContainsKey("tsid")
                         && Arg.ContainsKey("onid") && Arg.ContainsKey("sid")
                         && Arg.ContainsKey("eid")) //最低限必要
@@ -419,15 +420,11 @@ namespace EpgTimer
                             RecSettingData Setting = GetPreset(Arg, new RecSettingData());
                             Reserve.RecSetting = Setting;
                             ErrCode err = (ErrCode)CommonManager.Instance.CtrlCmd.SendAddReserve(new List<ReserveData> { Reserve });
-                            JsonData = "{\"result\":true, \"cmd\":\"" + err.ToString() + "\", \"res\":" + JsonUtil.Serialize(Reserve) + "}";
-                        }
-                        else
-                        {
-                            JsonData = "{\"result\":false}";
+                            if (err == ErrCode.CMD_SUCCESS) JsonData = "{\"result\":true, \"cmd\":\"" + err.ToString() + "\", \"res\":" + JsonUtil.Serialize(Reserve) + "}";
                         }
                     }
                 }
-                
+
                 else if (Command == "AddAutoReserve")
                 {
                     var Preset = GetPreset(Arg, new RecSettingData());
@@ -444,13 +441,13 @@ namespace EpgTimer
                             recSetting = Preset
                         }
                     });
-                    if(err == ErrCode.CMD_SUCCESS) 
+                    if (err == ErrCode.CMD_SUCCESS)
                         JsonData = JsonUtil.Serialize(new EpgAutoAddData()
                         {
                             searchInfo = Search,
                             recSetting = Preset
                         });
-                    
+
                 }
                 else if (Command == "EnumPresets")
                 {
@@ -492,66 +489,61 @@ namespace EpgTimer
                             Setting.Instance.ContentToColorTable.RemoveAll(s => s.ContentLevel1 == uint.Parse(Arg["id"]));
                             Setting.Instance.ContentToColorTable.Add(new ContentColorItem(uint.Parse(Arg["id"]), Arg["color"]));
                         }
+
                         JsonData = "{\"result\":true}";
                     }
                 }
                 else if (Command == "RemoveReserve")
                 {
+                    JsonData = "{\"result\":false}";
                     if (Arg.ContainsKey("id"))
                     {
                         ErrCode err = (ErrCode)CommonManager.Instance.CtrlCmd.SendDelReserve(new List<uint> { uint.Parse(Arg["id"]) });
-                        JsonData = "{\"result\":true, \"cmd\":\"" + err.ToString() + "\"}";
-                    }
-                    else
-                    {
-                        JsonData = "{\"result\":false}";
+                        if (err == ErrCode.CMD_SUCCESS)
+                            JsonData = "{\"result\":true, \"cmd\":\"" + err.ToString() + "\"}";
                     }
                 }
                 else if (Command == "RemoveAutoReserve")
                 {
+                    JsonData = "{\"result\":false}";
                     if (Arg.ContainsKey("id"))
                     {
                         ErrCode err = (ErrCode)CommonManager.Instance.CtrlCmd.SendDelEpgAutoAdd(new List<uint> { uint.Parse(Arg["id"]) });
-                        JsonData = "{\"result\":true, \"cmd\":\"" + err.ToString() + "\"}";
-                    }
-                    else
-                    {
-                        JsonData = "{\"result\":false}";
+                        if (err == ErrCode.CMD_SUCCESS)
+                            JsonData = "{\"result\":true, \"cmd\":\"" + err.ToString() + "\"}";
                     }
                 }
                 else if (Command == "RemoveManualReserve")
                 {
+                    JsonData = "{\"result\":false}";
                     if (Arg.ContainsKey("id"))
                     {
                         ErrCode err = (ErrCode)CommonManager.Instance.CtrlCmd.SendDelManualAdd(new List<uint> { uint.Parse(Arg["id"]) });
-                        JsonData = "{\"result\":true, \"cmd\":\"" + err.ToString() + "\"}";
-                    }
-                    else
-                    {
-                        JsonData = "{\"result\":false}";
+                        if (err == ErrCode.CMD_SUCCESS)
+                            JsonData = "{\"result\":true, \"cmd\":\"" + err.ToString() + "\"}";
                     }
                 }
                 else if (Command == "RemoveRecFile")
                 {
+                    JsonData = "{\"result\":false}";
                     if (Arg.ContainsKey("id"))
                     {
                         ErrCode err = (ErrCode)CommonManager.Instance.CtrlCmd.SendDelRecInfo(new List<uint> { uint.Parse(Arg["id"]) });
-                        JsonData = "{\"result\":true, \"cmd\":\"" + err.ToString() + "\"}";
-                    }
-                    else
-                    {
-                        JsonData = "{\"result\":false}";
+                        if (err == ErrCode.CMD_SUCCESS)
+                            JsonData = "{\"result\":true, \"cmd\":\"" + err.ToString() + "\"}";
                     }
                 }
                 else if (Command == "UpdateReserve")
                 {
+                    JsonData = "{\"result\":false}";
                     if (Arg.ContainsKey("id") &&
                         CommonManager.Instance.DB.ReserveList.ContainsKey(uint.Parse(Arg["id"])))
                     {
                         ReserveData Target = CommonManager.Instance.DB.ReserveList[uint.Parse(Arg["id"])];
                         Target.RecSetting = GetPreset(Arg, Target.RecSetting);
                         ErrCode err = (ErrCode)CommonManager.Instance.CtrlCmd.SendChgReserve(new List<ReserveData> { Target });
-                        JsonData = "{\"result\":true, \"cmd\":\"" + err.ToString() + "\"}";
+                        if (err == ErrCode.CMD_SUCCESS)
+                            JsonData = "{\"result\":true, \"cmd\":\"" + err.ToString() + "\"}";
                     }
                 }
                 else if (Command == "Hello")

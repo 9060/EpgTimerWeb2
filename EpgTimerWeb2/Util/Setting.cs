@@ -27,7 +27,6 @@ namespace EpgTimerWeb2
         }
         public PrivateSetting()
         {
-            Passwords = null;
             Sessions = new List<HttpSession>();
             CmdConnect = new CtrlCmdConnect();
             Server = null;
@@ -35,9 +34,7 @@ namespace EpgTimerWeb2
             ConfigPath = "EpgTimerWeb2.xml";
             SetupCode = "";
         }
-        public List<PasswordPair> Passwords { set; get; }
         public List<HttpSession> Sessions { set; get; }
-        public string AuthFilePath { get { return Setting.Instance.AuthFilePath; } }
         public CtrlCmdConnect CmdConnect { get; set; }
         public WebServer Server { get; set; }
         public bool SetupMode { set; get; }
@@ -82,7 +79,8 @@ namespace EpgTimerWeb2
             CallbackPort = 4521;
             HttpPort = 8080;
             LocalMode = false;
-            AuthFilePath = "";
+            LoginUser = "";
+            LoginPassword = "";
             ContentToColorTable = new List<ContentColorItem>(){
                 new ContentColorItem(0, "#ffffe0"),
                 new ContentColorItem(1, "#e0e0ff"),
@@ -109,14 +107,16 @@ namespace EpgTimerWeb2
         public UInt32 HttpPort { get; set; }
         [XmlAttribute("local")]
         public bool LocalMode { get; set; }
-        [XmlElement("auth")]
-        public string AuthFilePath { set; get; }
+        [XmlElement("user")]
+        public string LoginUser { set; get; }
+        [XmlElement("password")]
+        public string LoginPassword { set; get; }
         public List<ContentColorItem> ContentToColorTable { set; get; }
         public bool ReqAuth
         {
             get
             {
-                return PrivateSetting.Instance.Passwords != null;
+                return Setting.Instance.LoginPassword != "";
             }
         }
 

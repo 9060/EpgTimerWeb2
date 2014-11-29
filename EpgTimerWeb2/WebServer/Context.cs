@@ -20,7 +20,7 @@ namespace EpgTimer
             Response = new HttpResponse(this);
             IpAddress = "0.0.0.0";
             IsWsSend = false;
-            IsAuth = PrivateSetting.Instance.Passwords == null;
+            IsAuth = Setting.Instance.LoginPassword == "";
             Request = HttpRequestParser.Parse(this.HttpStream);
             IpAddress = ((IPEndPoint)Client.Client.RemoteEndPoint).Address.ToString();
         }

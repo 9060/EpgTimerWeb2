@@ -29,21 +29,24 @@ namespace EpgTimer
                 {
                     try
                     {
-                        if(Param["ctrlhost"] == null || Param["ctrlport"] == null ||
-                           Param["cbport"] == null || Param["http"] == null ||
-                           Param["authfile"] == null) throw new Exception("Bad Param");
+                        if (Param["ctrlhost"] == null || Param["ctrlport"] == null ||
+                            Param["cbport"] == null || Param["http"] == null ||
+                            Param["user"] == null || Param["pass"] == null) throw new Exception("Bad Param");
                         string Host = Param["ctrlhost"];
                         int CtrlPort = int.Parse(Param["ctrlport"]);
                         int CbPort = int.Parse(Param["cbport"]);
                         int HttpPort = int.Parse(Param["http"]);
-                        string Auth = Param["authfile"];
-                        if (PrivateSetting.Instance.CmdConnect.StartConnect(Host, CbPort, CtrlPort) && (Auth == "" || File.Exists(Auth)))
+                        if (PrivateSetting.Instance.CmdConnect.StartConnect(Host, CbPort, CtrlPort))
                         {
                             Setting.Instance.HttpPort = (uint)HttpPort;
                             Setting.Instance.CtrlHost = Host;
                             Setting.Instance.CtrlPort = (uint)CtrlPort;
                             Setting.Instance.CallbackPort = (uint)CbPort;
-                            Setting.Instance.AuthFilePath = Auth;
+                            if (Param["user"] != null && Param["pass"] != null)
+                            {
+                                Setting.Instance.LoginUser = Param["user"];
+                                Setting.Instance.LoginPassword = Param["pass"];
+                            }
                             Form = Encoding.UTF8.GetBytes("<html><head></head><body onload=\"setTimeout(function(){location.href = 'http://' + location.host;}, 1500);\">please wait....</body></html>");
                             OK = true;
                         }
@@ -73,7 +76,7 @@ namespace EpgTimer
                     PrivateSetting.Instance.SetupMode = false;
                     PrivateSetting.Instance.Server.Stop();
                     PrivateSetting.Instance.Server = new WebServer((int)Setting.Instance.HttpPort);
-                    PrivateSetting.Instance.Server.Start(); 
+                    PrivateSetting.Instance.Server.Start();
                 }
                 else
                 {
@@ -91,15 +94,16 @@ namespace EpgTimer
   <title>Setup</title>
  </head>
  <body>
-  <h1>EpgTimerWeb2 Setup</h1>
+  <h1>EpgTimerWeb2 Configure</h1>
   <form action='/do' method='get'>
-   <p>EDCB Server:<input name='ctrlhost' placeholder='127.0.0.1' value='127.0.0.1' /></p>
-   <p>EDCB Port:<input name='ctrlport' placeholder='4510' value='4510' /></p>
+   <p>EDCB Server  :<input name='ctrlhost' placeholder='127.0.0.1' value='127.0.0.1' /></p>
+   <p>EDCB Port    :<input name='ctrlport' placeholder='4510' value='4510' /></p>
    <p>Callback Port:<input name='cbport' placeholder='4521' value='4521' /></p>
-   <p>Auth File:<input name='authfile' placeholder='auth.txt'  /></p>
-   <p>Http Port:<input name='http' placeholder='8080' value='8080' /></p>
-   <p>Code:<input name='code' /></p>
-   <p><input type='submit' value='SAVE' /></p>
+   <p>Username     :<input name='user' placeholder='user'  /></p>
+   <p>Password     :<input name='pass' placeholder='pass'  /></p>
+   <p>Http Port    :<input name='http' placeholder='8080' value='8080' /></p>
+   <p>Code         :<input name='code' /></p>
+   <p><input type='submit' value='Update config' /></p>
   </form>
  </body>
 </html>
@@ -169,7 +173,7 @@ namespace EpgTimer
             if (r2.IsMatch(Info.Request.Url))
             {
                 var match = r2.Match(Info.Request.Url);
-                string id=match.Groups[1].Value, pass = match.Groups[2].Value;
+                string id = match.Groups[1].Value, pass = match.Groups[2].Value;
                 var sess = new HttpSession(id, pass, Info.IpAddress);
                 if (sess.CheckAuth(sess.SessionKey, Info.IpAddress))
                 {
@@ -178,7 +182,7 @@ namespace EpgTimer
                 }
                 else
                 {
-                    
+
                     byte[] Res = Encoding.UTF8.GetBytes("{\"sess\":\"\", \"error\":true}");
                     Info.Response.OutputStream.Write(Res, 0, Res.Length);
                 }
@@ -220,12 +224,12 @@ EpgTimerWeb(v2) by YUKI
                 //HttpResponseGenerater.SendResponse(Info);
                 Info.Response.Send();
                 Console.WriteLine("\n!!!! Exception !!!!");
-                
+
             }
             if (Info.Request.Headers.ContainsKey("connection") &&
                 Info.Request.Headers["connection"].ToLower() == "keep-alive") DoProcess(Client); //KeepAlive対応(適当)
             Info.Close();
         }
-        
+
     }
 }

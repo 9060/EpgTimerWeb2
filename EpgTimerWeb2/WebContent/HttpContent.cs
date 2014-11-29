@@ -102,7 +102,7 @@ namespace EpgTimer
                     break;
                 case "/css/site.css":
                     Context.Response.Headers.Add("Content-Type", "text/css");
-                    SendResponse(Context, Resources.Style);
+                    SendResponse(Context, File.ReadAllText(".\\www\\css\\main.css", Encoding.UTF8));
                     Ret = true;
                     break;
                 case "/img/not_thumb.png":

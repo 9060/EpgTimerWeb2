@@ -21,7 +21,7 @@ namespace EpgTimerWeb2
                 Console.Write(CmdText);
                 string ApiStr = Console.ReadLine();
                 if (ApiStr == null) return;
-                if (r2.IsMatch(ApiStr) && PrivateSetting.Instance.Passwords != null && sess == null)
+                if (r2.IsMatch(ApiStr) && sess == null)
                 {
                     var match = r2.Match(ApiStr);
                     string Pass = match.Groups[2].Value;
@@ -34,12 +34,22 @@ namespace EpgTimerWeb2
                     }
                     sess = null;
                 }
+                if (sess == null && Setting.Instance.LoginPassword == "")
+                {
+                    sess = new HttpSession("", "", "127.0.0.1");
+                    if (!sess.CheckAuth(sess.SessionKey, "127.0.0.1"))
+                    {
+                        Console.WriteLine("\nError Session \n");
+                        sess = null;
+                        continue;
+                    }
+                }
                 if (r2.IsMatch(ApiStr) && sess != null)
                 {
                     Console.WriteLine("....");
                     continue;
                 }
-                if (ApiStr == "Logout" && PrivateSetting.Instance.Passwords != null)
+                if (ApiStr == "Logout")
                 {
                     if (PrivateSetting.Instance.Sessions.Remove(sess) && !HttpSession.IsMatch(sess.SessionKey, "127.0.0.1"))
                         Console.WriteLine("OK {0}....", sess.SessionKey.Substring(0, 12));
@@ -56,22 +66,13 @@ namespace EpgTimerWeb2
                         Console.WriteLine("Error Disconect EpgTimer");
                     Environment.Exit(0);
                 }
-                if ((sess != null && HttpSession.IsMatch(sess.SessionKey, "127.0.0.1")) || HttpSession.IsMatch("", ""))
+                if ((sess != null && HttpSession.IsMatch(sess.SessionKey, "127.0.0.1")))
                 {
-                    if ((ApiStr == "ShowSession" || ApiStr == "ShowPassword") && PrivateSetting.Instance.Passwords == null) continue;
                     if (ApiStr == "ShowSession")
                     {
                         foreach (var Sess in PrivateSetting.Instance.Sessions)
                         {
                             Console.WriteLine("+ {0}", Sess.SessionKey);
-                        }
-                        continue;
-                    }
-                    if (ApiStr == "ShowPassword")
-                    {
-                        foreach (var Pass in PrivateSetting.Instance.Passwords)
-                        {
-                            Console.WriteLine("+ {0} : {1}", Pass.UserId, Pass.Password);
                         }
                         continue;
                     }
