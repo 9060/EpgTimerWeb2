@@ -3,6 +3,7 @@ using EpgTimerWeb2.Properties;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
@@ -45,7 +46,7 @@ namespace EpgTimer
             if (Context.Request.Url.ToLower().StartsWith("/part/"))
             {
                 var PartName = Context.Request.Url.ToLower().Replace("/part/", "").Replace("/", "\\");
-                if (File.Exists(PartName))
+                if (File.Exists(".\\www\\js\\" + PartName))
                 {
                     Context.Response.Headers.Add("Content-Type", "text/html; charset=utf8");
                     SendResponse(Context, File.ReadAllText(".\\www\\js\\" + PartName, Encoding.UTF8));
