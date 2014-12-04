@@ -42,101 +42,114 @@ namespace EpgTimer
         public bool RequestUrl(HttpContext Context)
         {
             var Ret = false;
-            switch (Context.Request.Url.ToLower())
+            if (Context.Request.Url.ToLower().StartsWith("/part/"))
             {
-                case "/":
-                case "/index.html":
-                case "/index.htm":
-                    Redirect(Context, "/dashboard");
-                    Ret = true;
-                    break;
-                case "/dashboard":
+                var PartName = Context.Request.Url.ToLower().Replace("/part/", "").Replace("/", "\\");
+                if (File.Exists(PartName))
+                {
                     Context.Response.Headers.Add("Content-Type", "text/html; charset=utf8");
-                    SendResponse(Context,  File.ReadAllText(".\\www\\index.html", Encoding.UTF8));
+                    SendResponse(Context, File.ReadAllText(".\\www\\js\\" + PartName, Encoding.UTF8));
                     Ret = true;
-                    break;
-                case "/meta":
-                    Context.Response.Headers.Add("Content-Type", "application/javascript");
-                    SendResponse(Context, "var meta = " + JsonUtil.Serialize(Setting.Instance));
-                    Ret = true;
-                    break;
-                case "/css/bootstrap.css":
-                    Context.Response.Headers.Add("Content-Type", "text/css");
-                    SendResponse(Context, Resources.BootStrapStyle);
-                    Ret = true;
-                    break;
-                case "/js/bootstrap.js":
-                    Context.Response.Headers.Add("Content-Type", "application/javascript");
-                    SendResponse(Context, Resources.BootStrap);
-                    Ret = true;
-                    break;
-                case "/js/jquery.js":
-                    Context.Response.Headers.Add("Content-Type", "application/javascript");
-                    SendResponse(Context, Resources.JQuery);
-                    Ret = true;
-                    break;
-                case "/js/respond.js":
-                    Context.Response.Headers.Add("Content-Type", "application/javascript");
-                    SendResponse(Context, Resources.Respond);
-                    Ret = true;
-                    break;
-                case "/js/main.js":
-                    Context.Response.Headers.Add("Content-Type", "application/javascript");
-                    SendResponse(Context, File.ReadAllText(".\\www\\js\\main.js", Encoding.UTF8));
-                    Ret = true;
-                    break;
-                case "/js/api.js":
-                    Context.Response.Headers.Add("Content-Type", "application/javascript");
-                    SendResponse(Context, File.ReadAllText(".\\www\\js\\api.js", Encoding.UTF8));
-                    Ret = true;
-                    break;
-                case "/js/epg.js":
-                    Context.Response.Headers.Add("Content-Type", "application/javascript");
-                    SendResponse(Context, File.ReadAllText(".\\www\\js\\epg.js", Encoding.UTF8));
-                    Ret = true;
-                    break;
-                case "/js/reserve.js":
-                    Context.Response.Headers.Add("Content-Type", "application/javascript");
-                    SendResponse(Context, File.ReadAllText(".\\www\\js\\reserve.js", Encoding.UTF8));
-                    Ret = true;
-                    break;
-                case "/css/site.css":
-                    Context.Response.Headers.Add("Content-Type", "text/css");
-                    SendResponse(Context, File.ReadAllText(".\\www\\css\\main.css", Encoding.UTF8));
-                    Ret = true;
-                    break;
-                case "/img/not_thumb.png":
-                    Context.Response.Headers.Add("Content-Type", "image/png");
-                    var Stream = new MemoryStream();
-                    Resources.NotThumbnail.Save(Stream, ImageFormat.Png);
-                    SendResponse(Context, Stream.GetBuffer());
-                    Stream.Close();
-                    Ret = true;
-                    break;
-                case "/img/loader.gif":
-                    Context.Response.Headers.Add("Content-Type", "image/gif");
-                    var Stream1 = new MemoryStream();
-                    Resources.loader.Save(Stream1, ImageFormat.Gif);
-                    SendResponse(Context, Stream1.GetBuffer());
-                    Stream1.Close();
-                    Ret = true;
-                    break;
-                case "/fonts/glyphicons-halflings-regular.eot":
-                    Ret = true;
-                    SendResponse(Context, Resources.glyphicons_halflings_regular_eot);
-                    break;
-                case "/fonts/glyphicons-halflings-regular.svg":
-                    Ret = true;
-                    SendResponse(Context, Resources.glyphicons_halflings_regular_svg);
-                    break;
-                case "/fonts/glyphicons-halflings-regular.ttf":
-                    Ret = true;
-                    SendResponse(Context, Resources.glyphicons_halflings_regular_ttf);
-                    break;
-                case "/fonts/glyphicons-halflings-regular.woff":
-                    Ret = true;
-                    SendResponse(Context, Resources.glyphicons_halflings_regular_woff);
-                    break;
+                }
+            }
+            else
+            {
+                switch (Context.Request.Url.ToLower())
+                {
+                    case "/":
+                    case "/index.html":
+                    case "/index.htm":
+                        Redirect(Context, "/dashboard");
+                        Ret = true;
+                        break;
+                    case "/dashboard":
+                        Context.Response.Headers.Add("Content-Type", "text/html; charset=utf8");
+                        SendResponse(Context, File.ReadAllText(".\\www\\index.html", Encoding.UTF8));
+                        Ret = true;
+                        break;
+                    case "/meta":
+                        Context.Response.Headers.Add("Content-Type", "application/javascript");
+                        SendResponse(Context, "var meta = " + JsonUtil.Serialize(Setting.Instance));
+                        Ret = true;
+                        break;
+                    case "/css/bootstrap.css":
+                        Context.Response.Headers.Add("Content-Type", "text/css");
+                        SendResponse(Context, Resources.BootStrapStyle);
+                        Ret = true;
+                        break;
+                    case "/js/bootstrap.js":
+                        Context.Response.Headers.Add("Content-Type", "application/javascript");
+                        SendResponse(Context, Resources.BootStrap);
+                        Ret = true;
+                        break;
+                    case "/js/jquery.js":
+                        Context.Response.Headers.Add("Content-Type", "application/javascript");
+                        SendResponse(Context, Resources.JQuery);
+                        Ret = true;
+                        break;
+                    case "/js/respond.js":
+                        Context.Response.Headers.Add("Content-Type", "application/javascript");
+                        SendResponse(Context, Resources.Respond);
+                        Ret = true;
+                        break;
+                    case "/js/main.js":
+                        Context.Response.Headers.Add("Content-Type", "application/javascript");
+                        SendResponse(Context, File.ReadAllText(".\\www\\js\\main.js", Encoding.UTF8));
+                        Ret = true;
+                        break;
+                    case "/js/api.js":
+                        Context.Response.Headers.Add("Content-Type", "application/javascript");
+                        SendResponse(Context, File.ReadAllText(".\\www\\js\\api.js", Encoding.UTF8));
+                        Ret = true;
+                        break;
+                    case "/js/epg.js":
+                        Context.Response.Headers.Add("Content-Type", "application/javascript");
+                        SendResponse(Context, File.ReadAllText(".\\www\\js\\epg.js", Encoding.UTF8));
+                        Ret = true;
+                        break;
+                    case "/js/reserve.js":
+                        Context.Response.Headers.Add("Content-Type", "application/javascript");
+                        SendResponse(Context, File.ReadAllText(".\\www\\js\\reserve.js", Encoding.UTF8));
+                        Ret = true;
+                        break;
+                    case "/css/site.css":
+                        Context.Response.Headers.Add("Content-Type", "text/css");
+                        SendResponse(Context, File.ReadAllText(".\\www\\css\\main.css", Encoding.UTF8));
+                        Ret = true;
+                        break;
+                    case "/img/not_thumb.png":
+                        Context.Response.Headers.Add("Content-Type", "image/png");
+                        var Stream = new MemoryStream();
+                        Resources.NotThumbnail.Save(Stream, ImageFormat.Png);
+                        SendResponse(Context, Stream.GetBuffer());
+                        Stream.Close();
+                        Ret = true;
+                        break;
+                    case "/img/loader.gif":
+                        Context.Response.Headers.Add("Content-Type", "image/gif");
+                        var Stream1 = new MemoryStream();
+                        Resources.loader.Save(Stream1, ImageFormat.Gif);
+                        SendResponse(Context, Stream1.GetBuffer());
+                        Stream1.Close();
+                        Ret = true;
+                        break;
+                    case "/fonts/glyphicons-halflings-regular.eot":
+                        Ret = true;
+                        SendResponse(Context, Resources.glyphicons_halflings_regular_eot);
+                        break;
+                    case "/fonts/glyphicons-halflings-regular.svg":
+                        Ret = true;
+                        SendResponse(Context, Resources.glyphicons_halflings_regular_svg);
+                        break;
+                    case "/fonts/glyphicons-halflings-regular.ttf":
+                        Ret = true;
+                        SendResponse(Context, Resources.glyphicons_halflings_regular_ttf);
+                        break;
+                    case "/fonts/glyphicons-halflings-regular.woff":
+                        Ret = true;
+                        SendResponse(Context, Resources.glyphicons_halflings_regular_woff);
+                        break;
+                }
             }
             return Ret;
         }
