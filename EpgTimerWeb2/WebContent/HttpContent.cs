@@ -46,10 +46,10 @@ namespace EpgTimer
             if (Context.Request.Url.ToLower().StartsWith("/part/"))
             {
                 var PartName = Context.Request.Url.ToLower().Replace("/part/", "").Replace("/", "\\");
-                if (File.Exists(".\\www\\js\\" + PartName))
+                if (File.Exists(".\\part\\" + PartName))
                 {
                     Context.Response.Headers.Add("Content-Type", "text/html; charset=utf8");
-                    SendResponse(Context, File.ReadAllText(".\\www\\js\\" + PartName, Encoding.UTF8));
+                    SendResponse(Context, File.ReadAllText(".\\part\\" + PartName, Encoding.UTF8));
                     Ret = true;
                 }
             }
@@ -78,44 +78,9 @@ namespace EpgTimer
                         SendResponse(Context, Resources.BootStrapStyle);
                         Ret = true;
                         break;
-                    case "/js/bootstrap.js":
-                        Context.Response.Headers.Add("Content-Type", "application/javascript");
-                        SendResponse(Context, Resources.BootStrap);
-                        Ret = true;
-                        break;
-                    case "/js/jquery.js":
-                        Context.Response.Headers.Add("Content-Type", "application/javascript");
-                        SendResponse(Context, Resources.JQuery);
-                        Ret = true;
-                        break;
-                    case "/js/respond.js":
-                        Context.Response.Headers.Add("Content-Type", "application/javascript");
-                        SendResponse(Context, Resources.Respond);
-                        Ret = true;
-                        break;
-                    case "/js/main.js":
-                        Context.Response.Headers.Add("Content-Type", "application/javascript");
-                        SendResponse(Context, File.ReadAllText(".\\www\\js\\main.js", Encoding.UTF8));
-                        Ret = true;
-                        break;
-                    case "/js/api.js":
-                        Context.Response.Headers.Add("Content-Type", "application/javascript");
-                        SendResponse(Context, File.ReadAllText(".\\www\\js\\api.js", Encoding.UTF8));
-                        Ret = true;
-                        break;
-                    case "/js/epg.js":
-                        Context.Response.Headers.Add("Content-Type", "application/javascript");
-                        SendResponse(Context, File.ReadAllText(".\\www\\js\\epg.js", Encoding.UTF8));
-                        Ret = true;
-                        break;
-                    case "/js/reserve.js":
-                        Context.Response.Headers.Add("Content-Type", "application/javascript");
-                        SendResponse(Context, File.ReadAllText(".\\www\\js\\reserve.js", Encoding.UTF8));
-                        Ret = true;
-                        break;
                     case "/css/site.css":
                         Context.Response.Headers.Add("Content-Type", "text/css");
-                        SendResponse(Context, File.ReadAllText(".\\www\\css\\main.css", Encoding.UTF8));
+                        SendResponse(Context, File.ReadAllText(".\\www\\main.css", Encoding.UTF8));
                         Ret = true;
                         break;
                     case "/img/not_thumb.png":
