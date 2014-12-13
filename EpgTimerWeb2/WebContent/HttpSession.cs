@@ -36,14 +36,14 @@ namespace EpgTimerWeb2
                 Setting.Instance.LoginUser == UserId) _IsAuth = true;
             if (_IsAuth)
             {
-                _SessionKey2 = BitConverter.ToString((new SHA512CryptoServiceProvider().ComputeHash(Encoding.UTF8.GetBytes(Password + UserId + DateTime.Now.ToString())))).Replace("-", "");
-                _SessionKey = BitConverter.ToString((new SHA1CryptoServiceProvider().ComputeHash(Encoding.UTF8.GetBytes(_SessionKey2 + IpAddr)))).Replace("-", "");
+                _SessionKey2 = BitConverter.ToString((new SHA1CryptoServiceProvider().ComputeHash(Encoding.UTF8.GetBytes(Password + UserId + DateTime.Now.ToString())))).Replace("-", "");
+                _SessionKey = BitConverter.ToString((new MD5CryptoServiceProvider().ComputeHash(Encoding.UTF8.GetBytes(_SessionKey2 + IpAddr)))).Replace("-", "");
                 PrivateSetting.Instance.Sessions.Add(this);
             }
         }
         public bool CheckAuth(string SessionKey, string IpAddr)
         {
-            if (_IsAuth && BitConverter.ToString(new SHA1CryptoServiceProvider().ComputeHash(Encoding.UTF8.GetBytes(SessionKey + IpAddr))).Replace("-", "") == _SessionKey) return true;
+            if (_IsAuth && BitConverter.ToString(new MD5CryptoServiceProvider().ComputeHash(Encoding.UTF8.GetBytes(SessionKey + IpAddr))).Replace("-", "") == _SessionKey) return true;
             return false;
         }
         public string SessionKey { get { return _SessionKey2; } }

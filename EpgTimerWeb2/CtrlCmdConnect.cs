@@ -38,7 +38,7 @@ namespace EpgTimer
             }
         }
 
-        public static string ReadLine(int timeOutMillisecs)
+        public string ReadLine(int timeOutMillisecs)
         {
             getInput.Set();
             bool success = gotInput.WaitOne(timeOutMillisecs);
@@ -196,8 +196,8 @@ namespace EpgTimer
             var ping = new Ping();
             if (ping.Send(IP).Status != IPStatus.Success)
             {
-                Console.WriteLine("Ping can not be sent. Do you want to connect? \nCancel after 10 seconds.(y/n):");
-                string Res = Reader.ReadLine(10000);
+                Console.Write("Ping can not be sent. Do you want to connect? \nCancel after 10 seconds.(y/n):");
+                string Res = new Reader().ReadLine(10000);
                 if(Res == null || !Res.ToLower().StartsWith("y"))
                     return false;
             }
@@ -210,7 +210,7 @@ namespace EpgTimer
                 string filePath = @".\Setting";
                 Directory.CreateDirectory(filePath);
                 filePath += @"\ChSet5.txt";
-                using (BinaryWriter w = new BinaryWriter(System.IO.File.Create(filePath)))
+                using (BinaryWriter w = new BinaryWriter(File.Create(filePath)))
                 {
                     w.Write(binData);
                     w.Close();

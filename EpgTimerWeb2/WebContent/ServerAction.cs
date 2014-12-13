@@ -15,15 +15,15 @@ namespace EpgTimer
 {
     public class ServerAction
     {
-        static Regex r = new Regex(@"^\/api\/(.*)\/json\/(.*)\/run\/(.*)$");
-        static Regex r1 = new Regex(@"^\/api\/(.*)\/run\/(.*)$");
-        static Regex r2 = new Regex(@"^\/auth\/(.*)\=(.*)$");
+        static Regex r = new Regex(@"^\/api\/(.*)\/json\/(.*)\/;(.*)$");
+        static Regex r1 = new Regex(@"^\/api\/(.*)\/;(.*)$");
+        static Regex r2 = new Regex(@"^\/auth\/;(.*)\=(.*)$");
         public static void SetupProcess(HttpContext Context)
         {
-            if (Context.Request.Url.StartsWith("/do"))
+            if (Context.Request.Url.StartsWith("/update"))
             {
                 bool OK = false;
-                var Param = HttpUtility.ParseQueryString(Context.Request.GetParam);
+                var Param = HttpUtility.ParseQueryString(Context.Request.PostString);
                 byte[] Form;
                 if (Param["code"] == PrivateSetting.Instance.SetupCode)
                 {
@@ -47,7 +47,7 @@ namespace EpgTimer
                                 Setting.Instance.LoginUser = Param["user"];
                                 Setting.Instance.LoginPassword = Param["pass"];
                             }
-                            Form = Encoding.UTF8.GetBytes("<html><head></head><body onload=\"setTimeout(function(){location.href = 'http://' + location.host;}, 1500);\">please wait....</body></html>");
+                            Form = Encoding.UTF8.GetBytes("<html>\n<head></head>\n<body onload=\"setTimeout(function(){location.href = 'http://' + location.hostname + ':" + HttpPort + "\';}, 1500);\">\nplease wait....\n</body>\n</html>");
                             OK = true;
                         }
                         else
@@ -95,7 +95,7 @@ namespace EpgTimer
  </head>
  <body>
   <h1>EpgTimerWeb2 Configure</h1>
-  <form action='/do' method='get'>
+  <form action='/update' method='post'>
    <p>EDCB Server  :<input name='ctrlhost' placeholder='127.0.0.1' value='127.0.0.1' /></p>
    <p>EDCB Port    :<input name='ctrlport' placeholder='4510' value='4510' /></p>
    <p>Callback Port:<input name='cbport' placeholder='4521' value='4521' /></p>
@@ -110,6 +110,7 @@ namespace EpgTimer
 ".Replace("'", "\""));
                 Context.Response.OutputStream.Write(Form, 0, Form.Length);
                 Context.Response.Headers["Content-Type"] = "text/html";
+                Context.Response.Headers["Cache-Control"] = "no-cache";
                 Context.Response.Send();
                 Context.Close();
             }
@@ -139,8 +140,8 @@ namespace EpgTimer
                         r.Match(Info.Request.Url).Groups[1].Value);
                     string cb = r.Match(Info.Request.Url).Groups[2].Value + "(";
                     byte[] Res = Encoding.UTF8.GetBytes(cb + Json + ");");
+                    Info.Response.Headers["Content-Type"] = "application/javascript; charset=utf8";
                     Info.Response.OutputStream.Write(Res, 0, Res.Length);
-                    Info.Response.Headers["Content-Type"] = "application/javascript";
                 }
                 else
                 {
@@ -159,6 +160,7 @@ namespace EpgTimer
                     string Json = Api.Call(
                         r1.Match(Info.Request.Url).Groups[1].Value);
                     byte[] Res = Encoding.UTF8.GetBytes(Json);
+                    Info.Response.Headers["Content-Type"] = "application/javascript; charset=utf8";
                     Info.Response.OutputStream.Write(Res, 0, Res.Length);
                 }
                 else
@@ -175,6 +177,7 @@ namespace EpgTimer
                 var match = r2.Match(Info.Request.Url);
                 string id = match.Groups[1].Value, pass = match.Groups[2].Value;
                 var sess = new HttpSession(id, pass, Info.IpAddress);
+                Info.Response.Headers["Content-Type"] = "application/javascript; charset=utf8";
                 if (sess.CheckAuth(sess.SessionKey, Info.IpAddress))
                 {
                     byte[] Res = Encoding.UTF8.GetBytes("{\"sess\":\"" + sess.SessionKey + "\", \"error\":false}");

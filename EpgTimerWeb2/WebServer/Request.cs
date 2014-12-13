@@ -14,9 +14,13 @@ namespace EpgTimer
         public string RawUrl { get; set; }
         public string Url { get; set; }
         public string GetParam { get; set; }
-        public string PostParam { get; set; }
+        public byte[] PostData { get; set; }
         public string HttpVersion { get; set; }
         public Dictionary<string, string> Headers { get; set; }
+        public string PostString
+        {
+            get { return PostData.Length == 0 ? "" : Encoding.UTF8.GetString(PostData); }
+        }
     }
     public class HttpRequestParser
     {
@@ -37,7 +41,7 @@ namespace EpgTimer
                 Headers = Headers,
                 HttpVersion = Request[2],
                 GetParam = "",
-                PostParam = "",
+                PostData = new byte[0],
                 Url = ""
             };
             if (Headers.ContainsKey("content-length")) //POSTかも
@@ -49,16 +53,15 @@ namespace EpgTimer
                     var BufferList = new List<byte>();
                     int Size = 0, AllSize = 0;
                     int oldTo = Input.ReadTimeout;
-                    Input.ReadTimeout = Math.Max(Math.Min(ContentLength, 10000), 2000);
+                    Input.ReadTimeout = 500;
                     while ((Size = Input.Read(Buffer, 0, Buffer.Length)) != 0)
                     {
-                        var Temp = new byte[Size];
-                        Array.Copy(Buffer, Temp, Size);
-                        BufferList.AddRange(Temp);
+                        BufferList.AddRange(Buffer.Take(Size));
                         AllSize += Size;
-                        if (AllSize >= ContentLength) break;
+                        if (AllSize >= ContentLength) break; //全て読んだ
                     }
                     Input.ReadTimeout = oldTo;
+                    Res.PostData = BufferList.ToArray();
                 }
             }
             if (Res.RawUrl.IndexOf("?") > 0) //GETかも
@@ -72,7 +75,6 @@ namespace EpgTimer
             }
             Res.Url = Uri.UnescapeDataString(Res.Url);
             Res.GetParam = Uri.UnescapeDataString(Res.GetParam);
-            Res.PostParam = Uri.UnescapeDataString(Res.PostParam);
             return Res;
         }
     }

@@ -43,13 +43,13 @@ namespace EpgTimer
         public bool RequestUrl(HttpContext Context)
         {
             var Ret = false;
-            if (Context.Request.Url.ToLower().StartsWith("/part/"))
+            if (Context.Request.Url.ToLower().StartsWith("/modules/"))
             {
-                var PartName = Context.Request.Url.ToLower().Replace("/part/", "").Replace("/", "\\");
-                if (File.Exists(".\\part\\" + PartName))
+                var PartName = Context.Request.Url.ToLower().Replace("/modules/", "").Replace("/", "\\");
+                if (File.Exists(".\\modules\\" + PartName))
                 {
-                    Context.Response.Headers.Add("Content-Type", "text/html; charset=utf8");
-                    SendResponse(Context, File.ReadAllText(".\\part\\" + PartName, Encoding.UTF8));
+                    Context.Response.Headers.Add("Content-Type", Mime.Get(PartName, "application/javascript"));
+                    SendResponse(Context, File.ReadAllText(".\\modules\\" + PartName, Encoding.UTF8));
                     Ret = true;
                 }
             }

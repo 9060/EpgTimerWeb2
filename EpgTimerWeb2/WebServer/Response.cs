@@ -35,7 +35,6 @@ namespace EpgTimer
     {
         public static bool SendResponseHeader(HttpContext Context, IDictionary<string,string> Input)
         {
-            //if (!Input.ContainsKey("Connection")) Input.Add("Connection", "close");
             var HeaderText = Encoding.UTF8.GetBytes(HttpHeader.Generate(Input) + "\r\n");
             return SendResponseBody(Context, HeaderText);
         }
@@ -85,15 +84,12 @@ namespace EpgTimer
             var ResHeader = Encoding.UTF8.GetBytes(
                 String.Format("HTTP/1.1 {0} {1}\r\n",
                 Context.Response.StatusCode, Context.Response.StatusText));
-            //Console.WriteLine("[Client][Response][Send] Code: {0} {1} {2}", "HTTP/1.1", 
-            //    Context.Response.StatusCode, Context.Response.StatusText);
             return SendResponseBody(Context, ResHeader);
         }
         public static bool SendResponse(HttpContext Context)
         {
             Context.Response.OutputStream.Seek(0, SeekOrigin.Begin);
-            var ContentLength = "";
-            if (!Context.Response.Headers.TryGetValue("Content-Length", out ContentLength))
+            if (!Context.Response.Headers.ContainsKey("Content-Length"))
             {
                 Context.Response.Headers["Content-Length"] = Context.Response.OutputStream.Length.ToString();
             }
@@ -105,8 +101,7 @@ namespace EpgTimer
         {
             using (FileStream Stream = new FileStream(Path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
             {
-                var ContentLength = "";
-                if (!Context.Response.Headers.TryGetValue("Content-Length", out ContentLength))
+                if (!Context.Response.Headers.ContainsKey("Content-Length"))
                 {
                     Context.Response.Headers["Content-Length"] = (new FileInfo(Path).Length).ToString();
                 }

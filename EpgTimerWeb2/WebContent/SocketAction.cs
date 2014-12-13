@@ -30,7 +30,7 @@ namespace EpgTimer
                     var match = r2.Match(UnMask);
                     string Command = match.Groups[2].Value;
                     string Id = match.Groups[1].Value;
-                    string JsonData = Api.Call(Command);
+                    string JsonData = Api.Call(Command, false);
                     HttpResponseGenerater.SendResponseBodyWS(Info, WebSocket.WebSocketMask(
                                 Encoding.UTF8.GetBytes("+OK" + Id + " " + JsonData), 0x1));
                 }

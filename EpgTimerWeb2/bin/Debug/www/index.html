@@ -8,10 +8,10 @@
         <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
     <script src="/meta"></script>
-    <script src="part/jquery.js"></script>
-    <script src="part/bootstrap.js"></script>
-    <script src="part/respond.js"></script>
-    <script src="part/epg.js"></script>
+    <script src="modules/jquery.js"></script>
+    <script src="modules/bootstrap.js"></script>
+    <script src="modules/respond.js"></script>
+    <script src="modules/main.js"></script>
     <!--
     <script src="js/reserve.js"></script>
     <script src="js/api.js"></script>
@@ -20,10 +20,11 @@
     <link rel="stylesheet" href="css/site.css" />
 </head>
 <body>
+    <!--
     <div id="loading">
         <div>
         </div>
-    </div>
+    </div>-->
     <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
         <div class="container">
             <!-- Brand and toggle get grouped for better mobile display -->
@@ -39,14 +40,14 @@
             <!-- Collect the nav links, forms, and other content for toggling -->
             <div class="collapse navbar-collapse" id="navbar-main">
                 <ul class="nav navbar-nav">
-                    <li><a href="#/epg"><span class="glyphicon glyphicon-th"></span> 番組表</a></li>
+                    <li><a href="#!epg"><span class="glyphicon glyphicon-th"></span> 番組表</a></li>
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="glyphicon glyphicon-record"></span> 録画メニュー<span class="caret"></span></a>
                         <ul class="dropdown-menu" role="menu">
-                            <li><a href="#"><span class="glyphicon glyphicon-hdd"></span> 録画一覧</a></li>
+                            <li><a href="#!rec/list"><span class="glyphicon glyphicon-hdd"></span> 録画一覧</a></li>
                             <li class="divider"></li>
-                            <li><a href="#"><span class="glyphicon glyphicon-search"></span> 自動検索予約</a></li>
-                            <li><a href="#"><span class="glyphicon glyphicon-time"></span> 録画予約一覧</a></li>
+                            <li><a href="#!res/auto"><span class="glyphicon glyphicon-search"></span> 自動検索予約</a></li>
+                            <li><a href="#!res/list"><span class="glyphicon glyphicon-time"></span> 録画予約一覧</a></li>
                         </ul>
                     </li>
                 </ul>
@@ -54,9 +55,9 @@
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="glyphicon glyphicon-wrench"></span> 管理<span class="caret"></span></a>
                         <ul class="dropdown-menu" role="menu">
-                            <li><a href="#/config"><span class="glyphicon glyphicon-cog"></span> 設定</a></li>
+                            <li><a href="#!config"><span class="glyphicon glyphicon-cog"></span> 設定</a></li>
                             <li class="divider"></li>
-                            <li><a href="#/about"><span class="glyphicon glyphicon-info-sign"></span> このソフトについて</a></li>
+                            <li><a href="#!about"><span class="glyphicon glyphicon-info-sign"></span> このソフトについて</a></li>
                         </ul>
                     </li>
                 </ul>
@@ -77,52 +78,7 @@
         <button class="btn btn-default" data-toggle="tooltip" data-target="#infoInner" data-placement="right" data-title="予約一覧、録画一覧の表示/非表示を切り替えます。">
             <span class="glyphicon glyphicon-chevron-up"></span>
         </button>
-        <div class="modal" id="formLogin">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h4 class="modal-title">ログイン</h4>
-                    </div>
-                    <div class="modal-body">
-                        <form class="form-horizontal" role="form" onsubmit="return false;">
-                            <ul class="nav nav-tabs" role="tablist">
-                                <li class="active"><a href="#user" data-toggle="tab">ユーザー名&パスワード</a></li>
-                                <li><a href="#sess" data-toggle="tab">セッション</a></li>
-                            </ul>
-                            <div class="tab-content">
-                                <div class="tab-pane fade in active" id="user">
-                                    <br />
-                                    <div class="form-group">
-                                        <label class="control-label col-xs-3">ユーザー名</label>
-                                        <div class="col-xs-9">
-                                            <input class="form-control" type="text" placeholder="User Name" id="username" />
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="control-label col-xs-3">パスワード</label>
-                                        <div class="col-xs-9">
-                                            <input class="form-control" type="password" placeholder="Password" id="password" />
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="tab-pane fade" id="sess">
-                                    <br />
-                                    <div class="form-group">
-                                        <label class="control-label col-xs-3">セッションコード</label>
-                                        <div class="col-xs-9">
-                                            <input class="form-control" type="text" placeholder="Session Code" id="sess_code" />
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-primary" id="authsubmit">ログイン</button>
-                    </div>
-                </div>
-            </div>
-        </div>
+        
         <div class="modal" id="recChange">
             <div class="modal-dialog" style="max-width: 80%;overflow-y: auto;">
                 <div class="modal-content">

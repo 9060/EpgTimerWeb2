@@ -19,9 +19,9 @@ namespace EpgTimer
         {
             @string, number, boolean, @object, array, @null
         }
-        public static string Serialize(object obj)
+        public static string Serialize(object obj, bool Indent = true)
         {
-            return CreateJsonString(new XStreamingElement("root", CreateTypeAttr(GetJsonType(obj)), CreateJsonNode(obj)));
+            return CreateJsonString(new XStreamingElement("root", CreateTypeAttr(GetJsonType(obj)), CreateJsonNode(obj)), Indent);
         }
         private static object CreateJsonNode(object obj)
         {
@@ -54,7 +54,7 @@ namespace EpgTimer
                 case TypeCode.Char:
                 case TypeCode.DateTime:
                     return JsonType.@string;
-                
+
                 case TypeCode.Int16:
                 case TypeCode.Int32:
                 case TypeCode.Int64:
@@ -75,7 +75,8 @@ namespace EpgTimer
                     return JsonType.@null;
             }
         }
-        private static XAttribute CreateTypeAttr(JsonType Type){
+        private static XAttribute CreateTypeAttr(JsonType Type)
+        {
             return new XAttribute("type", Type.ToString());
         }
         private static IEnumerable<XStreamingElement> CreateXArray<T>(T obj) where T : IEnumerable
@@ -90,14 +91,14 @@ namespace EpgTimer
                 .Select(pi => new { Name = pi.Name, Value = pi.GetValue(obj, null) })
                 .Select(a => new XStreamingElement(a.Name, CreateTypeAttr(GetJsonType(a.Value)), CreateJsonNode(a.Value)));
         }
-        private static string CreateJsonString(XStreamingElement element)
+        private static string CreateJsonString(XStreamingElement element, bool Indent)
         {
             using (var ms = new MemoryStream())
-            using (var writer = JsonReaderWriterFactory.CreateJsonWriter(ms, Encoding.Unicode))
+            using (var writer = JsonReaderWriterFactory.CreateJsonWriter(ms, Encoding.UTF8, true, Indent, "\t"))
             {
                 element.WriteTo(writer);
                 writer.Flush();
-                return Encoding.Unicode.GetString(ms.ToArray());
+                return Encoding.UTF8.GetString(ms.ToArray());
             }
         }
         readonly XElement xml;

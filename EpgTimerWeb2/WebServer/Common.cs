@@ -20,7 +20,13 @@ namespace EpgTimer
                 Next = Input.ReadByte();
                 if (Next == '\n') break;
                 if (Next == '\r') { continue; }
-                if (Next == -1) { Thread.Sleep(1); To++; if (To > 300) throw new TimeoutException(); continue; }
+                if (Next == -1)
+                {
+                    Thread.Sleep(1);
+                    To++;
+                    if (To > 1000) throw new TimeoutException();
+                    continue;
+                }
                 Data += Convert.ToChar(Next);
             }
             return Data;

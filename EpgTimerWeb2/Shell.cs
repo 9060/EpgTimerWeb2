@@ -76,6 +76,14 @@ namespace EpgTimerWeb2
                         }
                         continue;
                     }
+                    if (ApiStr == "ShowCacheList")
+                    {
+                        foreach (var cache in ContentCache.Instance.Cache)
+                        {
+                            Console.WriteLine("{0}: {1}bytes {2}", cache.Key, cache.Value.Value.Length, cache.Value.ExpireDate.ToString());
+                        }
+                        continue;
+                    }
                     Console.WriteLine(Api.Call(ApiStr));
                 }
                 else

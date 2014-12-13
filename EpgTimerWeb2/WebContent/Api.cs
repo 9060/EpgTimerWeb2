@@ -250,12 +250,17 @@ namespace EpgTimer
             }
             return e;
         }
-        public static string Call(string Str)
+        public static string Call(string Str, bool Indent = true)
         {
             string JsonData = "[]";
             try
             {
                 string Command = Str;
+                if (ContentCache.Instance.Contains(Command))
+                {
+                    Debug.Print("{0}: load cache", Command);
+                    return ContentCache.Instance.Get(Command);
+                }
                 var Arg = new Dictionary<string, string>();
                 if (Str.IndexOf("/") > 0)
                 {
@@ -278,15 +283,15 @@ namespace EpgTimer
 
                 if (Command == "EnumReserve")
                 {
-                    JsonData = JsonUtil.Serialize(CommonManager.Instance.DB.ReserveList.Values.Select(x => new ReserveItem(x)).ToList());
+                    JsonData = JsonUtil.Serialize(CommonManager.Instance.DB.ReserveList.Values.Select(x => new ReserveItem(x)).ToList(), Indent);
                 }
                 else if (Command == "EnumService")
                 {
-                    JsonData = JsonUtil.Serialize(ChSet5.Instance.ChList.Values);
+                    JsonData = JsonUtil.Serialize(ChSet5.Instance.ChList.Values, Indent);
                 }
                 else if (Command == "EnumRecFileInfo")
                 {
-                    JsonData = JsonUtil.Serialize(CommonManager.Instance.DB.RecFileInfo.Values.Select(x => new RecInfoItem(x)).ToList());
+                    JsonData = JsonUtil.Serialize(CommonManager.Instance.DB.RecFileInfo.Values.Select(x => new RecInfoItem(x)).ToList(), Indent);
                 }
                 else if (Command == "EnumServiceEvent")
                 {
@@ -326,27 +331,27 @@ namespace EpgTimer
                                 .ToList()
                             );
                     }
-                    JsonData = JsonUtil.Serialize(Out);
+                    JsonData = JsonUtil.Serialize(Out, Indent);
                 }
                 else if (Command == "EnumContentKindList1")
                 {
-                    JsonData = JsonUtil.Serialize(CommonManager.Instance.ContentKindDictionary);
+                    JsonData = JsonUtil.Serialize(CommonManager.Instance.ContentKindDictionary, Indent);
                 }
                 else if (Command == "EnumContentKindList2")
                 {
-                    JsonData = JsonUtil.Serialize(CommonManager.Instance.ContentKindDictionary2);
+                    JsonData = JsonUtil.Serialize(CommonManager.Instance.ContentKindDictionary2, Indent);
                 }
                 else if (Command == "EnumWritePlugInList")
                 {
-                    JsonData = JsonUtil.Serialize(CommonManager.Instance.DB.WritePlugInList);
+                    JsonData = JsonUtil.Serialize(CommonManager.Instance.DB.WritePlugInList, Indent);
                 }
                 else if (Command == "EnumRecNamePlugInList")
                 {
-                    JsonData = JsonUtil.Serialize(CommonManager.Instance.DB.RecNamePlugInList);
+                    JsonData = JsonUtil.Serialize(CommonManager.Instance.DB.RecNamePlugInList, Indent);
                 }
                 else if (Command == "EnumEpgAutoAddList")
                 {
-                    JsonData = JsonUtil.Serialize(CommonManager.Instance.DB.EpgAutoAddList);
+                    JsonData = JsonUtil.Serialize(CommonManager.Instance.DB.EpgAutoAddList, Indent);
                 }
                 else if (Command == "EpgCapNow")
                 {
@@ -364,16 +369,16 @@ namespace EpgTimer
                     if (CommonManager.Instance.CtrlCmd.SendEnumTunerReserve(ref reserves)
                          == (uint)ErrCode.CMD_SUCCESS)
                     {
-                        JsonData = JsonUtil.Serialize(reserves);
+                        JsonData = JsonUtil.Serialize(reserves, Indent);
                     }
                 }
                 else if (Command == "GetSetting")
                 {
-                    JsonData = JsonUtil.Serialize(Setting.Instance);
+                    JsonData = JsonUtil.Serialize(Setting.Instance, Indent);
                 }
                 else if (Command == "GetCommonManager")
                 {
-                    JsonData = JsonUtil.Serialize(CommonManagerJson.Instance);
+                    JsonData = JsonUtil.Serialize(CommonManagerJson.Instance, Indent);
                 }
                 else if (Command == "AddReserve")
                 {
@@ -420,7 +425,7 @@ namespace EpgTimer
                             RecSettingData Setting = GetPreset(Arg, new RecSettingData());
                             Reserve.RecSetting = Setting;
                             ErrCode err = (ErrCode)CommonManager.Instance.CtrlCmd.SendAddReserve(new List<ReserveData> { Reserve });
-                            if (err == ErrCode.CMD_SUCCESS) JsonData = "{\"result\":true, \"cmd\":\"" + err.ToString() + "\", \"res\":" + JsonUtil.Serialize(Reserve) + "}";
+                            if (err == ErrCode.CMD_SUCCESS) JsonData = "{\"result\":true, \"cmd\":\"" + err.ToString() + "\", \"res\":" + JsonUtil.Serialize(Reserve, Indent) + "}";
                         }
                     }
                 }
@@ -446,33 +451,33 @@ namespace EpgTimer
                         {
                             searchInfo = Search,
                             recSetting = Preset
-                        });
+                        }, Indent);
 
                 }
                 else if (Command == "EnumPresets")
                 {
-                    JsonData = JsonUtil.Serialize(PresetDb.Instance.Presets);
+                    JsonData = JsonUtil.Serialize(PresetDb.Instance.Presets, Indent);
                 }
                 else if (Command == "AddPreset")
                 {
                     if (!Arg.ContainsKey("name")) return JsonData;
                     uint ID = PresetDb.Instance.AddPreset(GetPreset(Arg, new RecSettingData()), Arg["name"]);
-                    JsonData = JsonUtil.Serialize(PresetDb.Instance.Presets[ID]);
+                    JsonData = JsonUtil.Serialize(PresetDb.Instance.Presets[ID], Indent);
                 }
                 else if (Command == "EpgSearch")
                 {
                     if (!Arg.ContainsKey("srvlist")) return JsonData;
                     List<EpgEventInfo> EpgResult = new List<EpgEventInfo>();
                     CommonManager.Instance.CtrlCmd.SendSearchPg(new List<EpgSearchKeyInfo> { GetEpgSKey(Arg) }, ref EpgResult);
-                    JsonData = JsonUtil.Serialize(EpgResult);
+                    JsonData = JsonUtil.Serialize(EpgResult.Select(s => new EventInfoItem(s)), Indent);
                 }
                 else if (Command == "EnumEvents")
                 {
-                    JsonData = JsonUtil.Serialize(EventStore.Instance.Events);
+                    JsonData = JsonUtil.Serialize(EventStore.Instance.Events, Indent);
                 }
                 else if (Command == "GetContentColorTable")
                 {
-                    JsonData = JsonUtil.Serialize(Setting.Instance.ContentToColorTable);
+                    JsonData = JsonUtil.Serialize(Setting.Instance.ContentToColorTable, Indent);
                 }
                 else if (Command == "SetContentColorTable")
                 {
@@ -548,8 +553,9 @@ namespace EpgTimer
                 }
                 else if (Command == "Hello")
                 {
-                    JsonData = JsonUtil.Serialize(VersionInfo.Instance);
+                    JsonData = JsonUtil.Serialize(VersionInfo.Instance, Indent);
                 }
+                ContentCache.Instance.Set(Str, JsonData, TimeSpan.FromMinutes(10));
             }
             catch (Exception ex)
             {

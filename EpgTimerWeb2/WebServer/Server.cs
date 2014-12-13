@@ -72,12 +72,15 @@ namespace EpgTimer
             }
             catch (TimeoutException to)
             {
-                Client.Close();
+                
             }
             catch (Exception ex)
             {
-                Client.Close();
                 Console.WriteLine("Error: {0}", ex.Message);
+            }
+            finally
+            {
+                Client.Close();
             }
             Client = null;
         }
