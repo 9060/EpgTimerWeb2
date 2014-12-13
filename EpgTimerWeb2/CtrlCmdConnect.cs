@@ -170,7 +170,7 @@ namespace EpgTimer
                         Notify.NotifyInfo = Status;
                         if (Notify.Title != "")
                         {
-                            SocketAction.SendAllMessage("EVENT " + JsonUtil.Serialize(Notify));
+                            SocketAction.SendAllMessage("EVENT " + JsonUtil.Serialize(Notify, false));
                             //Console.WriteLine("\n" + (Notify.Title + Notify.LogText).Replace("\n", ""));
                             EventStore.Instance.AddMessage(Notify);
                         }

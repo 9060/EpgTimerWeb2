@@ -250,13 +250,14 @@ namespace EpgTimer
             }
             return e;
         }
-        public static string Call(string Str, bool Indent = true)
+        public static string Call(string Str, bool Indent = true, bool NotUseCache = false)
         {
             string JsonData = "[]";
+            bool NotAddCache = false;
             try
             {
                 string Command = Str;
-                if (ContentCache.Instance.Contains(Command))
+                if (!NotUseCache && ContentCache.Instance.Contains(Command))
                 {
                     Debug.Print("{0}: load cache", Command);
                     return ContentCache.Instance.Get(Command);
@@ -355,10 +356,12 @@ namespace EpgTimer
                 }
                 else if (Command == "EpgCapNow")
                 {
+                    NotAddCache = true;
                     CommonManager.Instance.CtrlCmd.SendEpgCapNow();
                 }
                 else if (Command == "EpgReload")
                 {
+                    NotAddCache = true;
                     CommonManager.Instance.CtrlCmd.SendReloadEpg();
                     Thread.Sleep(500);
                     CommonManager.Instance.DB.ReloadEpgData();
@@ -374,14 +377,17 @@ namespace EpgTimer
                 }
                 else if (Command == "GetSetting")
                 {
+                    NotAddCache = true;
                     JsonData = JsonUtil.Serialize(Setting.Instance, Indent);
                 }
                 else if (Command == "GetCommonManager")
                 {
+                    NotAddCache = true;
                     JsonData = JsonUtil.Serialize(CommonManagerJson.Instance, Indent);
                 }
                 else if (Command == "AddReserve")
                 {
+                    NotAddCache = true;
                     JsonData = "{\"result\":false}";
                     if (Arg.ContainsKey("tsid")
                         && Arg.ContainsKey("onid") && Arg.ContainsKey("sid")
@@ -452,17 +458,20 @@ namespace EpgTimer
                             searchInfo = Search,
                             recSetting = Preset
                         }, Indent);
+                    NotAddCache = true;
 
                 }
                 else if (Command == "EnumPresets")
                 {
                     JsonData = JsonUtil.Serialize(PresetDb.Instance.Presets, Indent);
+                    NotAddCache = true;
                 }
                 else if (Command == "AddPreset")
                 {
                     if (!Arg.ContainsKey("name")) return JsonData;
                     uint ID = PresetDb.Instance.AddPreset(GetPreset(Arg, new RecSettingData()), Arg["name"]);
                     JsonData = JsonUtil.Serialize(PresetDb.Instance.Presets[ID], Indent);
+                    NotAddCache = true;
                 }
                 else if (Command == "EpgSearch")
                 {
@@ -474,10 +483,12 @@ namespace EpgTimer
                 else if (Command == "EnumEvents")
                 {
                     JsonData = JsonUtil.Serialize(EventStore.Instance.Events, Indent);
+                    NotAddCache = true;
                 }
                 else if (Command == "GetContentColorTable")
                 {
                     JsonData = JsonUtil.Serialize(Setting.Instance.ContentToColorTable, Indent);
+                    NotAddCache = true;
                 }
                 else if (Command == "SetContentColorTable")
                 {
@@ -497,6 +508,7 @@ namespace EpgTimer
 
                         JsonData = "{\"result\":true}";
                     }
+                    NotAddCache = true;
                 }
                 else if (Command == "RemoveReserve")
                 {
@@ -507,6 +519,7 @@ namespace EpgTimer
                         if (err == ErrCode.CMD_SUCCESS)
                             JsonData = "{\"result\":true, \"cmd\":\"" + err.ToString() + "\"}";
                     }
+                    NotAddCache = true;
                 }
                 else if (Command == "RemoveAutoReserve")
                 {
@@ -517,6 +530,7 @@ namespace EpgTimer
                         if (err == ErrCode.CMD_SUCCESS)
                             JsonData = "{\"result\":true, \"cmd\":\"" + err.ToString() + "\"}";
                     }
+                    NotAddCache = true;
                 }
                 else if (Command == "RemoveManualReserve")
                 {
@@ -527,6 +541,7 @@ namespace EpgTimer
                         if (err == ErrCode.CMD_SUCCESS)
                             JsonData = "{\"result\":true, \"cmd\":\"" + err.ToString() + "\"}";
                     }
+                    NotAddCache = true;
                 }
                 else if (Command == "RemoveRecFile")
                 {
@@ -537,6 +552,7 @@ namespace EpgTimer
                         if (err == ErrCode.CMD_SUCCESS)
                             JsonData = "{\"result\":true, \"cmd\":\"" + err.ToString() + "\"}";
                     }
+                    NotAddCache = true;
                 }
                 else if (Command == "UpdateReserve")
                 {
@@ -550,12 +566,14 @@ namespace EpgTimer
                         if (err == ErrCode.CMD_SUCCESS)
                             JsonData = "{\"result\":true, \"cmd\":\"" + err.ToString() + "\"}";
                     }
+                    NotAddCache = true;
                 }
                 else if (Command == "Hello")
                 {
                     JsonData = JsonUtil.Serialize(VersionInfo.Instance, Indent);
                 }
-                ContentCache.Instance.Set(Str, JsonData, TimeSpan.FromMinutes(10));
+                if(!NotAddCache) 
+                    ContentCache.Instance.Set(Str, JsonData, TimeSpan.FromMinutes(10));
             }
             catch (Exception ex)
             {

@@ -43,9 +43,7 @@ namespace EpgTimerWeb2
     }
     public class ContentColorItem
     {
-        [XmlAttribute("id")]
         public uint ContentLevel1 { set; get; }
-        [XmlAttribute("color")]
         public string Color { set; get; }
         public ContentColorItem()
         {
@@ -111,6 +109,7 @@ namespace EpgTimerWeb2
         public string LoginUser { set; get; }
         [XmlElement("password")]
         public string LoginPassword { set; get; }
+        
         public List<ContentColorItem> ContentToColorTable { set; get; }
         public bool ReqAuth
         {

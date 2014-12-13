@@ -9,6 +9,7 @@ using EpgTimer;
 using System.Threading;
 using System.Text.RegularExpressions;
 using System.IO;
+using System.Diagnostics;
 namespace EpgTimerWeb2
 {
     class Program
