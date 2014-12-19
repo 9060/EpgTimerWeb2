@@ -83,7 +83,7 @@ namespace EpgTimerWeb2
                     if (PrivateSetting.Instance.CmdConnect.StopConnect())
                         Console.WriteLine("Disconected EpgTimer");
                     else
-                        Console.WriteLine("Error Disconect EpgTimer");
+                        Console.WriteLine("Error Disconnect EpgTimer");
                 }
                 if (!PrivateSetting.Instance.SetupMode) Setting.SaveToXmlFile(PrivateSetting.Instance.ConfigPath);
             };

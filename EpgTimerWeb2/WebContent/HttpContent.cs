@@ -48,8 +48,11 @@ namespace EpgTimer
                 var PartName = Context.Request.Url.ToLower().Replace("/modules/", "").Replace("/", "\\");
                 if (File.Exists(".\\modules\\" + PartName))
                 {
-                    Context.Response.Headers.Add("Content-Type", Mime.Get(PartName, "application/javascript"));
-                    SendResponse(Context, File.ReadAllText(".\\modules\\" + PartName, Encoding.UTF8));
+                    Context.Response.Headers.Add("Content-Type", Mime.Get(PartName, "application/javascript") +( PartName.EndsWith(".png") ? "" : " ;charset=utf8"));
+                    if (PartName.EndsWith(".png"))
+                        SendResponse(Context, File.ReadAllBytes(".\\modules\\" + PartName));
+                    else
+                        SendResponse(Context, File.ReadAllText(".\\modules\\" + PartName, Encoding.UTF8));
                     Ret = true;
                 }
             }
@@ -66,11 +69,6 @@ namespace EpgTimer
                     case "/dashboard":
                         Context.Response.Headers.Add("Content-Type", "text/html; charset=utf8");
                         SendResponse(Context, File.ReadAllText(".\\www\\index.html", Encoding.UTF8));
-                        Ret = true;
-                        break;
-                    case "/meta":
-                        Context.Response.Headers.Add("Content-Type", "application/javascript");
-                        SendResponse(Context, "var meta = " + JsonUtil.Serialize(Setting.Instance));
                         Ret = true;
                         break;
                     case "/css/bootstrap.css":

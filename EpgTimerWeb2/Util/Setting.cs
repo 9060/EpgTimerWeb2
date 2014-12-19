@@ -5,9 +5,11 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Xml;
 using System.Xml.Serialization;
 
 namespace EpgTimerWeb2
@@ -41,9 +43,12 @@ namespace EpgTimerWeb2
         public string ConfigPath { set; get; }
         public string SetupCode { set; get; }
     }
+    [DataContract]
     public class ContentColorItem
     {
+        [DataMember]
         public uint ContentLevel1 { set; get; }
+        [DataMember]
         public string Color { set; get; }
         public ContentColorItem()
         {
@@ -56,7 +61,7 @@ namespace EpgTimerWeb2
             ContentLevel1 = Content;
         }
     }
-    [XmlRoot("setting")]
+    [DataContract]
     public class Setting
     {
         private static Setting _instance;
@@ -95,22 +100,22 @@ namespace EpgTimerWeb2
                 new ContentColorItem(15, "#f0f0f0")
             };
         }
-        [XmlElement("host")]
+        [DataMember]
         public string CtrlHost { get; set; }
-        [XmlAttribute("port")]
+        [DataMember]
         public UInt32 CtrlPort { get; set; }
-        [XmlAttribute("callback")]
+        [DataMember]
         public UInt32 CallbackPort { get; set; }
-        [XmlAttribute("http")]
+        [DataMember]
         public UInt32 HttpPort { get; set; }
-        [XmlAttribute("local")]
+        [DataMember]
         public bool LocalMode { get; set; }
-        [XmlElement("user")]
+        [DataMember]
         public string LoginUser { set; get; }
-        [XmlElement("password")]
+        [DataMember]
         public string LoginPassword { set; get; }
-        
-        public List<ContentColorItem> ContentToColorTable { set; get; }
+        [DataMember]
+        public List<ContentColorItem> ContentToColorTable;
         public bool ReqAuth
         {
             get
@@ -123,21 +128,10 @@ namespace EpgTimerWeb2
         {
             try
             {
-                
-                if (File.Exists(path) == true)
-                {
-                    string backPath = path + ".back";
-                    File.Copy(path, backPath, true);
-                    File.Delete(path);
-                }
-
-                FileStream fs = new FileStream(path,
-                    FileMode.Create,
-                    FileAccess.Write, FileShare.None);
-                XmlSerializer xs = new XmlSerializer(typeof(Setting));
-                //シリアル化して書き込む
-                xs.Serialize(fs, Instance);
-                fs.Close();
+                DataContractSerializer serializer = new DataContractSerializer(typeof(Setting));
+                XmlWriter writer = XmlWriter.Create(path, new XmlWriterSettings() { Encoding = Encoding.UTF8 });
+                serializer.WriteObject(writer, Instance);
+                writer.Close();
             }
             catch (Exception ex)
             {
@@ -148,16 +142,11 @@ namespace EpgTimerWeb2
         {
             try
             {
-                FileStream fs = new FileStream(path,
-                    FileMode.Open,
-                    FileAccess.Read);
-                System.Xml.Serialization.XmlSerializer xs =
-                    new System.Xml.Serialization.XmlSerializer(
-                        typeof(Setting));
-                //読み込んで逆シリアル化する
-                object obj = xs.Deserialize(fs);
-                fs.Close();
-                Instance = (Setting)obj;
+                if (!File.Exists(path)) return;
+                DataContractSerializer serializer = new DataContractSerializer(typeof(Setting));
+                XmlReader reader = XmlReader.Create(path);
+                Instance = (Setting)serializer.ReadObject(reader);
+                reader.Close();
             }
             catch (Exception ex)
             {

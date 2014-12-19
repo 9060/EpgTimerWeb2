@@ -68,7 +68,6 @@ namespace EpgTimer
             CommonManager.Instance.DB.ReloadPlugInFile();
             CommonManager.Instance.DB.ReloadrecFileInfo();
             CommonManager.Instance.DB.ReloadReserveInfo();
-            Console.WriteLine("Loaded Data");
         }
         private int OutsideCmdCallback(object pParam, CMD_STREAM pCmdParam, ref CMD_STREAM pResParam)
         {
@@ -89,13 +88,6 @@ namespace EpgTimer
                         CommonManager.Instance.DB.SetUpdateNotify((UInt32)UpdateNotifyItem.AutoAddManualInfo);
 
                         CommonManager.Instance.DB.ReloadReserveInfo();
-                        ReserveData item = new ReserveData();
-                        if (CommonManager.Instance.DB.GetNextReserve(ref item) == true)
-                        {
-                            String timeView = item.StartTime.ToString("yyyy/MM/dd(ddd) HH:mm:ss ～ ");
-                            DateTime endTime = item.StartTime + TimeSpan.FromSeconds(item.DurationSecond);
-                            timeView += endTime.ToString("HH:mm:ss");
-                        }
                     }
                     break;
                 case CtrlCmd.CMD_TIMER_GUI_UPDATE_EPGDATA:
