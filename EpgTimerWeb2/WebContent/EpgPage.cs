@@ -143,16 +143,16 @@ namespace EpgTimer
                             if (Event.ContentInfo != null && Event.ContentInfo.nibbleList != null && Event.ContentInfo.nibbleList.Count != 0 &&
                                 Setting.Instance.ContentToColorTable
                                         .Count(s => s.ContentLevel1 == Event.ContentInfo.nibbleList[0].content_nibble_level_1) > 0)
-                                sb2.AppendFormat("<div class=\"item event {5}\" data-eventid=\"{0}\" style=\"background: {2};top: {4}px;min-height: {3}px;z-index: {6};\">{1}</div>\n", Event.EventID, EventName,
+                                sb2.AppendFormat("<div class=\"item event {5}\" data-eventid=\"{0}\" style=\"background: {2};top: {4}px;min-height: {3}px;max-height: {3}px;z-index: {6};\">{1}</div>\n", Event.EventID, EventName,
                                     Setting.Instance.ContentToColorTable
                                         .Where(s => s.ContentLevel1 == Event.ContentInfo.nibbleList[0].content_nibble_level_1).First().Color, Size, Top, AddClass, ItemCount);
                             else
-                                sb2.AppendFormat("<div class=\"item event {4}\" data-eventid=\"{0}\" style=\"top: {3}px;min-height: {2};z-index: {5};\">{1}</div>\n", 
+                                sb2.AppendFormat("<div class=\"item event {4}\" data-eventid=\"{0}\" style=\"top: {3}px;min-height: {2}px;max-height: {2}px;z-index: {5};\">{1}</div>\n", 
                                     Event.EventID, EventName, Size, Top, AddClass, ItemCount);
                         }
                         else
                         {
-                            sb2.AppendFormat("<div class=\"item event {4}\" data-eventid=\"{0}\" title=\"{1}\" style=\"top: {3}px;min-height: {2};z-index: {5};\">{1}</div>\n", 
+                            sb2.AppendFormat("<div class=\"item event {4}\" data-eventid=\"{0}\" title=\"{1}\" style=\"top: {3}px;min-height: {2}px;max-height: {2}px;z-index: {5};\">{1}</div>\n", 
                                 Event.EventID, EventName, Size, Top, AddClass, ItemCount);
                         }
                         ItemCount++;
