@@ -92,7 +92,8 @@ namespace EpgTimer
             DateTime Temp = StartTime.AddSeconds(StartTime.Second * -1).AddMinutes(StartTime.Minute * -1);
             for (int i = 0; i < MaxHour; i++)
             {
-                sb.AppendFormat("<div class=\"item\" style=\"height: {1}px;top: {2}px;\">{0}</div>\n", Temp.Hour, MinSize * 60, MinSize * 60 * i);
+                string Text = (i == 0 || Temp.Hour == 0) ? "<p>" + Temp.Month + "/" + Temp.Day + "</p>" + Temp.Hour : Temp.Hour.ToString();
+                sb.AppendFormat("<div class=\"item\" style=\"height: {1}px;top: {2}px;\">{0}</div>\n", Text, MinSize * 60, MinSize * 60 * i);
                 Temp = Temp.AddHours(1);
             }
             sb.AppendLine("</div>");
@@ -105,7 +106,6 @@ namespace EpgTimer
                 if (Item.Value == null || Item.Value.Count == 0)
                 {
                     if (!IncludeNotEpg) continue;
-                    //sb2.AppendFormat("<div class=\"item no-epg\" style=\"height: {1}px\">{0}</div>\n", NoEPGMsg, MinSize * 60 * MaxHour);
                 }
                 else
                 {
@@ -119,11 +119,6 @@ namespace EpgTimer
                         EventStart = EventStart.AddSeconds(-1 * EventStart.Second); // 19:00:03 => 19:00:00
                         EventEnd = EventEnd.AddSeconds(-1 * EventEnd.Second);
                         long Size = 0;
-                        if (OldTime < EventStart)
-                        {
-                            Size = (UnixTime.ToUnixTime(EventStart) - UnixTime.ToUnixTime(OldTime)) / 60 * MinSize;
-                            //sb2.AppendFormat("<div style=\"height: {0}px;top: {2}px;\" class=\"item no-epg\">{1}</div>\n", Size, NoEventMsg, (int)(OldTime - Start).TotalMinutes * MinSize);
-                        }
                         OldTime = EventEnd;
                         if (EventStart < Start)
                             EventStart = Start;
@@ -148,28 +143,19 @@ namespace EpgTimer
                             if (Event.ContentInfo != null && Event.ContentInfo.nibbleList != null && Event.ContentInfo.nibbleList.Count != 0 &&
                                 Setting.Instance.ContentToColorTable
                                         .Count(s => s.ContentLevel1 == Event.ContentInfo.nibbleList[0].content_nibble_level_1) > 0)
-                                sb2.AppendFormat("<div class=\"item event {5}\" data-eventid=\"{0}\" style=\"background: {2};height: {3}px;top: {4}px;\">{1}</div>\n", Event.EventID, EventName,
+                                sb2.AppendFormat("<div class=\"item event {5}\" data-eventid=\"{0}\" style=\"background: {2};top: {4}px;min-height: {3}px;z-index: {6};\">{1}</div>\n", Event.EventID, EventName,
                                     Setting.Instance.ContentToColorTable
-                                        .Where(s => s.ContentLevel1 == Event.ContentInfo.nibbleList[0].content_nibble_level_1).First().Color, Size, Top, AddClass);
+                                        .Where(s => s.ContentLevel1 == Event.ContentInfo.nibbleList[0].content_nibble_level_1).First().Color, Size, Top, AddClass, ItemCount);
                             else
-                                sb2.AppendFormat("<div class=\"item event {4}\" data-eventid=\"{0}\" style=\"height: {2}px;top: {3}px;\">{1}</div>\n", Event.EventID, EventName, Size, Top, AddClass);
+                                sb2.AppendFormat("<div class=\"item event {4}\" data-eventid=\"{0}\" style=\"top: {3}px;min-height: {2};z-index: {5};\">{1}</div>\n", 
+                                    Event.EventID, EventName, Size, Top, AddClass, ItemCount);
                         }
                         else
                         {
-                            sb2.AppendFormat("<div class=\"item event {4}\" data-eventid=\"{0}\" title=\"{1}\" style=\"height: {2}px;top: {3}px;\">{1}</div>\n", Event.EventID, EventName, Size, Top, AddClass);
+                            sb2.AppendFormat("<div class=\"item event {4}\" data-eventid=\"{0}\" title=\"{1}\" style=\"top: {3}px;min-height: {2};z-index: {5};\">{1}</div>\n", 
+                                Event.EventID, EventName, Size, Top, AddClass, ItemCount);
                         }
                         ItemCount++;
-                    }
-                    if (ItemCount == 0)
-                    {
-                        if (!IncludeNotEpg) continue;
-                        //sb2.AppendFormat("<div class=\"item no-epg\" style=\"height: {1}px\">{0}</div>\n", NoEPGMsg, MinSize * 60 * MaxHour);
-                    }
-                    else if (OldTime.AddSeconds(-1) < End)
-                    {
-                        long Top = (UnixTime.ToUnixTime(OldTime) - UnixTime.ToUnixTime(Start)) / 60 * MinSize;
-                        //sb2.AppendFormat("<div style=\"height: {0}px;top: {2}px;\" class=\"item no-epg\">{1}</div>\n",
-                        //(MinSize * 60 * MaxHour) - Top, NoEventMsg, Top);
                     }
                     sb.Append(sb2.ToString());
                     sb1.AppendFormat("<div class=\"item\">{0}</div>\n", Item.Key.service_name);
