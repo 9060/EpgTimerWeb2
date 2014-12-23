@@ -88,12 +88,15 @@ namespace EpgTimer
                         CommonManager.Instance.DB.SetUpdateNotify((UInt32)UpdateNotifyItem.AutoAddManualInfo);
 
                         CommonManager.Instance.DB.ReloadReserveInfo();
+                        SocketAction.SendAllMessage("UPDATED RESERVE");
                     }
                     break;
                 case CtrlCmd.CMD_TIMER_GUI_UPDATE_EPGDATA:
                     {
                         pResParam.uiParam = (uint)ErrCode.CMD_SUCCESS;
                         CommonManager.Instance.DB.SetUpdateNotify((UInt32)UpdateNotifyItem.EpgData);
+                        CommonManager.Instance.DB.ReloadEpgData();
+                        SocketAction.SendAllMessage("UPDATED EPG");
                     }
                     break;
                 case CtrlCmd.CMD_TIMER_GUI_VIEW_EXECUTE:
@@ -160,6 +163,7 @@ namespace EpgTimer
                         CmdStreamUtil.ReadStreamData(ref Status, pCmdParam);
                         var Notify = new NotifySrvInfoItem();
                         Notify.NotifyInfo = Status;
+                        
                         if (Notify.Title != "")
                         {
                             SocketAction.SendAllMessage("EVENT " + JsonUtil.Serialize(Notify, false));

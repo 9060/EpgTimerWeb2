@@ -294,6 +294,53 @@ namespace EpgTimer
                 {
                     JsonData = JsonUtil.Serialize(CommonManager.Instance.DB.RecFileInfo.Values.Select(x => new RecInfoItem(x)).ToList(), Indent);
                 }
+                else if (Command == "GenerateEpgHTML")
+                {
+                    int MaxHour = 6;
+                    DateTime Start = DateTime.Now;
+                    List<ulong> ServiceKeys = null;
+                    int MinSize = 5;
+                    bool EpgCapOnly = false;
+                    bool SetBgColor = false;
+                    EpgSearchKeyInfo search = null;
+                    if (Arg.ContainsKey("maxhour"))
+                    {
+                        MaxHour = int.Parse(Arg["maxhour"]);
+                    }
+                    if (Arg.ContainsKey("unixstart"))
+                    {
+                        Start = UnixTime.FromUnixTime(long.Parse(Arg["unixstart"]));
+                        if (Start < DateTime.Now.AddMinutes(DateTime.Now.Minute * -1).AddSeconds(DateTime.Now.Second * -1).AddSeconds(-1))
+                        {
+                            Start = DateTime.Now.AddMinutes(-1 * DateTime.Now.Minute).AddSeconds(-1 * DateTime.Now.Second); //変な時間対策
+                            Debug.Print("変な時間発動");
+                        }
+                    }
+                    if (Arg.ContainsKey("services"))
+                    {
+                        ServiceKeys = new List<ulong>();
+                        if (Arg["services"].IndexOf(",") > 0)
+                        {
+                            ServiceKeys.AddRange(Arg["services"].Split(',').Select(s => ulong.Parse(s)));
+                        }
+                        else
+                        {
+                            ServiceKeys.Add(ulong.Parse(Arg["services"]));
+                        }
+                    }
+                    if (Arg.ContainsKey("minsize"))
+                    {
+                        MinSize = int.Parse(Arg["minsize"]);
+                    }
+                    if (Arg.ContainsKey("epgcaponly"))
+                        EpgCapOnly = true;
+                    if (Arg.ContainsKey("setbg"))
+                        SetBgColor = true;
+                    if (Arg.ContainsKey("search"))
+                        search = GetEpgSKey(Arg);
+                    JsonData = JsonUtil.Serialize(EpgPage.Generate(Start, MaxHour, ServiceKeys, MinSize, EpgCapOnly: EpgCapOnly, SetBgColor: SetBgColor, Search: search));
+                    NotAddCache = true;
+                }
                 else if (Command == "EnumServiceEvent")
                 {
                     int MaxHour = 6;
@@ -572,7 +619,7 @@ namespace EpgTimer
                 {
                     JsonData = JsonUtil.Serialize(VersionInfo.Instance, Indent);
                 }
-                if(!NotAddCache) 
+                if (!NotAddCache)
                     ContentCache.Instance.Set(Str, JsonData, TimeSpan.FromMinutes(10));
             }
             catch (Exception ex)

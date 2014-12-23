@@ -107,6 +107,7 @@
     <Compile Include="Util\Setting.cs" />
     <Compile Include="Util\UnixTime.cs" />
     <Compile Include="Util\VersionInfo.cs" />
+    <Compile Include="WebContent\EpgPage.cs" />
     <Compile Include="WebContent\HttpContent.cs" />
     <Compile Include="WebContent\HttpSession.cs" />
     <Compile Include="WebContent\Api.cs" />
@@ -123,7 +124,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-    <None Include="bin\Debug\www\fonts\glyphicons-halflings-regular.ttf" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx">
@@ -132,16 +132,7 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="bin\Debug\www\css\bootstrap.css" />
-    <Content Include="bin\Debug\www\css\main.css" />
-    <Content Include="bin\Debug\www\fonts\glyphicons-halflings-regular.svg" />
     <Content Include="bin\Debug\www\index.html" />
-    <Content Include="bin\Debug\www\js\api.js" />
-    <Content Include="bin\Debug\www\js\bootstrap.js" />
-    <Content Include="bin\Debug\www\js\epg.js" />
-    <Content Include="bin\Debug\www\js\jquery.js" />
-    <Content Include="bin\Debug\www\js\main.js" />
-    <Content Include="bin\Debug\www\js\reserve.js" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

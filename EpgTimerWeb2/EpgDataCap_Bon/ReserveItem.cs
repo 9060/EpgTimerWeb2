@@ -190,21 +190,6 @@ namespace EpgTimer
             }
         }
 
-        
-        public String Priority
-        {
-            get
-            {
-                String view = "";
-                if (ReserveInfo != null)
-                {
-                    view = ReserveInfo.RecSetting.Priority.ToString();
-                }
-                return view;
-            }
-        }
-
-        
         public String Tuijyu
         {
             get
@@ -272,6 +257,10 @@ namespace EpgTimer
                 }
                 return list.ToArray();
             }
+        }
+        public RecSettingData Setting
+        {
+            get { return ReserveInfo.RecSetting; }
         }
     }
 }

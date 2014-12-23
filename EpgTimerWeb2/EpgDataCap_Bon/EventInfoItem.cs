@@ -13,7 +13,14 @@ namespace EpgTimer
         {
             this.EventInfo = EventInfo;
         }
-
+        public bool StartTimeFlg
+        {
+            get { return EventInfo.StartTimeFlag == 1; }
+        }
+        public bool DurationFlg
+        {
+            get { return EventInfo.DurationFlag == 1; }
+        }
         public DateTime StartTime
         {
             get
