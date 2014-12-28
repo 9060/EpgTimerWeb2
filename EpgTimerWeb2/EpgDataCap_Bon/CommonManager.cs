@@ -742,13 +742,6 @@ namespace EpgTimer
             }
 
             view += "予約状況 : " + reserveInfo.Comment;
-            view += "\r\n\r\n";
-
-            //view += "OriginalNetworkID : " + reserveInfo.OriginalNetworkID.ToString() + " (0x" + reserveInfo.OriginalNetworkID.ToString("X4") + ")\r\n";
-            //view += "TransportStreamID : " + reserveInfo.TransportStreamID.ToString() + " (0x" + reserveInfo.TransportStreamID.ToString("X4") + ")\r\n";
-            //view += "ServiceID : " + reserveInfo.ServiceID.ToString() + " (0x" + reserveInfo.ServiceID.ToString("X4") + ")\r\n";
-            //view += "EventID : " + reserveInfo.EventID.ToString() + " (0x" + reserveInfo.EventID.ToString("X4") + ")\r\n";
-
             return view;
         }
 
@@ -955,12 +948,6 @@ namespace EpgTimer
                         extInfo += "\r\n";
                     }
                 }
-
-                //extInfo += "OriginalNetworkID : " + eventInfo.original_network_id.ToString() + " (0x" + eventInfo.original_network_id.ToString("X4") + ")\r\n";
-                //extInfo += "TransportStreamID : " + eventInfo.transport_stream_id.ToString() + " (0x" + eventInfo.transport_stream_id.ToString("X4") + ")\r\n";
-                //extInfo += "ServiceID : " + eventInfo.service_id.ToString() + " (0x" + eventInfo.service_id.ToString("X4") + ")\r\n";
-                //extInfo += "EventID : " + eventInfo.event_id.ToString() + " (0x" + eventInfo.event_id.ToString("X4") + ")\r\n";
-
             }
 
             if (textMode == EventInfoTextMode.All || textMode == EventInfoTextMode.BasicOnly)

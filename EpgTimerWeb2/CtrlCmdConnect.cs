@@ -60,7 +60,7 @@ namespace EpgTimer
                 Console.WriteLine("Server {0}:{1} ({2}) Connect Failed", Setting.Instance.CtrlHost, Setting.Instance.CtrlPort, Setting.Instance.CallbackPort);
                 Environment.Exit(1);
             }
-            Console.WriteLine("Loading Data...");
+            Console.WriteLine("Loading...");
             CommonManager.Instance.DB.ClearAllDB();
             CommonManager.Instance.DB.ReloadEpgAutoAddInfo();
             CommonManager.Instance.DB.ReloadEpgData();
@@ -171,7 +171,6 @@ namespace EpgTimer
                             EventStore.Instance.AddMessage(Notify);
                         }
                         NotifyStatus(Status);
-                        //Console.WriteLine("Sending Msg...");
                     }
                     break;
                 default:

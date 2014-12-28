@@ -83,14 +83,14 @@ namespace EpgTimerWeb2
                     if (PrivateSetting.Instance.CmdConnect.StopConnect())
                         Console.WriteLine("Disconnected EpgTimer");
                     else
-                        Console.WriteLine("Error Disconnect EpgTimer");
+                        Console.WriteLine("Error: Disconnect EpgTimer");
                 }
                 if (!PrivateSetting.Instance.SetupMode) Setting.SaveToXmlFile(PrivateSetting.Instance.ConfigPath);
             };
             if (PrivateSetting.Instance.SetupMode)
             {
                 Console.WriteLine("Please access to http://localhost:" + Setting.Instance.HttpPort);
-                Console.WriteLine("Code: {0}", PrivateSetting.Instance.SetupCode);
+                Console.WriteLine("Pin Code: {0}", PrivateSetting.Instance.SetupCode);
                 while (PrivateSetting.Instance.SetupMode) Thread.Sleep(1);
             }
             Shell.Run();

@@ -96,13 +96,13 @@ namespace EpgTimer
  <body>
   <h1>EpgTimerWeb2 Configure</h1>
   <form action='/update' method='post'>
-   <p>EDCB Server  :<input name='ctrlhost' placeholder='127.0.0.1' value='127.0.0.1' /></p>
-   <p>EDCB Port    :<input name='ctrlport' placeholder='4510' value='4510' /></p>
+   <p>EDCB Server:<input name='ctrlhost' placeholder='127.0.0.1' value='127.0.0.1' /></p>
+   <p>EDCB Port:<input name='ctrlport' placeholder='4510' value='4510' /></p>
    <p>Callback Port:<input name='cbport' placeholder='4521' value='4521' /></p>
-   <p>Username     :<input name='user' placeholder='user'  /></p>
-   <p>Password     :<input name='pass' placeholder='pass'  /></p>
-   <p>Http Port    :<input name='http' placeholder='8080' value='8080' /></p>
-   <p>Code         :<input name='code' /></p>
+   <p>Username:<input name='user' placeholder='user'  /></p>
+   <p>Password:<input name='pass' placeholder='pass'  /></p>
+   <p>Http Port:<input name='http' placeholder='8080' value='8080' /></p>
+   <p>Pin Code:<input name='code' /></p>
    <p><input type='submit' value='Update config' /></p>
   </form>
  </body>
@@ -146,7 +146,7 @@ namespace EpgTimer
                 else
                 {
                     Info.Response.StatusCode = 400;
-                    Info.Response.StatusText = "Fail Auth";
+                    Info.Response.StatusText = "Failed Auth";
                 }
                 Info.Response.Send();
                 Info.Close();

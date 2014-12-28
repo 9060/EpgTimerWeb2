@@ -11,33 +11,12 @@ namespace EpgTimer
 {
     public class ServiceItem : INotifyPropertyChanged
     {
-        public event PropertyChangedEventHandler PropertyChanged;
         private bool selected = false;
-
-        private void NotifyPropertyChanged(String info)
-        {
-            if (PropertyChanged != null)
-            {
-                PropertyChanged(this, new PropertyChangedEventArgs(info));
-            }
-        }
 
         public EpgServiceInfo ServiceInfo
         {
             get;
             set;
-        }
-        public bool IsSelected
-        {
-            get
-            {
-                return this.selected;
-            }
-            set
-            {
-                this.selected = value;
-                NotifyPropertyChanged("IsSelected");
-            }
         }
         public UInt64 ID
         {
