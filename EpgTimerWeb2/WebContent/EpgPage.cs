@@ -19,9 +19,9 @@ namespace EpgTimer
             DateTime End = Start.AddHours(MaxHour);
             StringBuilder sb = new StringBuilder();
             StringBuilder sb1 = new StringBuilder();
-            sb1.AppendLine("<div id=\"epg\">");
-            sb1.AppendLine("<div id=\"header\" class=\"header\">");
-            sb1.AppendLine("<div class=\"item time\">時間</div>");
+            sb1.Append("<div id=\"epg\">");
+            sb1.Append("<div id=\"header\">");
+            sb1.Append("<div class=\"time\">時間</div>");
             //Select Item
             var Out = new Dictionary<EpgServiceInfo, List<EventInfoItem>>();
             var List = new Dictionary<ulong, EpgServiceEventInfo>();
@@ -86,23 +86,23 @@ namespace EpgTimer
             }
 
 
-            sb.AppendLine("</div>\n<div id=\"body\">");
+            sb.Append("</div><div id=\"body\">");
             //Print Time
-            sb.AppendLine("<div id=\"timeline\" class=\"list\">");
+            sb.Append("<div id=\"timeline\" class=\"list\">");
             DateTime Temp = StartTime.AddSeconds(StartTime.Second * -1).AddMinutes(StartTime.Minute * -1);
             for (int i = 0; i < MaxHour; i++)
             {
                 string Text = (i == 0 || Temp.Hour == 0) ? "<p>" + Temp.Month + "/" + Temp.Day + "</p>" + Temp.Hour : Temp.Hour.ToString();
-                sb.AppendFormat("<div class=\"item\" style=\"height: {1}px;top: {2}px;\">{0}</div>\n", Text, MinSize * 60, MinSize * 60 * i);
+                sb.AppendFormat("<div style=\"height: {1}px;top: {2}px;\">{0}</div>", Text, MinSize * 60, MinSize * 60 * i);
                 Temp = Temp.AddHours(1);
             }
-            sb.AppendLine("</div>");
+            sb.Append("</div>");
 
             //Print EPG
             foreach (var Item in Out)
             {
                 StringBuilder sb2 = new StringBuilder();
-                sb2.AppendFormat("<div class=\"list\" data-tsid=\"{0}\" data-onid=\"{1}\" data-sid=\"{2}\">\n", Item.Key.TSID, Item.Key.ONID, Item.Key.SID);
+                sb2.AppendFormat("<div class=\"list\" data-t=\"{0}\" data-o=\"{1}\" data-s=\"{2}\">", Item.Key.TSID, Item.Key.ONID, Item.Key.SID);
                 if (Item.Value == null || Item.Value.Count == 0)
                 {
                     if (!IncludeNotEpg) continue;
@@ -114,8 +114,8 @@ namespace EpgTimer
                     foreach (var Event in Item.Value)
                     {
                         //Debug.Print("EPG Header {0}", Item.Key.service_name);
-                        if (Event.ShortInfo == null || !Event.StartTimeFlg) continue;
-                        DateTime EventStart = Event.StartTime, EventEnd = Event.EndTime;
+                        if (Event.Short == null || !Event.StartFlg) continue;
+                        DateTime EventStart = Event.Start, EventEnd = Event.End;
                         EventStart = EventStart.AddSeconds(-1 * EventStart.Second); // 19:00:03 => 19:00:00
                         EventEnd = EventEnd.AddSeconds(-1 * EventEnd.Second);
                         long Size = 0;
@@ -127,42 +127,45 @@ namespace EpgTimer
 
                         Size = (UnixTime.ToUnixTime(EventEnd) - UnixTime.ToUnixTime(EventStart)) / 60 * MinSize;
                         if (Size <= 0) continue;
-                        string StartTimeStr = Event.StartTime.ToString("HH:mm");
-                        var EventName = String.Format("{0} <span title=\"{1}\">{1}</span><p title=\"{2}\">{2}</p>", StartTimeStr,
-                            HttpUtility.HtmlEncode(Event.ShortInfo.event_name), 
-                            HttpUtility.HtmlEncode(Event.ShortInfo.text_char));
+                        string StartTimeStr = Event.Start.ToString("HH:mm");
+                        var EventName = String.Format("{0} <span title=\"{1}\">{1}</span><p>{2}</p>", StartTimeStr,
+                            HttpUtility.HtmlEncode(Event.Short.event_name), 
+                            HttpUtility.HtmlEncode(Event.Short.text_char));
                         long Top = (UnixTime.ToUnixTime(EventStart) - UnixTime.ToUnixTime(Start)) / 60 * MinSize;
                         var Reserve = CommonManager.Instance.DB.ReserveList.Values.Where(s =>
-                            s.EventID == Event.EventID &&
+                            s.EventID == Event.EID &&
                             s.ServiceID == Event.SID &&
                             s.TransportStreamID == Event.TSID &&
                             s.OriginalNetworkID == Event.ONID);
-                        string AddClass = (Reserve.Count() > 0) ? (Reserve.First().RecSetting.RecMode == 5 ? "disable-reserve" : "reserved") : "";
+                        string AddClass = (Reserve.Count() > 0) ? (Reserve.First().RecSetting.RecMode == 5 ? " disable-reserve" : " reserved") : "";
                         if (SetBgColor)
                         {
-                            if (Event.ContentInfo != null && Event.ContentInfo.nibbleList != null && Event.ContentInfo.nibbleList.Count != 0 &&
+                            if (Event.Content != null && Event.Content.nibbleList != null && Event.Content.nibbleList.Count != 0 &&
                                 Setting.Instance.ContentToColorTable
-                                        .Count(s => s.ContentLevel1 == Event.ContentInfo.nibbleList[0].content_nibble_level_1) > 0)
-                                sb2.AppendFormat("<div class=\"item event {5}\" data-eventid=\"{0}\" style=\"background: {2};top: {4}px;min-height: {3}px;max-height: {3}px;z-index: {6};\">{1}</div>\n", Event.EventID, EventName,
+                                        .Count(s => s.ContentLevel1 == Event.Content.nibbleList[0].content_nibble_level_1) > 0)
+                                sb2.AppendFormat("<div class=\"event{5}\" data-e=\"{0}\" style=\"background: {2};top: {4}px;min-height: {3}px;max-height: {3}px;z-index: {6};\">{1}</div>", Event.EID, EventName,
                                     Setting.Instance.ContentToColorTable
-                                        .Where(s => s.ContentLevel1 == Event.ContentInfo.nibbleList[0].content_nibble_level_1).First().Color, Size, Top, AddClass, ItemCount);
+                                        .Where(s => s.ContentLevel1 == Event.Content.nibbleList[0].content_nibble_level_1).First().Color, Size, Top, AddClass, ItemCount);
                             else
-                                sb2.AppendFormat("<div class=\"item event {4}\" data-eventid=\"{0}\" style=\"top: {3}px;min-height: {2}px;max-height: {2}px;z-index: {5};\">{1}</div>\n", 
-                                    Event.EventID, EventName, Size, Top, AddClass, ItemCount);
+                                sb2.AppendFormat("<div class=\"event{4}\" data-e=\"{0}\" style=\"top: {3}px;min-height: {2}px;max-height: {2}px;z-index: {5};\">{1}</div>", 
+                                    Event.EID, EventName, Size, Top, AddClass, ItemCount);
                         }
                         else
                         {
-                            sb2.AppendFormat("<div class=\"item event {4}\" data-eventid=\"{0}\" title=\"{1}\" style=\"top: {3}px;min-height: {2}px;max-height: {2}px;z-index: {5};\">{1}</div>\n", 
-                                Event.EventID, EventName, Size, Top, AddClass, ItemCount);
+                            sb2.AppendFormat("<div class=\"event {4}\" data-e=\"{0}\" style=\"top: {3}px;min-height: {2}px;max-height: {2}px;z-index: {5};\">{1}</div>", 
+                                Event.EID, EventName, Size, Top, AddClass, ItemCount);
                         }
                         ItemCount++;
                     }
                     sb.Append(sb2.ToString());
-                    sb1.AppendFormat("<div class=\"item\">{0}</div>\n", Item.Key.service_name);
+                    if(Item.Key.remote_control_key_id == 0)
+                        sb1.AppendFormat("<div>{0}<p>{1}</p></div>", Item.Key.service_name, Item.Key.network_name + " " + Item.Key.SID);
+                    else
+                        sb1.AppendFormat("<div>{0}<p>{1}</p></div>", Item.Key.service_name, Item.Key.remote_control_key_id);
                 }
-                sb.AppendLine("</div>");
+                sb.Append("</div>");
             }
-            sb.AppendLine("</div>");
+            sb.Append("</div>");
             return sb1.ToString() + sb.ToString();
         }
     }

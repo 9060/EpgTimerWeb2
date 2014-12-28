@@ -131,6 +131,10 @@ namespace EpgTimer
                 return key;
             }
         }
+        public string KeyS
+        {
+            get { return Key.ToString(); }
+        }
 
         public UInt16 ONID
         {

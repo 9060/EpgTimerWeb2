@@ -126,29 +126,23 @@ namespace EpgTimer
         {
             get { return RecInfo.DurationSecond;  }
         }
-        public String StartTime
+        public DateTime StartTime
         {
             get
             {
-                String view = "";
-                if (RecInfo != null)
-                {
-                    view = UnixTime.ToUnixTime(RecInfo.StartTime).ToString();
-                }
-                return view;
+                if (RecInfo == null)
+                    return DateTime.Now;
+                return RecInfo.StartTime;
             }
         }
 
-        public String StartTimeEpg
+        public DateTime StartTimeEpg
         {
             get
             {
-                String view = "";
-                if (RecInfo != null)
-                {
-                    view = UnixTime.ToUnixTime(RecInfo.StartTimeEpg).ToString();
-                }
-                return view;
+                if (RecInfo == null)
+                    return DateTime.Now;
+                return RecInfo.StartTimeEpg;
             }
         }
         

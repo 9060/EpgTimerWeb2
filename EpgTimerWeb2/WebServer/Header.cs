@@ -32,7 +32,7 @@ namespace EpgTimer
                 int Pos = Separator + 1;
                 while ((Pos < Line.Length) && (Line[Pos] == ' ')) Pos++;
 
-                Dict.Add(Name.ToLower(), Line.Substring(Pos));
+                Dict[Name.ToLower()] = Line.Substring(Pos);
             }
             return Dict;
         }

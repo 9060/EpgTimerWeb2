@@ -163,14 +163,14 @@ namespace EpgTimer
                         CmdStreamUtil.ReadStreamData(ref Status, pCmdParam);
                         var Notify = new NotifySrvInfoItem();
                         Notify.NotifyInfo = Status;
-                        
+
                         if (Notify.Title != "")
                         {
                             SocketAction.SendAllMessage("EVENT " + JsonUtil.Serialize(Notify, false));
                             //Console.WriteLine("\n" + (Notify.Title + Notify.LogText).Replace("\n", ""));
                             EventStore.Instance.AddMessage(Notify);
                         }
-
+                        NotifyStatus(Status);
                         //Console.WriteLine("Sending Msg...");
                     }
                     break;
@@ -180,6 +180,67 @@ namespace EpgTimer
             }
             return 0;
         }
+        private void NotifyStatus(NotifySrvInfo status)
+        {
+            switch ((UpdateNotifyItem)status.notifyID)
+            {
+                case UpdateNotifyItem.EpgData:
+                    {
+                        CommonManager.Instance.DB.SetUpdateNotify((UInt32)UpdateNotifyItem.EpgData);
+                        CommonManager.Instance.DB.ReloadEpgData();
+                        SocketAction.SendAllMessage("UPDATED EPG");
+                    }
+                    break;
+                case UpdateNotifyItem.ReserveInfo:
+                    {
+                        CommonManager.Instance.DB.SetUpdateNotify((UInt32)UpdateNotifyItem.ReserveInfo);
+                        CommonManager.Instance.DB.ReloadReserveInfo();
+                        SocketAction.SendAllMessage("UPDATED RESERVE");
+                    }
+                    break;
+                case UpdateNotifyItem.RecInfo:
+                    {
+                        CommonManager.Instance.DB.SetUpdateNotify((UInt32)UpdateNotifyItem.RecInfo);
+                        CommonManager.Instance.DB.ReloadrecFileInfo();
+                        SocketAction.SendAllMessage("UPDATED REC");
+                    }
+                    break;
+                case UpdateNotifyItem.AutoAddEpgInfo:
+                    {
+                        CommonManager.Instance.DB.SetUpdateNotify((UInt32)UpdateNotifyItem.AutoAddEpgInfo);
+                        CommonManager.Instance.DB.ReloadEpgAutoAddInfo();
+                        SocketAction.SendAllMessage("UPDATED AUTO");
+                    }
+                    break;
+                case UpdateNotifyItem.AutoAddManualInfo:
+                    {
+                        CommonManager.Instance.DB.SetUpdateNotify((UInt32)UpdateNotifyItem.AutoAddManualInfo);
+                        CommonManager.Instance.DB.ReloadManualAutoAddInfo();
+                        SocketAction.SendAllMessage("UPDATED MAN");
+                    }
+                    break;
+                case UpdateNotifyItem.SrvStatus:
+                    {
+                        if (status.param1 == 1)
+                        {
+                            Console.Title = "Recording: EpgTimerWeb2";
+                        }
+                        else if (status.param1 == 2)
+                        {
+                            Console.Title = "EPG: EpgTimerWeb2";
+                        }
+                        else
+                        {
+                            Console.Title = "EpgTimerWeb2";
+                        }
+                    }
+                    break;
+
+                default:
+                    break;
+            }
+        }
+
         public bool StopConnect()
         {
             if (!CommonManager.Instance.NW.IsConnected) return true;
@@ -194,7 +255,7 @@ namespace EpgTimer
             {
                 Console.Write("Ping can not be sent. Do you want to connect? \nCancel after 10 seconds.(y/n):");
                 string Res = new Reader().ReadLine(10000);
-                if(Res == null || !Res.ToLower().StartsWith("y"))
+                if (Res == null || !Res.ToLower().StartsWith("y"))
                     return false;
             }
             CommonManager.Instance.NWMode = true;

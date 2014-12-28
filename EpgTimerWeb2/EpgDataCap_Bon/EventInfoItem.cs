@@ -13,15 +13,15 @@ namespace EpgTimer
         {
             this.EventInfo = EventInfo;
         }
-        public bool StartTimeFlg
+        public bool StartFlg
         {
             get { return EventInfo.StartTimeFlag == 1; }
         }
-        public bool DurationFlg
+        public bool DurFlg
         {
             get { return EventInfo.DurationFlag == 1; }
         }
-        public DateTime StartTime
+        public DateTime Start
         {
             get
             {
@@ -30,12 +30,12 @@ namespace EpgTimer
             }
         }
 
-        public DateTime EndTime
+        public DateTime End
         {
             get
             {
                 if (EventInfo.StartTimeFlag != 1 || EventInfo.DurationFlag != 1) return DateTime.MinValue;
-                return StartTime.AddSeconds(EventInfo.durationSec);
+                return Start.AddSeconds(EventInfo.durationSec);
             }
         }
          
@@ -63,7 +63,7 @@ namespace EpgTimer
             }
         }
 
-        public ushort EventID
+        public ushort EID
         {
             get
             {
@@ -71,37 +71,25 @@ namespace EpgTimer
             }
         }
 
-        public ulong Key
+        public string Key
         {
-            get
-            {
-                return CommonManager.Create64PgKey(ONID, TSID, SID, EventID);
-            }
+            get { return CommonManager.Create64PgKey(ONID, TSID, SID, EID).ToString(); }
         }
-        public string KeyS
-        {
-            get { return Key.ToString(); }
-        }
-        public ulong ServiceKey
-        {
-            get
-            {
-                return CommonManager.Create64Key(ONID, TSID, SID);
-            }
-        }
+
+
         public string ServiceKeyS
         {
-            get { return ServiceKey.ToString(); }
+            get { return CommonManager.Create64Key(ONID, TSID, SID).ToString(); }
         }
-        public bool IsScramble
+        public byte FreeCA
         {
             get
             {
-                return EventInfo.FreeCAFlag != 1;
+                return EventInfo.FreeCAFlag;
             }
         }
 
-        public EpgComponentInfo ComponentInfo
+        public EpgComponentInfo Component
         {
             get
             {
@@ -109,7 +97,7 @@ namespace EpgTimer
             }
         }
 
-        public EpgAudioComponentInfo AudioInfo
+        public EpgAudioComponentInfo Audio
         {
             get
             {
@@ -117,7 +105,7 @@ namespace EpgTimer
             }
         }
 
-        public EpgContentInfo ContentInfo
+        public EpgContentInfo Content
         {
             get
             {
@@ -125,7 +113,7 @@ namespace EpgTimer
             }
         }
 
-        public EpgEventGroupInfo EventGroupInfo
+        public EpgEventGroupInfo EventGroup
         {
             get
             {
@@ -133,7 +121,7 @@ namespace EpgTimer
             }
         }
 
-        public EpgEventGroupInfo EventRelayInfo
+        public EpgEventGroupInfo EventRelay
         {
             get
             {
@@ -141,7 +129,7 @@ namespace EpgTimer
             }
         }
 
-        public EpgExtendedEventInfo ExtInfo
+        public EpgExtendedEventInfo Ext
         {
             get
             {
@@ -149,14 +137,14 @@ namespace EpgTimer
             }
         }
 
-        public EpgShortEventInfo ShortInfo
+        public EpgShortEventInfo Short
         {
             get
             {
                 return EventInfo.ShortInfo;
             }
         }
-
+        /*
         public string TextViewAll
         {
             get
@@ -180,6 +168,6 @@ namespace EpgTimer
                 return CommonManager.Instance.ConvertProgramText(EventInfo, EventInfoTextMode.ExtOnly);
             }
         }
-        
+        */
     }
 }

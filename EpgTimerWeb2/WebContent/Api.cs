@@ -284,7 +284,7 @@ namespace EpgTimer
 
                 if (Command == "EnumReserve")
                 {
-                    JsonData = JsonUtil.Serialize(CommonManager.Instance.DB.ReserveList.Values.Select(x => new ReserveItem(x)).ToList(), Indent);
+                    JsonData = JsonUtil.Serialize(CommonManager.Instance.DB.ReserveList.Values, Indent);
                 }
                 else if (Command == "EnumService")
                 {
@@ -292,7 +292,7 @@ namespace EpgTimer
                 }
                 else if (Command == "EnumRecFileInfo")
                 {
-                    JsonData = JsonUtil.Serialize(CommonManager.Instance.DB.RecFileInfo.Values.Select(x => new RecInfoItem(x)).ToList(), Indent);
+                    JsonData = JsonUtil.Serialize(CommonManager.Instance.DB.RecFileInfo.Values, Indent);
                 }
                 else if (Command == "GenerateEpgHTML")
                 {
@@ -381,6 +381,36 @@ namespace EpgTimer
                     }
                     JsonData = JsonUtil.Serialize(Out, Indent);
                 }
+                else if (Command == "GetEpgEvent")
+                {
+                    ulong Key = 0;
+                    if (Arg.ContainsKey("key"))
+                    {
+                        Key = ulong.Parse(Arg["key"]);
+                    }
+                    else if (Arg.ContainsKey("o") && Arg.ContainsKey("t")
+                        && Arg.ContainsKey("s") && Arg.ContainsKey("e"))
+                    {
+                        Key = CommonManager.Create64PgKey(ushort.Parse(Arg["o"]), ushort.Parse(Arg["t"]),
+                            ushort.Parse(Arg["s"]), ushort.Parse(Arg["e"]));
+                    }
+                    if (Key == 0) return "";
+                    EpgEventInfo Event = null;
+                    foreach (var service in CommonManager.Instance.DB.ServiceEventList.Values)
+                    {
+                        foreach (var _event in service.eventList)
+                        {
+                            if (CommonManager.Create64PgKey(_event.original_network_id, _event.transport_stream_id, _event.service_id, _event.event_id) == Key)
+                            {
+                                Event = _event;
+                                break;
+                            }
+                        }
+                        if (Event != null) break;
+                    }
+                    if (Event == null) return "";
+                    JsonData = JsonUtil.Serialize(new EventInfoItem(Event), Indent);
+                }
                 else if (Command == "EnumContentKindList1")
                 {
                     JsonData = JsonUtil.Serialize(CommonManager.Instance.ContentKindDictionary, Indent);
@@ -450,7 +480,7 @@ namespace EpgTimer
                         if (!CommonManager.Instance.DB.ServiceEventList.ContainsKey(Key)) JsonData = "{\"result\":false}";
                         if (CommonManager.Instance.DB.ServiceEventList[Key].eventList.Count(e => e.event_id == EventID) == 1)
                         {
-                            Event = CommonManager.Instance.DB.ServiceEventList[Key].eventList.Where(e => e.event_id == EventID).First();
+                            Event = CommonManager.Instance.DB.ServiceEventList[Key].eventList.First(e => e.event_id == EventID);
                         }
                         else
                         {

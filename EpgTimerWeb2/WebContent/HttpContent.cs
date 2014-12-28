@@ -46,13 +46,13 @@ namespace EpgTimer
             if (Context.Request.Url.ToLower().StartsWith("/modules/"))
             {
                 var PartName = Context.Request.Url.ToLower().Replace("/modules/", "").Replace("/", "\\");
-                if (File.Exists(".\\modules\\" + PartName))
+                if (File.Exists(".\\web\\modules\\" + PartName))
                 {
                     Context.Response.Headers.Add("Content-Type", Mime.Get(PartName, "application/javascript") + (PartName.EndsWith(".png") ? "" : " ;charset=utf8"));
                     if (PartName.EndsWith(".png"))
-                        SendResponse(Context, File.ReadAllBytes(".\\modules\\" + PartName));
+                        SendResponse(Context, File.ReadAllBytes(".\\web\\modules\\" + PartName));
                     else
-                        SendResponse(Context, File.ReadAllText(".\\modules\\" + PartName, Encoding.UTF8));
+                        SendResponse(Context, File.ReadAllText(".\\web\\modules\\" + PartName, Encoding.UTF8));
                     Ret = true;
                 }
             }
@@ -64,7 +64,7 @@ namespace EpgTimer
                     case "/index.html":
                     case "/index.htm":
                         Context.Response.Headers.Add("Content-Type", "text/html; charset=utf8");
-                        SendResponse(Context, File.ReadAllText(".\\www\\index.html", Encoding.UTF8));
+                        SendResponse(Context, File.ReadAllText(".\\web\\index.html", Encoding.UTF8));
                         Ret = true;
                         break;
                     case "/css/bootstrap.css":
@@ -72,9 +72,9 @@ namespace EpgTimer
                         SendResponse(Context, Resources.BootStrapStyle);
                         Ret = true;
                         break;
-                    case "/css/site.css":
+                    case "/css/main.css":
                         Context.Response.Headers.Add("Content-Type", "text/css");
-                        SendResponse(Context, File.ReadAllText(".\\www\\main.css", Encoding.UTF8));
+                        SendResponse(Context, File.ReadAllText(".\\web\\css\\main.css", Encoding.UTF8));
                         Ret = true;
                         break;
                     case "/img/not_thumb.png":
