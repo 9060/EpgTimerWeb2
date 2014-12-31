@@ -93,7 +93,7 @@ namespace EpgTimerWeb2
                 Console.WriteLine("Pin Code: {0}", PrivateSetting.Instance.SetupCode);
                 while (PrivateSetting.Instance.SetupMode) Thread.Sleep(1);
             }
-            Shell.Run();
+            while (true) Thread.Sleep(100);
         }
     }
 }

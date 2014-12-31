@@ -53,9 +53,8 @@
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="CtrlCmdCLI, Version=1.0.4300.35918, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\EpgTimerWeb2\EpgTimerWeb2\bin\Debug\CtrlCmdCLI.dll</HintPath>
+    <Reference Include="CtrlCmdCLI">
+      <HintPath>D:\TvTest\EDCB\CtrlCmdCLI.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -99,7 +98,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="Shell.cs" />
     <Compile Include="Util\ContentCache.cs" />
     <Compile Include="Util\EventStore.cs" />
     <Compile Include="Util\JsonUtil.cs" />
