@@ -9,7 +9,7 @@ using CtrlCmdCLI.Def;
 
 namespace EpgTimer
 {
-    public class ServiceItem : INotifyPropertyChanged
+    public class ServiceItem
     {
         private bool selected = false;
 

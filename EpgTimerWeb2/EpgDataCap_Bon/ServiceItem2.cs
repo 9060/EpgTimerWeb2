@@ -6,7 +6,7 @@ using System.ComponentModel;
 
 namespace EpgTimer
 {
-    public class ServiceItem2 : INotifyPropertyChanged
+    public class ServiceItem2
     {
         public ChSet5Item ServiceInfo
         {
