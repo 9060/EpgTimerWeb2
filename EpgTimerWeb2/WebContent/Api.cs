@@ -278,7 +278,7 @@ namespace EpgTimer
                         }
                         else
                         {
-                            Arg[ArgTemp.ToLower()] = "0";
+                            Arg[ArgTemp.ToLower()] = "";
                         }
                     }
                 }
@@ -655,7 +655,7 @@ namespace EpgTimer
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                Debug.Print(ex.Message);
             }
             return JsonData;
         }
