@@ -23,6 +23,7 @@ namespace EpgTimer
             if (Arg.ContainsKey("savedata"))
                 pInfo.ServiceMode |= 0x20;
             pInfo.PittariFlag = (byte)(Arg.ContainsKey("usepittari") ? 1 : 0);
+            pInfo.TuijyuuFlag = (byte)(Arg.ContainsKey("usetuijyuu") ? 1 : 0);
             if (Arg.ContainsKey("suspendmode"))
             {
                 if (byte.Parse(Arg["suspendmode"]) < 5 && byte.Parse(Arg["suspendmode"]) > 0)
