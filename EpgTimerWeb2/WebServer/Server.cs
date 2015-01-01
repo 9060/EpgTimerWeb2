@@ -65,10 +65,10 @@ namespace EpgTimer
             RequsetListener.BeginAcceptTcpClient(AcceptRequest, RequsetListener);
             var Client = RequsetListener.EndAcceptTcpClient(Result);
             var IP = ((IPEndPoint)Client.Client.RemoteEndPoint).Address;
-            
+            ServerAction.DoProcess(Client);
             try
             {
-                ServerAction.DoProcess(Client);
+                
             }
             catch (TimeoutException to)
             {

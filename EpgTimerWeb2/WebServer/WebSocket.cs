@@ -14,32 +14,37 @@ namespace EpgTimer
         public static byte[] GetWebSocketUnMaskedFrame(HttpContext Context)
         {
             while (Context.Client.Available < 2) Thread.Sleep(10);
-            UInt64 DataSize = 0;
-            UInt64 NowSize = 0;
-            UInt64 HdrSize = 2;
+            Int64 DataSize = 0;
+            Int64 NowSize = 0;
+            Int64 HdrSize = 2;
             byte[] Buffer = new byte[1024];
             int Size;
             int TotalSize = 0;
             List<byte> MaskBuffer = new List<byte>();
-            while (TotalSize <= 2)
+            while (TotalSize < 2) //Headerの全長を知るための2byteをRead
             {
-                Size = Context.HttpStream.Read(Buffer, 0, (int)HdrSize);
+                Size = Context.HttpStream.Read(Buffer, 0, 2);
                 MaskBuffer.AddRange(Buffer.Take(Size));
                 TotalSize += Size;
             }
-            HdrSize = WebSocketGetHdrLen(MaskBuffer.ToArray()) - (ulong)TotalSize;
-            while (HdrSize != 0)
+            HdrSize = WebSocketGetHdrLen(MaskBuffer.ToArray()); //Headerの全長
+            if (TotalSize < HdrSize) //Headerをすべて読んでいない
             {
-                Size = Context.HttpStream.Read(Buffer, 0, (int)HdrSize);
-                MaskBuffer.AddRange(Buffer.Take(Size));
-                TotalSize += Size;
-                HdrSize -= (ulong)Size;
+                HdrSize -= TotalSize; //今まで読んだ分
+                while (HdrSize > 0)
+                {
+                    Size = Context.HttpStream.Read(Buffer, 0, HdrSize > Buffer.Length ? Buffer.Length : (int)HdrSize); //HeaderがBufferを超えるならBuffer分、それ以下ならHeaderの全長一気に
+                    MaskBuffer.AddRange(Buffer.Take(Size));
+                    TotalSize += Size;
+                    HdrSize -= Size;
+                }
             }
-            DataSize = WebSocketGetLen(MaskBuffer.ToArray());
-            NowSize = DataSize - (ulong)TotalSize;
+            DataSize = WebSocketGetLen(MaskBuffer.ToArray()); //データの長さ
+            NowSize = DataSize - TotalSize; //読むべき残りデータ
             while (NowSize > 0)
             {
-                if(NowSize < (ulong)Buffer.Length){
+                if (NowSize < Buffer.Length) //DataがBufferを超えないならData分
+                {
                     Size = Context.HttpStream.Read(Buffer, 0, (int)NowSize);
                 }
                 else
@@ -47,30 +52,30 @@ namespace EpgTimer
                     Size = Context.HttpStream.Read(Buffer, 0, Buffer.Length);
                 }
                 MaskBuffer.AddRange(Buffer.Take(Size));
-                NowSize -= (ulong)Size;
+                NowSize -= Size;
             }
             DataSize = 0;
-            if ((byte)(MaskBuffer[0] & 0x0f) == 0x8)
+            if ((byte)(MaskBuffer[0] & 0x0f) == 0x8)//Close
             {
                 Context.Close();
                 return null;
             }
-            else if ((byte)(MaskBuffer[0] & 0x0f) == 0x9)
+            else if ((byte)(MaskBuffer[0] & 0x0f) == 0x9) //Pingに返す
             {
                 var SendFrame = MaskBuffer.ToArray();
                 SendFrame[0] = 0x8A;
                 HttpResponseGenerater.SendResponseBody(Context, SendFrame);
                 return null;
             }
-            return WebSocketUnMask(MaskBuffer.ToArray());
+            return WebSocketUnMask(MaskBuffer.ToArray()); //全部まとめてアンマスク
         }
         public static void HandshakeResponseSend(HttpContext Context)
         {
             if (!Context.Request.Headers.ContainsKey("upgrade") && Context.Request.Headers.ContainsKey("sec-websocket-key")) return;
             if (Context.Request.Headers["upgrade"] == "websocket" && Context.Request.Headers["sec-websocket-key"] != null)
             {
-                var Accept = GenerateAccept(Context.Request.Headers["sec-websocket-key"]);               
-                
+                var Accept = GenerateAccept(Context.Request.Headers["sec-websocket-key"]);
+
                 Context.Response.Headers.Add("Connection", "Upgrade");
                 Context.Response.Headers.Add("Upgrade", "websocket");
                 Context.Response.Headers.Add("Sec-WebSocket-Accept", Accept);
@@ -94,18 +99,18 @@ namespace EpgTimer
                     Encoding.UTF8.GetBytes(Key + ACCEPT_KEY)
                 ));
         }
-        public static UInt64 WebSocketGetHdrLen(byte[] Frame)
+        public static Int64 WebSocketGetHdrLen(byte[] Frame)
         {
-            var PayloadLen = (UInt64)(Frame[1] & 0x7f);
-            UInt64 Len = 2;
+            var PayloadLen = (Int64)(Frame[1] & 0x7f);
+            Int64 Len = 2;
             if (PayloadLen == 126) Len += 2;
             if (PayloadLen == 127) Len += 8;
             if ((Frame[1] & 0x80) == 0x80) Len += 4;
             return Len;
         }
-        public static UInt64 WebSocketGetLen(byte[] Frame)
+        public static Int64 WebSocketGetLen(byte[] Frame)
         {
-            var PayloadLen = (UInt64)(Frame[1] & 0x7f);
+            var PayloadLen = (Int64)(Frame[1] & 0x7f);
             int Offset = 2;
             if (PayloadLen == 126)
             {
@@ -120,14 +125,14 @@ namespace EpgTimer
                 var RevArray = new byte[8];
                 Array.Copy(Frame, Offset, RevArray, 0, 8);
                 Array.Reverse(RevArray);
-                PayloadLen = BitConverter.ToUInt64(RevArray, 0);
+                PayloadLen = BitConverter.ToInt64(RevArray, 0);
                 Offset += 8;
             }
             if ((Frame[1] & 0x80) == 0x80)
             {
                 Offset += 4;
             }
-            return PayloadLen + (UInt64)Offset;
+            return PayloadLen + (Int64)Offset;
         }
         public static byte[] WebSocketUnMask(byte[] WebSocketFrame)
         {
