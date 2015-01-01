@@ -72,7 +72,7 @@ namespace EpgTimer
         public static void HandshakeResponseSend(HttpContext Context)
         {
             if (!Context.Request.Headers.ContainsKey("upgrade") && Context.Request.Headers.ContainsKey("sec-websocket-key")) return;
-            if (Context.Request.Headers["upgrade"] == "websocket" && Context.Request.Headers["sec-websocket-key"] != null)
+            if (Context.Request.Headers["upgrade"].ToLower() == "websocket" && Context.Request.Headers["sec-websocket-key"] != "")
             {
                 var Accept = GenerateAccept(Context.Request.Headers["sec-websocket-key"]);
 
