@@ -48,7 +48,7 @@ namespace EpgTimer
                 var PartName = Context.Request.Url.ToLower().Replace("/modules/", "").Replace("/", "\\");
                 if (File.Exists(".\\web\\modules\\" + PartName))
                 {
-                    Context.Response.Headers.Add("Content-Type", Mime.Get(PartName, "application/javascript") + (PartName.EndsWith(".png") ? "" : " ;charset=utf8"));
+                    Context.Response.Headers.Add("Content-Type", Mime.Get(PartName, "application/javascript") + (PartName.EndsWith(".png") ? "" : " ;charset=UTF-8"));
                     if (PartName.EndsWith(".png"))
                         SendResponse(Context, File.ReadAllBytes(".\\web\\modules\\" + PartName));
                     else
@@ -63,7 +63,7 @@ namespace EpgTimer
                     case "/":
                     case "/index.html":
                     case "/index.htm":
-                        Context.Response.Headers.Add("Content-Type", "text/html; charset=utf8");
+                        Context.Response.Headers.Add("Content-Type", "text/html; charset=UTF-8");
                         SendResponse(Context, File.ReadAllText(".\\web\\index.html", Encoding.UTF8));
                         Ret = true;
                         break;
