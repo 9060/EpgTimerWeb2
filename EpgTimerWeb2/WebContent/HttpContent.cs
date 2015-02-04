@@ -46,7 +46,7 @@ namespace EpgTimer
             if (Context.Request.Url.ToLower().StartsWith("/modules/"))
             {
                 var PartName = Context.Request.Url.ToLower().Replace("/modules/", "").Replace("/", "\\");
-                if (File.Exists(".\\web\\modules\\" + PartName))
+                if (PartName.IndexOf("..\\") < 0 && File.Exists(".\\web\\modules\\" + PartName))
                 {
                     Context.Response.Headers.Add("Content-Type", Mime.Get(PartName, "application/javascript") + (PartName.EndsWith(".png") ? "" : " ;charset=UTF-8"));
                     if (PartName.EndsWith(".png"))
