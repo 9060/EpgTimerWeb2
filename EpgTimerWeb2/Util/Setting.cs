@@ -99,6 +99,7 @@ namespace EpgTimerWeb2
                 new ContentColorItem(11, "#e0f0ff"),
                 new ContentColorItem(15, "#f0f0f0")
             };
+            MaxUploadSize = 1024 * 1024 * 3;
         }
         [DataMember]
         public string CtrlHost { get; set; }
@@ -116,6 +117,8 @@ namespace EpgTimerWeb2
         public string LoginPassword { set; get; }
         [DataMember]
         public List<ContentColorItem> ContentToColorTable;
+        [DataMember]
+        public long MaxUploadSize { set; get; }
         public bool ReqAuth
         {
             get

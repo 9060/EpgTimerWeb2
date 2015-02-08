@@ -212,15 +212,15 @@ namespace EpgTimer
                         string[] a = s.Split('-');
                         string[] b = a[0].Split('.');
                         string[] c = a[1].Split('.');
-                        if (uint.Parse(a[1]) > 24 || uint.Parse(b[1]) > 24 || uint.Parse(a[2]) > 60 || uint.Parse(b[2]) > 60 || uint.Parse(a[0]) > 7 || uint.Parse(b[0]) > 7) return null;
+                        if (uint.Parse(c[1]) > 24 || uint.Parse(b[1]) > 24 || uint.Parse(c[2]) > 60 || uint.Parse(b[2]) > 60 || uint.Parse(c[0]) > 7 || uint.Parse(b[0]) > 7) return null;
                         return new EpgSearchDateInfo()
                         {
-                            startDayOfWeek = byte.Parse(a[0]),
-                            startHour = ushort.Parse(a[1]),
-                            startMin = ushort.Parse(a[2]),
-                            endDayOfWeek = byte.Parse(b[0]),
-                            endHour = ushort.Parse(b[1]),
-                            endMin = ushort.Parse(b[2])
+                            startDayOfWeek = byte.Parse(b[0]),
+                            startHour = ushort.Parse(b[1]),
+                            startMin = ushort.Parse(b[2]),
+                            endDayOfWeek = byte.Parse(c[0]),
+                            endHour = ushort.Parse(c[1]),
+                            endMin = ushort.Parse(c[2])
                         };
                     }).Where(p => p != null));
                 }
@@ -253,7 +253,7 @@ namespace EpgTimer
         }
         public static string Call(string Str, bool Indent = true, bool NotUseCache = false)
         {
-            string JsonData = "[]";
+            string JsonData = "";
             bool NotAddCache = false;
             try
             {
@@ -555,8 +555,9 @@ namespace EpgTimer
                 {
                     if (!Arg.ContainsKey("srvlist")) return JsonData;
                     List<EpgEventInfo> EpgResult = new List<EpgEventInfo>();
-                    CommonManager.Instance.CtrlCmd.SendSearchPg(new List<EpgSearchKeyInfo> { GetEpgSKey(Arg) }, ref EpgResult);
-                    JsonData = JsonUtil.Serialize(EpgResult.Select(s => new EventInfoItem(s)), Indent);
+                    ErrCode code = (ErrCode)CommonManager.Instance.CtrlCmd.SendSearchPg(new List<EpgSearchKeyInfo> { GetEpgSKey(Arg) }, ref EpgResult);
+                    if (code == ErrCode.CMD_SUCCESS)
+                        JsonData = JsonUtil.Serialize(EpgResult.Select(s => new EventInfoItem(s)), Indent);
                 }
                 else if (Command == "EnumEvents")
                 {

@@ -48,11 +48,11 @@ namespace EpgTimer
                 var PartName = Context.Request.Url.ToLower().Replace("/modules/", "").Replace("/", "\\");
                 if (PartName.IndexOf("..\\") < 0 && File.Exists(".\\web\\modules\\" + PartName))
                 {
-                    Context.Response.Headers.Add("Content-Type", Mime.Get(PartName, "application/javascript") + (PartName.EndsWith(".png") ? "" : " ;charset=UTF-8"));
-                    if (PartName.EndsWith(".png"))
-                        SendResponse(Context, File.ReadAllBytes(".\\web\\modules\\" + PartName));
-                    else
-                        SendResponse(Context, File.ReadAllText(".\\web\\modules\\" + PartName, Encoding.UTF8));
+                    string MimeType = Mime.Get(PartName, "application/javascript");
+                    if (!Mime.IsImage(PartName))
+                        MimeType += "; charset=utf-8";
+                    Context.Response.Headers.Add("Content-Type", MimeType);
+                    SendResponse(Context, File.ReadAllBytes(".\\web\\modules\\" + PartName));
                     Ret = true;
                 }
             }
@@ -64,7 +64,7 @@ namespace EpgTimer
                     case "/index.html":
                     case "/index.htm":
                         Context.Response.Headers.Add("Content-Type", "text/html; charset=UTF-8");
-                        SendResponse(Context, File.ReadAllText(".\\web\\index.html", Encoding.UTF8));
+                        SendResponse(Context, File.ReadAllBytes(".\\web\\index.html"));
                         Ret = true;
                         break;
                     case "/css/bootstrap.css":
@@ -74,7 +74,7 @@ namespace EpgTimer
                         break;
                     case "/css/main.css":
                         Context.Response.Headers.Add("Content-Type", "text/css");
-                        SendResponse(Context, File.ReadAllText(".\\web\\css\\main.css", Encoding.UTF8));
+                        SendResponse(Context, File.ReadAllBytes(".\\web\\css\\main.css"));
                         Ret = true;
                         break;
                     case "/img/not_thumb.png":

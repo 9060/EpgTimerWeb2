@@ -31,8 +31,14 @@ namespace EpgTimer
                     string Command = match.Groups[2].Value;
                     string Id = match.Groups[1].Value;
                     string JsonData = Api.Call(Command, false);
+                    byte[] Response = WebSocket.WebSocketMask(
+                                Encoding.UTF8.GetBytes("ERR No API"), 0x1);
+                    if (JsonData != "")
+                    {
+                        Response = Encoding.UTF8.GetBytes("+OK" + Id + " " + JsonData);
+                    }
                     HttpResponseGenerater.SendResponseBodyWS(Info, WebSocket.WebSocketMask(
-                                Encoding.UTF8.GetBytes("+OK" + Id + " " + JsonData), 0x1));
+                                    Response, 0x1));
                 }
                 else if (r.IsMatch(UnMask) && !Info.IsAuth)
                 {

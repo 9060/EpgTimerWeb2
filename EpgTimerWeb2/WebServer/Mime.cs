@@ -9,8 +9,25 @@ namespace EpgTimer
 {
     public class Mime
     {
+        public static bool IsImage(string path)
+        {
+            if (path.IndexOf(".") < 0) return false;
+            var split = path.Split(new char[] { '.' });
+            var ext = split[split.Length - 1];
+            switch (ext.ToLower())
+            {
+                case "png":
+                case "jpg":
+                case "bmp":
+                case "ico":
+                    return true;
+                default:
+                    return false;
+            }
+        }
         public static string Get(string path, string mimeProposed)
         {
+            if (path.IndexOf(".") < 0) return mimeProposed;
             var split = path.Split(new char[] { '.' });
             var ext = split[split.Length - 1];
             var key = Registry.ClassesRoot.OpenSubKey("." + ext);

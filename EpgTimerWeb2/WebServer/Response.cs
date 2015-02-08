@@ -97,28 +97,5 @@ namespace EpgTimer
             SendResponseHeader(Context, Context.Response.Headers);
             return SendResponseBody(Context, Context.Response.OutputStream);
         }
-        public static bool SendFileResponse(HttpContext Context, string Path)
-        {
-            using (FileStream Stream = new FileStream(Path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
-            {
-                if (!Context.Response.Headers.ContainsKey("Content-Length"))
-                {
-                    Context.Response.Headers["Content-Length"] = (new FileInfo(Path).Length).ToString();
-                }
-                Context.Response.Headers["Content-Type"] = Mime.Get(Path, "application/x-javascript");
-                SendResponseCode(Context);
-                SendResponseHeader(Context, Context.Response.Headers);
-                Stream.Position = 0;
-                if (!SendResponseBody(Context, Stream))
-                {
-                    Debug.Print(Path);
-                    Stream.Close();
-                    return false;
-                }
-                Stream.Close();
-            }
-            return true;
-        }
-        
     }
 }

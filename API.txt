@@ -1,0 +1,210 @@
+EpgTimerWeb2 API仕様
+
+
+1.呼び出し方、パラメータ、認証
+ EpgTimerWeb2のAPIはHTTPとWebSocketで提供される。
+ ・認証が必要な場合がある。
+ ・大文字と小文字は区別される
+ 1.1 WebSocketでの呼び出し方
+  WebSocketのURI： ws://[サーバー]/ws
+  ・エラー発生は「ERR [詳細]」が返る（ログイン時以外）
+  1.1.1 WebSocketでの認証
+   ・ログインエラー発生は「LERR [詳細]」が返る
+   ・未ログインは認証エラー(詳細なし)が返る
+   ・ログインが必要かどうかの確認は「L-CHECK」を送信する。
+    ・ログインが必要なときのレスポンス： 「-LA」が返る。
+    ・ログインが必要でないときのレスポンス： 「-LN」が返る。
+   ・実際のログインは「LOGIN [ユーザー名] [パスワード]」または「LOGIN [セッションID]」を送信する。
+    ・成功時レスポンス: 「+LOK [セッションID]」が返る。
+    ・失敗時レスポンス: 認証エラー 「No Auth」が返る。
+   ・ログアウトは「LOGOUT」を送信する。
+    ・成功すると「-LOK」が返る。
+    ・成功すると、それ以降のコマンドは：認証エラー(詳細なし)が返る。
+  1.1.2 WebSocketでのAPI呼び出し
+   ・API呼び出しは「RUNCMD [コールバック] [API呼び出し文字列]」を送信する。
+   ・成功すると、「+OK[コールバック] [APIのレスポンス(JSON)]」が返る。
+    ・「+OK」と「[コールバック]」の間にスペースはない。
+   ・失敗時はエラー「No API」が返る。
+ 1.2 HTTPでの呼び出し方
+  1.2.1 HTTPでの認証
+   呼び出すURI: http://[サーバー]/auth/;[ユーザー名]=[パスワード]
+   ・JSONで結果が返る
+   ------------------------------
+    +[RootNode]
+     +[error]:[BOOL] //成功: true
+     +[sess]:[STRING] //成功時のみ
+    +[/RootNode]
+   -----------------------------
+  1.2.2 HTTPでのAPI呼び出し
+ 　呼び出すURI: http://[サーバー]/api/[API呼び出し文字列]/;[セッションID]
+   呼び出すURI(JSONP): http://[サーバー]/api/[API呼び出し文字列]/json/[コールバック]/;[セッションID]
+   ・JSONで結果が返る
+ 1.3 API呼び出し文字列
+  形式: [API名]/[パラメータ]
+  1.3.1 パラメータ
+   一つのパラメータの形式(key,val): [Key]=[Val]
+   一つのパラメータの形式(keyのみ): [Key]
+   パラメータは「/」でつながる。
+  例: GenerateEpgHTML/maxhour=12/epgcaponly/minsize=5
+2 API一覧
+ TYPEはレスポンスの型、ResultInfoは
+ --------
+ class ResultInfo
+ {
+  bool result;
+ }
+ --------
+ ↑これ
+ PARAMはパラメータ、配列は「,」でつなぐ
+ [PRESET]は
+ --------
+ class PRESET {
+  bool savedata;
+  bool savecaption;
+  bool usepittari;
+  bool usetuijyuul
+  byte suspendmode;
+  int marginestart;
+  int margineend;
+  bool usepartial;
+  //RecFolder, WritePlugIn, RecNameを「:」でつないで1Item
+  //配列だが接続は「*」で行うので注意
+  string[] partialdir;
+  bool continuerec;
+  int tuner;
+  byte priority;
+  byte recmode;
+ }
+ --------
+ [SEARCH]は
+ --------
+ class SEARCH
+ {
+  //「*」で全て
+  string[] srvlist;
+  //ContentNibbleLevel1,ContentNibbleLevel2,UserNibble1,UserNibble2を「.」でつなぐ
+  //配列OK
+  string[] content;
+  bool notcontent;
+  bool useregex;
+  bool aimai;
+  // Title only
+  bool tonly;
+  // Keyword
+  string kw;
+  //FreeCA
+  byte freeca;
+  //時間指定
+  //1つの形式: 「[startDayOfWeek].[startHour].[startMin]-[endDayOfWeek].[endHour].[endMin]」
+  string[] date;
+  bool notdate;
+ }
+ ・EnumReserve
+   予約一覧を取得
+   TYPE: ReserveData[]
+ ・EnumService
+   サービス一覧を取得
+   TYPE: ChSet5Item[]
+ ・EnumRecFileInfo
+   録画一覧を取得
+   TYPE: RecFileInfo[]
+ ・GenerateEpgHTML
+   EPGのHTMLを作る
+   PARAM: [maxhour:INT],[unixstart:UNIXTIME],[services:ULONG[]],[minsize:INT],[epgcaponly:BOOL],[setbg:BOOL],[search:BOOL],[SEARCH]
+    maxhour: 最大表示時間
+    unixstart: 表示開始時間
+    services: ServiceKeyの配列
+    minsize: 一分あたりのサイズ(px)
+    epgcaponly: ChSet5でEpgCapFlag == 1のみ表示
+    setbg: ジャンルごとに色を付ける
+    search==trueのみ[SEARCH]が必要
+   TYPE: String
+ ・EnumServiceEvent
+   EPGデータを取得
+   PARAM: [maxhour:INT],[key:INT],[unixstart:UNIXTIME]
+    maxhour: 最大表示時間
+    unixstart: 表示開始時間
+    key: サービス指定(ServiceKey)
+   TYPE: Dictionary<string, List<EventInfoItem>>
+ ・GetEpgEvent
+   EPGデータからひとつのイベントを取得
+   PARAM: [key:INT],[o:INT],[t:INT],[s:INT],[e:INT]
+          keyかo,t,s,eは必須
+   o => ONID, t => TSID, s => SID, e => EventID
+   TYPE: EventInfoItem
+ ・EnumContentKindList1
+   TYPE: Dictionary<UInt16, ContentKindInfo>
+ ・EnumContentKindList2
+   TYPE: Dictionary<UInt16, ContentKindInfo>
+ ・EnumWritePlugInList
+   TYPE: Dictionary<Int32, String>
+ ・EnumRecNamePlugInList
+   TYPE: Dictionary<Int32, String>
+ ・EnumEpgAutoAddList
+   自動予約一覧を取得
+   TYPE: Dictionary<UInt32, EpgAutoAddData>
+ ・EpgCapNow
+   EPG取得を開始
+ ・EpgReload
+   EpgTimerSrvでEPGをリロード
+ ・EnumTunerReserve
+   チューナー別の予約一覧
+   TYPE: List<TunerReserveInfo>
+ ・GetSetting
+   TYPE: Setting
+ ・GetCommonManager
+   TYPE: CommonManagerJson
+ ・AddReserve
+   予約追加
+   PARAM: [PRESET],[onid:INT],[sid:INT],[tsid:INT],[eid:INT]
+          onid,sid,tsid,eid(EventID)は必須
+   TYPE: ResultInfo
+ ・AddAutoReserve
+   自動予約追加
+   PARAM: [SEARCH],[PRESET],[overlap_check:BOOL],[overlap_day:INT]
+   TYPE: EpgAutoAddData
+ ・EnumPresets
+   TYPE: Dictionary<UInt32, KeyValuePair<RecPresetItem, RecSettingData>>
+ ・AddPreset
+   PARAM: [name:STRING],[PRESET]
+   TYPE: KeyValuePair<RecPresetItem, RecSettingData>
+ ・EpgSearch
+   EPG検索を行う
+   PARAM: [SEARCH]
+   TYPE: List<EventInfoItem>
+ ・EnumEvents
+   TYPE: List<NotifySrvInfoItem>
+ ・GetContentColorTable
+   TYPE: List<ContentColorItem>
+ ・SetContentColorTable
+   PARAM: [id:INT],[color:STRING]
+                    ↑形式: #RRGGBB (つまりCSSのあれ)
+          どちらも必須
+   TYPE: ResultInfo
+ ・RemoveReserve
+   予約削除
+   PARAM: [id:INT]
+          idは必須
+   TYPE: ResultInfo
+ ・RemoveAutoReserve
+   自動予約削除
+   PARAM: [id:INT]
+          idは必須
+   TYPE: ResultInfo
+ ・RemoveManualReserve
+   マニュアル予約削除
+   PARAM: [id:INT]
+          idは必須
+   TYPE: ResultInfo
+ ・RemoveRecFile
+   録画データ削除
+   PARAM: [id:INT]
+          idは必須
+   TYPE: ResultInfo
+ ・UpdateReserve
+   予約更新
+   PARAM: [id:INT],[PRESET]
+   TYPE: ResultInfo
+ ・Hello
+   (´・ω・`)
+   TYPE: VersionInfo

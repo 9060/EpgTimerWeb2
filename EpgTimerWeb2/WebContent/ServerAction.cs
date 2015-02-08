@@ -15,8 +15,11 @@ namespace EpgTimer
 {
     public class ServerAction
     {
+        //                                   API         CB     SESS
         static Regex r = new Regex(@"^\/api\/(.*)\/json\/(.*)\/;(.*)$");
+        //                                    API    SESS
         static Regex r1 = new Regex(@"^\/api\/(.*)\/;(.*)$");
+        //                                      ID    PW
         static Regex r2 = new Regex(@"^\/auth\/;(.*)\=(.*)$");
         public static void SetupProcess(HttpContext Context)
         {
@@ -138,10 +141,18 @@ namespace EpgTimer
                 {
                     string Json = Api.Call(
                         r.Match(Info.Request.Url).Groups[1].Value);
-                    string cb = r.Match(Info.Request.Url).Groups[2].Value + "(";
-                    byte[] Res = Encoding.UTF8.GetBytes(cb + Json + ");");
-                    Info.Response.Headers["Content-Type"] = "application/javascript; charset=utf8";
-                    Info.Response.OutputStream.Write(Res, 0, Res.Length);
+                    if (Json != "")
+                    {
+                        string cb = r.Match(Info.Request.Url).Groups[2].Value + "(";
+                        byte[] Res = Encoding.UTF8.GetBytes(cb + Json + ");");
+                        Info.Response.Headers["Content-Type"] = "application/javascript; charset=utf8";
+                        Info.Response.OutputStream.Write(Res, 0, Res.Length);
+                    }
+                    else
+                    {
+                        Info.Response.StatusCode = 404;
+                        Info.Response.StatusText = "API Not Found";
+                    }
                 }
                 else
                 {
@@ -159,9 +170,17 @@ namespace EpgTimer
                 {
                     string Json = Api.Call(
                         r1.Match(Info.Request.Url).Groups[1].Value);
-                    byte[] Res = Encoding.UTF8.GetBytes(Json);
-                    Info.Response.Headers["Content-Type"] = "application/javascript; charset=utf8";
-                    Info.Response.OutputStream.Write(Res, 0, Res.Length);
+                    if (Json != "")
+                    {
+                        byte[] Res = Encoding.UTF8.GetBytes(Json);
+                        Info.Response.Headers["Content-Type"] = "application/javascript; charset=utf8";
+                        Info.Response.OutputStream.Write(Res, 0, Res.Length);
+                    }
+                    else
+                    {
+                        Info.Response.StatusCode = 404;
+                        Info.Response.StatusText = "API Not Found";
+                    }
                 }
                 else
                 {
