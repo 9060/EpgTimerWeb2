@@ -19,9 +19,9 @@ namespace EpgTimer
             DateTime End = Start.AddHours(MaxHour);
             StringBuilder sb = new StringBuilder();
             StringBuilder sb1 = new StringBuilder();
-            sb1.Append("<div id=\"epg\">");
-            sb1.Append("<div id=\"header\">");
-            sb1.Append("<div class=\"time\">時間</div>");
+            sb1.Append("<div id=\"epg\">\n");
+            sb1.Append("<div id=\"header\">\n");
+            sb1.Append("<div class=\"time\">時間</div>\n");
             //Select Item
             var Out = new Dictionary<EpgServiceInfo, List<EventInfoItem>>();
             var List = new Dictionary<ulong, EpgServiceEventInfo>();
@@ -47,6 +47,8 @@ namespace EpgTimer
 
             if (Search != null)
             {
+                Start = DateTime.MinValue;
+                End = DateTime.MaxValue;
                 List<EpgEventInfo> Events = new List<EpgEventInfo>();
                 var Res = CommonManager.Instance.CtrlCmd.SendSearchPg(new List<EpgSearchKeyInfo>() { Search }, ref Events);
                 if ((ErrCode)Res != ErrCode.CMD_SUCCESS || Events.Count == 0) return "";
@@ -75,20 +77,60 @@ namespace EpgTimer
             {
                 if (ServiceKeys != null && ServiceKeys.Count != 0 && !ServiceKeys.Contains(a.Key)) continue;
                 if (EpgCapOnly && (!ChSet5.Instance.ChList.ContainsKey(a.Key) || ChSet5.Instance.ChList[a.Key].EpgCapFlag != 1)) continue;
-                Out.Add(
-                    a.Value.serviceInfo,
-                    a.Value.eventList
-                        .Where(b => b.start_time < End && b.start_time.AddSeconds(b.durationSec) > Start)
-                        .OrderBy(d => d.start_time)
-                        .Select(e => new EventInfoItem(e))
-                        .ToList()
-                    );
+                if (Search == null)
+                {
+                    Out.Add(
+                        a.Value.serviceInfo,
+                        a.Value.eventList
+                            .Where(b => b.start_time < End && b.start_time.AddSeconds(b.durationSec) > Start)
+                            .OrderBy(d => d.start_time)
+                            .Select(e => new EventInfoItem(e))
+                            .ToList()
+                        );
+                }
+                else
+                {
+                    Out.Add(
+                        a.Value.serviceInfo,
+                        a.Value.eventList
+                            .Select(e => new EventInfoItem(e))
+                            .ToList()
+                        );
+                }
+            }
+            SortedList<DateTime, DateTime> TimeList = new SortedList<DateTime, DateTime>(); ;
+            foreach (var Item3 in Out.Values)
+            {
+                foreach (var Item2 in Item3)
+                {
+                    var TempDate = Item2.Start;
+                    var TempDate2 = Item2.End;
+                    if (TempDate < Start)
+                        TempDate = Start;
+                    if (TempDate2 > End)
+                        TempDate2 = End;
+                    if (UnixTime.ToUnixTime(TempDate) % 3600 != 0)
+                        TempDate = TempDate.AddSeconds(-1 * (UnixTime.ToUnixTime(TempDate) % 3600));
+                    for (; TempDate < TempDate2; )
+                    {
+                        TimeList[TempDate] = TempDate;
+                        TempDate = TempDate.AddHours(1);
+                    }
+                }
             }
 
-
-            sb.Append("</div><div id=\"body\">");
+            sb.Append("</div><div id=\"body\">\n");
             //Print Time
-            sb.Append("<div id=\"timeline\" class=\"list\">");
+            sb.Append("<div id=\"timeline\" class=\"list\">\n");
+            for (int i = 0; i < TimeList.Values.Count; i++)
+            {
+                DateTime Temp = TimeList.Values[i];
+                string Text = (TimeList.Values.Count(s => s < Temp && s > Temp.AddHours(-1 * Temp.Hour)) == 0) ? "<p>" + Temp.Month + "/" + Temp.Day + "</p>" + Temp.Hour : Temp.Hour.ToString();
+                sb.AppendFormat("<div style=\"height: {1}px;top: {2}px;\">{0}</div>\n", Text, MinSize * 60, MinSize * 60 * i);
+                Debug.Print(Temp.ToString());
+            }
+            sb.Append("</div>\n");
+            /*
             DateTime Temp = StartTime.AddSeconds(StartTime.Second * -1).AddMinutes(StartTime.Minute * -1);
             for (int i = 0; i < MaxHour; i++)
             {
@@ -97,7 +139,7 @@ namespace EpgTimer
                 Temp = Temp.AddHours(1);
             }
             sb.Append("</div>");
-
+            */
             //Print EPG
             foreach (var Item in Out)
             {
@@ -129,9 +171,19 @@ namespace EpgTimer
                         if (Size <= 0) continue;
                         string StartTimeStr = Event.Start.ToString("HH:mm");
                         var EventName = String.Format("{0} <span title=\"{1}\">{1}</span><p>{2}</p>", StartTimeStr,
-                            HttpUtility.HtmlEncode(Event.Short.event_name), 
+                            HttpUtility.HtmlEncode(Event.Short.event_name),
                             HttpUtility.HtmlEncode(Event.Short.text_char));
-                        long Top = (UnixTime.ToUnixTime(EventStart) - UnixTime.ToUnixTime(Start)) / 60 * MinSize;
+                        DateTime Time1 = EventStart;
+                        long Top = 0;
+                        if (UnixTime.ToUnixTime(Time1) % 3600 != 0)
+                            Time1 = Time1.AddSeconds(-1 * (UnixTime.ToUnixTime(Time1) % 3600));
+                        foreach (var Time2 in TimeList.Values)
+                        {
+                            if (Time1 == Time2) break;
+                            Top += MinSize * 60;
+                        }
+                        Top += EventStart.Minute * MinSize;
+                        //long Top = (UnixTime.ToUnixTime(EventStart) - UnixTime.ToUnixTime(Start)) / 60 * MinSize;
                         var Reserve = CommonManager.Instance.DB.ReserveList.Values.Where(s =>
                             s.EventID == Event.EID &&
                             s.ServiceID == Event.SID &&
@@ -147,18 +199,18 @@ namespace EpgTimer
                                     Setting.Instance.ContentToColorTable
                                         .Where(s => s.ContentLevel1 == Event.Content.nibbleList[0].content_nibble_level_1).First().Color, Size, Top, AddClass, ItemCount);
                             else
-                                sb2.AppendFormat("<div class=\"event{4}\" data-e=\"{0}\" style=\"top: {3}px;min-height: {2}px;max-height: {2}px;z-index: {5};\">{1}</div>", 
+                                sb2.AppendFormat("<div class=\"event{4}\" data-e=\"{0}\" style=\"top: {3}px;min-height: {2}px;max-height: {2}px;z-index: {5};\">{1}</div>",
                                     Event.EID, EventName, Size, Top, AddClass, ItemCount);
                         }
                         else
                         {
-                            sb2.AppendFormat("<div class=\"event {4}\" data-e=\"{0}\" style=\"top: {3}px;min-height: {2}px;max-height: {2}px;z-index: {5};\">{1}</div>", 
+                            sb2.AppendFormat("<div class=\"event {4}\" data-e=\"{0}\" style=\"top: {3}px;min-height: {2}px;max-height: {2}px;z-index: {5};\">{1}</div>",
                                 Event.EID, EventName, Size, Top, AddClass, ItemCount);
                         }
                         ItemCount++;
                     }
                     sb.Append(sb2.ToString());
-                    if(Item.Key.remote_control_key_id == 0)
+                    if (Item.Key.remote_control_key_id == 0)
                         sb1.AppendFormat("<div>{0}<p>{1}</p></div>", Item.Key.service_name, Item.Key.network_name + " " + Item.Key.SID);
                     else
                         sb1.AppendFormat("<div>{0}<p>{1}</p></div>", Item.Key.service_name, Item.Key.remote_control_key_id);
@@ -166,6 +218,7 @@ namespace EpgTimer
                 sb.Append("</div>");
             }
             sb.Append("</div>");
+
             return sb1.ToString() + sb.ToString();
         }
     }
