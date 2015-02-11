@@ -28,7 +28,7 @@ EpgTimerWeb2 API仕様
  1.2 HTTPでの呼び出し方
   1.2.1 HTTPでの認証
    呼び出すURI: http://[サーバー]/auth/;[ユーザー名]=[パスワード]
-   ・JSONで結果が返る
+   ・JSONで結果が返る。失敗時は401が返る
    ------------------------------
     +[RootNode]
      +[error]:[BOOL] //成功: true
@@ -47,6 +47,10 @@ EpgTimerWeb2 API仕様
    パラメータは「/」でつながる。
   例: GenerateEpgHTML/maxhour=12/epgcaponly/minsize=5
 2 API一覧
+ パラメータの型BOOLはそれがあるかで判断される。
+ Ex. [usexxx:BOOL]はusexxxありでtrueなしでfalse
+   つまり「.../usexxx/...」 => usexxx true
+   「.../...」 => usexxx false
  TYPEはレスポンスの型、ResultInfoは
  --------
  class ResultInfo
@@ -59,10 +63,11 @@ EpgTimerWeb2 API仕様
  [PRESET]は
  --------
  class PRESET {
-  bool savedata;
-  bool savecaption;
-  bool usepittari;
-  bool usetuijyuul
+  //Example: savecaption/usepittari/priority=2 =>字幕保存、データカルーセルなし、優先度2
+  bool savedata; //データカルーセル
+  bool savecaption; //字幕
+  bool usepittari; //ぴったり
+  bool usetuijyuu; //追従
   byte suspendmode;
   int marginestart;
   int margineend;
@@ -80,9 +85,9 @@ EpgTimerWeb2 API仕様
  --------
  class SEARCH
  {
-  //「*」で全て
+  //「*」で全て、配列
   string[] srvlist;
-  //ContentNibbleLevel1,ContentNibbleLevel2,UserNibble1,UserNibble2を「.」でつなぐ
+  //ContentNibbleLevel1,ContentNibbleLevel2,UserNibble1,UserNibble2を「.」でつなぐ(0.0.0.0のように)
   //配列OK
   string[] content;
   bool notcontent;
