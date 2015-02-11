@@ -1,9 +1,11 @@
-﻿using System;
+﻿using EpgTimerWeb2;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace EpgTimer
@@ -26,6 +28,7 @@ namespace EpgTimer
     {
         public static HttpRequest Parse(Stream Input)
         {
+            
             var Start = HttpCommon.StreamReadLine(Input);
             var Request = Start.Split(' ');
             if (Request.Length != 3)
@@ -33,7 +36,6 @@ namespace EpgTimer
                 throw new Exception("Invalid Http Request " + Start);
             }
             var Headers = HttpHeader.Parse(Input);
-            var Pos = Request[1].IndexOf("?");
             var Res = new HttpRequest()
             {
                 Method = Request[0].ToUpper(),
@@ -46,23 +48,14 @@ namespace EpgTimer
             };
             if (Headers.ContainsKey("content-length")) //POSTかも
             {
+                Input.ReadTimeout = 1000;
                 var ContentLength = 0;
                 if (int.TryParse(Headers["content-length"], out ContentLength))
                 {
-                    var Buffer = new byte[1024];
-                    var BufferList = new List<byte>();
-                    int Size = 0, AllSize = 0;
-                    int oldTo = Input.ReadTimeout;
-                    Input.ReadTimeout = 500;
-                    while ((Size = Input.Read(Buffer, 0, Buffer.Length)) != 0)
-                    {
-                        BufferList.AddRange(Buffer.Take(Size));
-                        AllSize += Size;
-                        if (AllSize >= ContentLength) break; //全て読んだ
-                    }
-                    Input.ReadTimeout = oldTo;
-                    Res.PostData = BufferList.ToArray();
+                    if(ContentLength < Setting.Instance.MaxUploadSize && ContentLength > 0)
+                        Res.PostData = Util.ReadStream(Input, ContentLength);
                 }
+                Input.ReadTimeout = Timeout.Infinite;
             }
             if (Res.RawUrl.IndexOf("?") > 0) //GETかも
             {

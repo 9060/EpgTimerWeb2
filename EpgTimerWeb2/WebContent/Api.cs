@@ -133,22 +133,32 @@ namespace EpgTimer
         public static EpgSearchKeyInfo GetEpgSKey(Dictionary<string, string> Arg)
         {
             var e = new EpgSearchKeyInfo();
-            if (Arg["srvlist"].IndexOf(",") > 0)
+            if (Arg.ContainsKey("srvlist"))
             {
-                e.serviceList = Arg["srvlist"].Split(',').Select(s => long.Parse(s)).ToList();
-            }
-            else
-            {
-                if (Arg["srvlist"] == "*")
+                if (Arg["srvlist"].IndexOf(",") > 0)
                 {
-                    foreach (var ch in ChSet5.Instance.ChList)
-                    {
-                        e.serviceList.Add((long)ch.Value.Key);
-                    }
+                    e.serviceList = Arg["srvlist"].Split(',').Select(s => long.Parse(s)).ToList();
                 }
                 else
                 {
-                    e.serviceList.Add(long.Parse(Arg["srvlist"]));
+                    if (Arg["srvlist"] == "*")
+                    {
+                        foreach (var ch in ChSet5.Instance.ChList)
+                        {
+                            e.serviceList.Add((long)ch.Value.Key);
+                        }
+                    }
+                    else
+                    {
+                        e.serviceList.Add(long.Parse(Arg["srvlist"]));
+                    }
+                }
+            }
+            else
+            {
+                foreach (var ch in ChSet5.Instance.ChList)
+                {
+                    e.serviceList.Add((long)ch.Value.Key);
                 }
             }
             if (Arg.ContainsKey("content") && Arg["content"].IndexOf(".") > 0)

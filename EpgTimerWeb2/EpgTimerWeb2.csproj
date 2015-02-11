@@ -92,6 +92,7 @@
     <Compile Include="EpgDataCap_Bon\ServiceItem.cs" />
     <Compile Include="EpgDataCap_Bon\ServiceItem2.cs" />
     <Compile Include="EpgDataCap_Bon\YesNoInfo.cs" />
+    <Compile Include="Plugin\IEpgTimerWeb2Plugin.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
@@ -105,11 +106,13 @@
     <Compile Include="Util\PresetDb.cs" />
     <Compile Include="Util\Setting.cs" />
     <Compile Include="Util\UnixTime.cs" />
+    <Compile Include="Util\Util.cs" />
     <Compile Include="Util\VersionInfo.cs" />
     <Compile Include="WebContent\EpgPage.cs" />
     <Compile Include="WebContent\HttpContent.cs" />
     <Compile Include="WebContent\HttpSession.cs" />
     <Compile Include="WebContent\Api.cs" />
+    <Compile Include="WebContent\Setup.cs" />
     <Compile Include="WebServer\Common.cs" />
     <Compile Include="WebServer\Header.cs" />
     <Compile Include="WebServer\Context.cs" />
