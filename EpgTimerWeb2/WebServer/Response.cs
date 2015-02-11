@@ -30,9 +30,27 @@ namespace EpgTimer
         public int StatusCode { get; set; }
         public string StatusText { get; set; }
         private HttpContext context;
+        public void SetStatus(int Code, string Text)
+        {
+            StatusCode = Code;
+            StatusText = Text;
+        }
     }
     public class HttpResponseGenerater
     {
+        public static void NotFound(HttpContext Context)
+        {
+            byte[] NotFound = Encoding.UTF8.GetBytes(@"<html>
+<body>
+<h1>404 - Not found</h1>
+<hr />
+EpgTimerWeb(v2) by YUKI
+</body>
+</html>");
+            Context.Response.SetStatus(404, "Not Found");
+            Context.Response.OutputStream.Write(NotFound, 0, NotFound.Length);
+            Context.Response.Send();
+        }
         public static bool SendResponseHeader(HttpContext Context, IDictionary<string,string> Input)
         {
             var HeaderText = Encoding.UTF8.GetBytes(HttpHeader.Generate(Input) + "\r\n");
