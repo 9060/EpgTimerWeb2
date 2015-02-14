@@ -19,7 +19,8 @@ namespace EpgTimer
             {
                 {"Server", "EpgTimerWeb2/1.0"},
                 {"Date", DateTime.Now.ToString("R")},
-                {"Content-Language", "ja"}
+                {"Content-Language", "ja"},
+                {"Connection", "close"}
             };
             context = c;
         }

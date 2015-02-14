@@ -59,7 +59,7 @@ namespace EpgTimer
         }
         
         private void AcceptRequest(IAsyncResult Result)
-        { 
+        {
             try
             {
                 var RequsetListener = (TcpListener)Result.AsyncState;
@@ -67,12 +67,15 @@ namespace EpgTimer
                 RequsetListener.BeginAcceptTcpClient(AcceptRequest, RequsetListener);
                 var Client = RequsetListener.EndAcceptTcpClient(Result);
                 var IP = ((IPEndPoint)Client.Client.RemoteEndPoint).Address;
-                ServerAction.DoProcess(Client);
+                try
+                {
+                    ServerAction.DoProcess(Client);
+                }
+                catch (TimeoutException to)
+                {
+                    Debug.Print("Timeout: {0}", to.Message);
+                }
                 Client.Close();
-            }
-            catch (TimeoutException to)
-            {
-                Debug.Print("Timeout: {0}", to.Message);
             }
             catch (Exception ex)
             {

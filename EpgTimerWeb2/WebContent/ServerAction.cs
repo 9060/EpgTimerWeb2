@@ -200,8 +200,7 @@ EpgTimerWeb(v2) by YUKI
                 Info.Response.Send();
                 Console.WriteLine("\n!!!! Exception !!!!");
             }
-            if (Info.Request.Headers.ContainsKey("connection") &&
-                Info.Request.Headers["connection"].ToLower() == "keep-alive") DoProcess(Client); //KeepAlive対応(適当)
+            
             Info.Close();
         }
 
