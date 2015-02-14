@@ -17,6 +17,7 @@ namespace EpgTimer
             OutputStream = new MemoryStream();
             Headers = new Dictionary<string, string>()
             {
+                {"Server", "EpgTimerWeb2/1.0"}
             };
             context = c;
         }

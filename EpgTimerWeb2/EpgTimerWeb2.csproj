@@ -92,7 +92,6 @@
     <Compile Include="EpgDataCap_Bon\ServiceItem.cs" />
     <Compile Include="EpgDataCap_Bon\ServiceItem2.cs" />
     <Compile Include="EpgDataCap_Bon\YesNoInfo.cs" />
-    <Compile Include="Plugin\IEpgTimerWeb2Plugin.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
