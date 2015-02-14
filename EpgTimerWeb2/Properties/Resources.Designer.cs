@@ -187,6 +187,29 @@ namespace EpgTimerWeb2.Properties {
         }
         
         /// <summary>
+        ///   &lt;!DOCTYPE html&gt;
+        ///
+        ///&lt;html lang=&quot;ja&quot; xmlns=&quot;http://www.w3.org/1999/xhtml&quot;&gt;
+        ///&lt;head&gt;
+        ///    &lt;meta charset=&quot;utf-8&quot; /&gt;
+        ///    &lt;title&gt;&lt;/title&gt;
+        ///    &lt;script src=&quot;/modules/jquery.js&quot;&gt;&lt;/script&gt;
+        ///    &lt;script src=&quot;/modules/bootstrap.js&quot;&gt;&lt;/script&gt;
+        ///    &lt;link rel=&quot;stylesheet&quot; href=&quot;/css/bootstrap.css&quot; /&gt;
+        ///    &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1&quot;&gt;
+        ///    &lt;style&gt;
+        ///        #user {
+        ///            margin-bottom: -1px;
+        ///            border-bottom-right-radius: 0;
+        ///            border-bottom-left-radius: 0; [残りの文字列は切り詰められました]&quot;; に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string Login {
+            get {
+                return ResourceManager.GetString("Login", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   //EpgDataCap_Bon
         ///$(document).ready(function () {
         ///    $(&quot;button[data-toggle=&apos;tooltip&apos;]&quot;).tooltip();
@@ -227,39 +250,6 @@ namespace EpgTimerWeb2.Properties {
         public static string Respond {
             get {
                 return ResourceManager.GetString("Respond", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   body {
-        ///            padding-top: 100px;
-        ///        }
-        ///
-        ///        #records, #reserves {
-        ///            max-height: 300px;
-        ///            overflow: auto;
-        ///        }
-        ///
-        ///        #inner table {
-        ///            max-width: 150px;
-        ///        }
-        ///
-        ///        #refresh {
-        ///            cursor: pointer;
-        ///        }
-        ///
-        ///        #loading {
-        ///            position: fixed;
-        ///            top: 0px;
-        ///            left: 0px;
-        ///            background: rgba(0, 0, 0, 0.30);
-        ///            width: 100%;
-        ///            height: 100%;
-        ///            z-index: 9999; [残りの文字列は切り詰められました]&quot;; に類似しているローカライズされた文字列を検索します。
-        /// </summary>
-        public static string Style {
-            get {
-                return ResourceManager.GetString("Style", resourceCulture);
             }
         }
     }

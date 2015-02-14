@@ -1,4 +1,5 @@
 ﻿using EpgTimerWeb2;
+using EpgTimerWeb2.Properties;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -15,25 +16,65 @@ namespace EpgTimer
 {
     public class ServerAction
     {
-        private static string HTTPAPIRequest(string CallStr, string Sess, string IP)
+        private static string HTTPAPIRequest(string CallStr)
         {
-            if (HttpSession.IsMatch(Sess, IP) || !Setting.Instance.ReqAuth)
+            string Json = Api.Call(CallStr);
+            if (Json != "")
             {
-                string Json = Api.Call(CallStr);
-                if (Json != "")
-                {
-                    return Json;
-                }
-                return "\x00";
+                return Json;
             }
-            return "\x11";
+            return "\x00";
         }
-        //                                   API         CB     SESS
-        static Regex r = new Regex(@"^\/api\/(.*)\/json\/(.*)\/;?(.*)$");
-        //                                    API    SESS
-        static Regex r1 = new Regex(@"^\/api\/(.*)\/;?(.*)$");
-        //                                      ID    PW
-        static Regex r2 = new Regex(@"^\/auth\/;(.*)\=(.*)$");
+        private static void LoginURL(HttpContext Info)
+        {
+            Info.Response.Headers["Cache-Control"] = "no-cache";
+            if (CheckCookie(Info))
+            {
+                HttpContext.Redirect(Info, "/");
+                return;
+            }
+            Info.Response.Headers["Content-Type"] = "text/html";
+            Info.Response.Headers["Cache-Control"] = "no-cache";
+            HttpContext.SendResponse(Info, Resources.Login);
+        }
+        private static void DoLoginURL(HttpContext Info)
+        {
+            Info.Response.Headers["Cache-Control"] = "no-cache";
+            if (CheckCookie(Info))
+            {
+                HttpContext.Redirect(Info, "/");
+                return;
+            }
+            var Param = HttpUtility.ParseQueryString(Info.Request.PostString);
+            string UserName = Param["user"];
+            string Password = Param["pass"];
+            if (string.IsNullOrWhiteSpace(UserName) || string.IsNullOrWhiteSpace(Password))
+            {
+                HttpContext.Redirect(Info, "/login");
+                return;
+            }
+            HttpSession Session = new HttpSession(UserName, Password, Info.IpAddress);
+            if (!Session.CheckAuth(Session.SessionKey, Info.IpAddress))
+            {
+                HttpContext.Redirect(Info, "/login");
+                return;
+            }
+            Info.Response.Headers["Set-Cookie"] = Cookie.Generate(new Cookie(){
+                {"session", Session.SessionKey}
+            });
+            HttpContext.Redirect(Info, "/");
+        }
+        private static bool CheckCookie(HttpContext Info)
+        {
+            if (!Setting.Instance.ReqAuth || (Info.Request.Cookie.ContainsKey("session") && HttpSession.IsMatch(Info.Request.Cookie["session"], Info.IpAddress)))
+                return true;
+            else
+                return false;
+        }
+        //                                   API         CB
+        static Regex r = new Regex(@"^\/api\/(.*)\/json\/(.*)\/$");
+        //                                    API
+        static Regex r1 = new Regex(@"^\/api\/(.*)\/$");
         public static void DoProcess(TcpClient Client)
         {
             var Info = new HttpContext(Client);
@@ -45,32 +86,50 @@ namespace EpgTimer
                     Setup.SetupProcess(Info);
                     return;
                 }
-                if (Info.Request.Url == "/ws") //WebSocket
+                if (Info.Request.Url.ToLower() == "/ws") //WebSocket
                 {
-                    WebSocket.HandshakeResponseSend(Info);
-                    SocketAction.Process(Info);
-                    Info.Close();
-                    return;
-                }
-
-                if (r.IsMatch(Info.Request.Url))
-                {
-                    string Sess = r.Match(Info.Request.Url).Groups[3].Value;
-                    string Result = HTTPAPIRequest(r.Match(Info.Request.Url).Groups[1].Value, Sess, Info.IpAddress);
-                    if (Result == "\x11")
+                    Info.Response.Headers["Cache-Control"] = "no-cache";
+                    if (CheckCookie(Info))
                     {
-                        Info.Response.SetStatus(401, "Unauthorixed");
-                    }
-                    else if (Result == "\x00")
-                    {
-                        Info.Response.SetStatus(404, "Not Found");
+                        WebSocket.HandshakeResponseSend(Info);
+                        SocketAction.Process(Info);
                     }
                     else
                     {
-                        string cb = r.Match(Info.Request.Url).Groups[2].Value + "(";
-                        byte[] Res = Encoding.UTF8.GetBytes(cb + Result + ");");
-                        Info.Response.Headers["Content-Type"] = "application/javascript; charset=utf8";
-                        Info.Response.OutputStream.Write(Res, 0, Res.Length);
+                        Info.Response.SetStatus(401, "Unauthorixed");
+                    }
+                    Info.Close();
+                    return;
+                }
+                if (Info.Request.Url.ToLower() == "/login")
+                {
+                    LoginURL(Info);
+                }
+                if (Info.Request.Url.ToLower() == "/dologin")
+                {
+                    DoLoginURL(Info);
+                }
+                if (r.IsMatch(Info.Request.Url))
+                {
+                    Info.Response.Headers["Cache-Control"] = "no-cache";
+                    if (CheckCookie(Info))
+                    {
+                        string Result = HTTPAPIRequest(r.Match(Info.Request.Url).Groups[1].Value);
+                        if (Result == "\x00")
+                        {
+                            Info.Response.SetStatus(404, "Not Found");
+                        }
+                        else
+                        {
+                            string cb = r.Match(Info.Request.Url).Groups[2].Value + "(";
+                            byte[] Res = Encoding.UTF8.GetBytes(cb + Result + ");");
+                            Info.Response.Headers["Content-Type"] = "application/javascript; charset=utf8";
+                            Info.Response.OutputStream.Write(Res, 0, Res.Length);
+                        }
+                    }
+                    else
+                    {
+                        Info.Response.SetStatus(401, "Unauthorixed");
                     }
                     Info.Response.Send();
                     Info.Close();
@@ -78,47 +137,30 @@ namespace EpgTimer
                 }
                 else if (r1.IsMatch(Info.Request.Url))
                 {
-                    string Sess = r1.Match(Info.Request.Url).Groups[2].Value;
-                    string Result = HTTPAPIRequest(r1.Match(Info.Request.Url).Groups[1].Value, Sess, Info.IpAddress);
-                    if (Result == "\x11")
+                    Info.Response.Headers["Cache-Control"] = "no-cache";
+                    if (CheckCookie(Info))
                     {
-                        Info.Response.SetStatus(401, "Unauthorixed");
-                    }
-                    else if (Result == "\x00")
-                    {
-                        Info.Response.SetStatus(404, "Not Found");
-                    }
-                    else
-                    {
-                        byte[] Res = Encoding.UTF8.GetBytes(Result);
-                        Info.Response.Headers["Content-Type"] = "application/javascript; charset=utf8";
-                        Info.Response.OutputStream.Write(Res, 0, Res.Length);
-                    }
-                    Info.Response.Send();
-                    Info.Close();
-                    return;
-                }
-                else if (r2.IsMatch(Info.Request.Url))
-                {
-                    var match = r2.Match(Info.Request.Url);
-                    string id = match.Groups[1].Value, pass = match.Groups[2].Value;
-                    var sess = new HttpSession(id, pass, Info.IpAddress);
-                    Info.Response.Headers["Content-Type"] = "application/javascript; charset=utf8";
-                    if (sess.CheckAuth(sess.SessionKey, Info.IpAddress))
-                    {
-                        byte[] Res = Encoding.UTF8.GetBytes("{\"sess\":\"" + sess.SessionKey + "\", \"error\":false}");
-                        Info.Response.OutputStream.Write(Res, 0, Res.Length);
+                        string Result = HTTPAPIRequest(r1.Match(Info.Request.Url).Groups[1].Value);
+                        if (Result == "\x00")
+                        {
+                            Info.Response.SetStatus(404, "Not Found");
+                        }
+                        else
+                        {
+                            byte[] Res = Encoding.UTF8.GetBytes(Result);
+                            Info.Response.Headers["Content-Type"] = "application/javascript; charset=utf8";
+                            Info.Response.OutputStream.Write(Res, 0, Res.Length);
+                        }
                     }
                     else
                     {
-                        byte[] Res = Encoding.UTF8.GetBytes("{\"sess\":\"\", \"error\":true}");
-                        Info.Response.OutputStream.Write(Res, 0, Res.Length);
                         Info.Response.SetStatus(401, "Unauthorixed");
                     }
                     Info.Response.Send();
                     Info.Close();
                     return;
                 }
+
                 if (!new HttpContent().RequestUrl(Info))
                 {
                     HttpResponse.NotFound(Info);

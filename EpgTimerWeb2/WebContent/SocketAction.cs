@@ -17,7 +17,7 @@ namespace EpgTimer
         static Regex r3 = new Regex(@"^LOGIN (.*)$");
         public static void Process(HttpContext Info)
         {
-            HttpSession _sess = null;
+            //HttpSession _sess = null;
             Sockets.Add(Info);
             while (Info.Client.Connected)
             {
@@ -25,7 +25,7 @@ namespace EpgTimer
                 if (UnMaskBuf == null) continue;
                 string UnMask = Encoding.UTF8.GetString(UnMaskBuf);
                 Debug.Print(UnMask);
-                if (r2.IsMatch(UnMask) && Info.IsAuth)
+                if (r2.IsMatch(UnMask))// && Info.IsAuth)
                 {
                     var match = r2.Match(UnMask);
                     string Command = match.Groups[2].Value;
@@ -40,6 +40,7 @@ namespace EpgTimer
                     HttpResponse.SendResponseBodyWS(Info, WebSocket.WebSocketMask(
                                     Response, 0x1));
                 }
+                    /*
                 else if (r.IsMatch(UnMask) && !Info.IsAuth)
                 {
                     var match = r.Match(UnMask);
@@ -91,6 +92,7 @@ namespace EpgTimer
                                 Encoding.UTF8.GetBytes("LERR"), 0x1);
                     HttpResponse.SendResponseBodyWS(Info, Response);
                 }
+                     */
                 else
                 {
                     byte[] Response = WebSocket.WebSocketMask(
