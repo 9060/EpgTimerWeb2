@@ -196,12 +196,12 @@ namespace EpgTimerWeb2.Properties {
         ///    &lt;script src=&quot;/modules/jquery.js&quot;&gt;&lt;/script&gt;
         ///    &lt;script src=&quot;/modules/bootstrap.js&quot;&gt;&lt;/script&gt;
         ///    &lt;link rel=&quot;stylesheet&quot; href=&quot;/css/bootstrap.css&quot; /&gt;
-        ///    &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1&quot;&gt;
+        ///    &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1, user-scalable=no&quot;&gt;
         ///    &lt;style&gt;
         ///        #user {
         ///            margin-bottom: -1px;
         ///            border-bottom-right-radius: 0;
-        ///            border-bottom-left-radius: 0; [残りの文字列は切り詰められました]&quot;; に類似しているローカライズされた文字列を検索します。
+        ///            border-bott [残りの文字列は切り詰められました]&quot;; に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string Login {
             get {

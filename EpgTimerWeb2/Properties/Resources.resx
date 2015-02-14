@@ -161,7 +161,7 @@
     &lt;script src="/modules/jquery.js"&gt;&lt;/script&gt;
     &lt;script src="/modules/bootstrap.js"&gt;&lt;/script&gt;
     &lt;link rel="stylesheet" href="/css/bootstrap.css" /&gt;
-    &lt;meta name="viewport" content="width=device-width, initial-scale=1"&gt;
+    &lt;meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"&gt;
     &lt;style&gt;
         #user {
             margin-bottom: -1px;
