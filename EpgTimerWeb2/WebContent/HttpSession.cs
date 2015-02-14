@@ -36,6 +36,7 @@ namespace EpgTimerWeb2
                 Setting.Instance.LoginUser == UserId) _IsAuth = true;
             if (_IsAuth)
             {
+                LastTime = UnixTime.ToUnixTime(DateTime.Now);
                 _SessionKey2 = BitConverter.ToString((new SHA1CryptoServiceProvider().ComputeHash(Encoding.UTF8.GetBytes(Password + UserId + DateTime.Now.ToString())))).Replace("-", "");
                 _SessionKey = BitConverter.ToString((new MD5CryptoServiceProvider().ComputeHash(Encoding.UTF8.GetBytes(_SessionKey2 + IpAddr)))).Replace("-", "");
                 PrivateSetting.Instance.Sessions.Add(this);
@@ -43,11 +44,19 @@ namespace EpgTimerWeb2
         }
         public bool CheckAuth(string SessionKey, string IpAddr)
         {
-            if (_IsAuth && BitConverter.ToString(new MD5CryptoServiceProvider().ComputeHash(Encoding.UTF8.GetBytes(SessionKey + IpAddr))).Replace("-", "") == _SessionKey) return true;
+            if (!IsExpired() && _IsAuth && 
+                BitConverter.ToString(new MD5CryptoServiceProvider().ComputeHash(Encoding.UTF8.GetBytes(SessionKey + IpAddr))).Replace("-", "") == _SessionKey)
+            {
+                LastTime = UnixTime.ToUnixTime(DateTime.Now);
+                return true;
+            }
             return false;
         }
+        private bool IsExpired()
+        {
+            return LastTime < UnixTime.ToUnixTime(DateTime.Now) - Setting.Instance.SessionExpireSecond;
+        }
         public string SessionKey { get { return _SessionKey2; } }
-        private long _time = 0;
-        public long Time { get { return _time; } }
+        public long LastTime { get; set; }
     }
 }
