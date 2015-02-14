@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -8,9 +9,45 @@ using System.Threading.Tasks;
 
 namespace EpgTimer
 {
+    public class HttpHeaderArray : IEnumerable<KeyValuePair<string, string>>
+    {
+        private List<KeyValuePair<string, string>> _items = null;
+        public HttpHeaderArray()
+        {
+            _items = new List<KeyValuePair<string, string>>();
+        }
+        public string this[string key]
+        {
+            get
+            {
+                if (_items.Count(s => s.Key == key) > 0) return _items.First(s => s.Key == key).Value;
+                throw new KeyNotFoundException();
+            }
+            set
+            {
+                _items.Add(new KeyValuePair<string, string>(key, value));
+            }
+        }
+        public IEnumerator<KeyValuePair<string, string>> GetEnumerator()
+        {
+            return _items.GetEnumerator();
+        }
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return _items.GetEnumerator();
+        }
+        public bool ContainsKey(string key)
+        {
+            return (_items.Count(s => s.Key == key) > 0);
+        }
+        public void Add(string Key, string Value)
+        {
+            _items.Add(new KeyValuePair<string, string>(Key, Value));
+        }
+    }
     public class HttpHeader
     {
-        public static string Generate(IDictionary<string, string> Input)
+        public static string Generate(HttpHeaderArray Input)
         {
             StringBuilder Ret = new StringBuilder();
             foreach (KeyValuePair<string, string> Item in Input)
@@ -19,10 +56,10 @@ namespace EpgTimer
             }
             return Ret.ToString();
         }
-        public static Dictionary<string, string> Parse(Stream Input)
+        public static HttpHeaderArray Parse(Stream Input)
         {
             string Line = "";
-            Dictionary<string, string> Dict = new Dictionary<string, string>();
+            HttpHeaderArray Dict = new HttpHeaderArray();
             while ((Line = HttpCommon.StreamReadLine(Input)) != null)
             {
                 if (Line == "") return Dict;

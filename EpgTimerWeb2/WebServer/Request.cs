@@ -18,7 +18,7 @@ namespace EpgTimer
         public string GetParam { get; set; }
         public byte[] PostData { get; set; }
         public string HttpVersion { get; set; }
-        public Dictionary<string, string> Headers { get; set; }
+        public HttpHeaderArray Headers { get; set; }
         public string PostString
         {
             get { return PostData.Length == 0 ? "" : Encoding.UTF8.GetString(PostData); }

@@ -15,7 +15,7 @@ namespace EpgTimer
             StatusCode = 200;
             StatusText = "OK";
             OutputStream = new MemoryStream();
-            Headers = new Dictionary<string, string>()
+            Headers = new HttpHeaderArray()
             {
                 {"Server", "EpgTimerWeb2/1.0"}
             };
@@ -27,7 +27,7 @@ namespace EpgTimer
             HttpResponseGenerater.SendResponse(context);
         }
         public MemoryStream OutputStream { get; set; }
-        public Dictionary<string, string> Headers { get; set; }
+        public HttpHeaderArray Headers { get; set; }
         public int StatusCode { get; set; }
         public string StatusText { get; set; }
         private HttpContext context;
@@ -52,7 +52,7 @@ EpgTimerWeb(v2) by YUKI
             Context.Response.OutputStream.Write(NotFound, 0, NotFound.Length);
             Context.Response.Send();
         }
-        public static bool SendResponseHeader(HttpContext Context, IDictionary<string,string> Input)
+        public static bool SendResponseHeader(HttpContext Context, HttpHeaderArray Input)
         {
             var HeaderText = Encoding.UTF8.GetBytes(HttpHeader.Generate(Input) + "\r\n");
             return SendResponseBody(Context, HeaderText);
