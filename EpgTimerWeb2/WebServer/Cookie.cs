@@ -16,7 +16,7 @@ namespace EpgTimer
         }
         private static string[] SplitCookieKVPair(string Cookie)
         {
-            return Cookie.Split(',').Select(s => Util.RemoveStartSpace(s)).ToArray();
+            return Cookie.Split(';').Select(s => Util.RemoveStartSpace(s)).ToArray();
         }
         public DateTime Expire { set; get; }
         public string Path { set; get; }
@@ -34,7 +34,7 @@ namespace EpgTimer
             {
                 string line = item.Key + "=" + item.Value;
                 if (Cookie != "")
-                    Cookie += ",";
+                    Cookie += "; ";
                 Cookie += line;
             }
             return Cookie;

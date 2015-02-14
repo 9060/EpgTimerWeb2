@@ -19,6 +19,7 @@ namespace EpgTimer
         public byte[] PostData { get; set; }
         public string HttpVersion { get; set; }
         public HttpHeaderArray Headers { get; set; }
+        public Cookie Cookie { get; set; }
         public string PostString
         {
             get { return PostData.Length == 0 ? "" : Encoding.UTF8.GetString(PostData); }
@@ -44,7 +45,8 @@ namespace EpgTimer
                 HttpVersion = Request[2],
                 GetParam = "",
                 PostData = new byte[0],
-                Url = ""
+                Url = "",
+                Cookie = new Cookie()
             };
             if (Headers.ContainsKey("content-length")) //POSTかも
             {
@@ -68,6 +70,10 @@ namespace EpgTimer
             }
             Res.Url = Uri.UnescapeDataString(Res.Url);
             Res.GetParam = Uri.UnescapeDataString(Res.GetParam);
+            if (Res.Headers.ContainsKey("Cookie"))
+            {
+                Res.Cookie = Cookie.Parse(Res.Headers["Cookie"]);
+            }
             return Res;
         }
     }
