@@ -1,6 +1,7 @@
 ﻿using EpgTimer;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -100,6 +101,7 @@ namespace EpgTimerWeb2
                 new ContentColorItem(15, "#f0f0f0")
             };
             MaxUploadSize = 1024 * 1024 * 3;
+            SessionExpireSecond = 60 * 60 * 1;//1 hour
         }
         [DataMember]
         public string CtrlHost { get; set; }
@@ -119,6 +121,8 @@ namespace EpgTimerWeb2
         public List<ContentColorItem> ContentToColorTable;
         [DataMember]
         public long MaxUploadSize { set; get; }
+        [DataMember]
+        public long SessionExpireSecond { set; get; }
         public bool ReqAuth
         {
             get
@@ -138,6 +142,7 @@ namespace EpgTimerWeb2
             }
             catch (Exception ex)
             {
+                Debug.Print("Config Error: {0}", ex.Message);
                 //MessageBox.Show(ex.Message + "\r\n" + ex.StackTrace);
             }
         }
@@ -153,6 +158,7 @@ namespace EpgTimerWeb2
             }
             catch (Exception ex)
             {
+                Debug.Print("Config Error: {0}", ex.Message);
             }
         }
     }
