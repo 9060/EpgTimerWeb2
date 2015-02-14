@@ -25,6 +25,11 @@ namespace EpgTimerWeb2
             {
                 if (Tmp.CheckAuth(SessionKey, IpAddr)) return Tmp;
             }
+            foreach (HttpSession Tmp in PrivateSetting.Instance.Sessions.Where(s => s.IsExpired()))
+            {
+                Debug.Print("Expire: {0}", Tmp.SessionKey);
+            }
+            PrivateSetting.Instance.Sessions = PrivateSetting.Instance.Sessions.Where(s => !s.IsExpired()).ToList();
             return null;
         }
         private bool _IsAuth = false;
