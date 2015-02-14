@@ -20,7 +20,8 @@ namespace EpgTimer
         {
             get
             {
-                if (_items.Count(s => s.Key == key) > 0) return _items.First(s => s.Key == key).Value;
+                if (_items.Count(s => s.Key.ToLower() == key.ToLower()) > 0)
+                    return _items.First(s => s.Key.ToLower() == key.ToLower()).Value;
                 throw new KeyNotFoundException();
             }
             set
@@ -38,7 +39,7 @@ namespace EpgTimer
         }
         public bool ContainsKey(string key)
         {
-            return (_items.Count(s => s.Key == key) > 0);
+            return (_items.Count(s => s.Key.ToLower() == key.ToLower()) > 0);
         }
         public void Add(string Key, string Value)
         {
@@ -64,7 +65,7 @@ namespace EpgTimer
                 int Separator = Line.IndexOf(":");
                 if (Separator == -1) throw new Exception("Invalid Http Header " + Line);
                 var Name = Line.Substring(0, Separator);
-                Dict[Name.ToLower()] = Util.RemoveStartSpace(Line.Substring(Separator + 1));
+                Dict[Name] = Util.RemoveStartSpace(Line.Substring(Separator + 1));
             }
             return Dict;
         }
