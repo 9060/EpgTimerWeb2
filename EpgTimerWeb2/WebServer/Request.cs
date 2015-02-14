@@ -35,7 +35,7 @@ namespace EpgTimer
             {
                 throw new Exception("Invalid Http Request " + Start);
             }
-            var Headers = HttpHeader.Parse(Input);
+            var Headers = HttpHeaderArray.Parse(Input);
             var Res = new HttpRequest()
             {
                 Method = Request[0].ToUpper(),

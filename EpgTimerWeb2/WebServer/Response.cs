@@ -54,7 +54,7 @@ EpgTimerWeb(v2) by YUKI
         }
         public static bool SendResponseHeader(HttpContext Context, HttpHeaderArray Input)
         {
-            var HeaderText = Encoding.UTF8.GetBytes(HttpHeader.Generate(Input) + "\r\n");
+            var HeaderText = Encoding.UTF8.GetBytes(HttpHeaderArray.Generate(Input) + "\r\n");
             return SendResponseBody(Context, HeaderText);
         }
         public static bool SendResponseBody(HttpContext Context, Stream Input)

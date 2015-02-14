@@ -44,9 +44,7 @@ namespace EpgTimer
         {
             _items.Add(new KeyValuePair<string, string>(Key, Value));
         }
-    }
-    public class HttpHeader
-    {
+
         public static string Generate(HttpHeaderArray Input)
         {
             StringBuilder Ret = new StringBuilder();
@@ -66,12 +64,10 @@ namespace EpgTimer
                 int Separator = Line.IndexOf(":");
                 if (Separator == -1) throw new Exception("Invalid Http Header " + Line);
                 var Name = Line.Substring(0, Separator);
-                int Pos = Separator + 1;
-                while ((Pos < Line.Length) && (Line[Pos] == ' ')) Pos++;
-
-                Dict[Name.ToLower()] = Line.Substring(Pos);
+                Dict[Name.ToLower()] = Util.RemoveStartSpace(Line.Substring(Separator + 1));
             }
             return Dict;
         }
     }
+
 }
