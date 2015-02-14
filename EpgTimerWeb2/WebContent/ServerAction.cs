@@ -52,7 +52,8 @@ namespace EpgTimer
                     Info.Close();
                     return;
                 }
-                else if (r.IsMatch(Info.Request.Url))
+
+                if (r.IsMatch(Info.Request.Url))
                 {
                     string Sess = r.Match(Info.Request.Url).Groups[3].Value;
                     string Result = HTTPAPIRequest(r.Match(Info.Request.Url).Groups[1].Value, Sess, Info.IpAddress);

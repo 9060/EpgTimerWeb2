@@ -113,6 +113,7 @@
     <Compile Include="WebContent\Api.cs" />
     <Compile Include="WebContent\Setup.cs" />
     <Compile Include="WebServer\Common.cs" />
+    <Compile Include="WebServer\Cookie.cs" />
     <Compile Include="WebServer\Header.cs" />
     <Compile Include="WebServer\Context.cs" />
     <Compile Include="WebServer\Response.cs" />
