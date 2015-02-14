@@ -37,7 +37,7 @@ namespace EpgTimer
                     {
                         Response = Encoding.UTF8.GetBytes("+OK" + Id + " " + JsonData);
                     }
-                    HttpResponseGenerater.SendResponseBodyWS(Info, WebSocket.WebSocketMask(
+                    HttpResponse.SendResponseBodyWS(Info, WebSocket.WebSocketMask(
                                     Response, 0x1));
                 }
                 else if (r.IsMatch(UnMask) && !Info.IsAuth)
@@ -53,7 +53,7 @@ namespace EpgTimer
                         Response = WebSocket.WebSocketMask(
                                     Encoding.UTF8.GetBytes("+LOK " + Sess.SessionKey), 0x1);
                     }
-                    HttpResponseGenerater.SendResponseBodyWS(Info, Response);
+                    HttpResponse.SendResponseBodyWS(Info, Response);
                 }
                 else if (r3.IsMatch(UnMask) && !Info.IsAuth)
                 {
@@ -67,7 +67,7 @@ namespace EpgTimer
                         _sess = HttpSession.Search(Sess, Info.IpAddress);
                         if(_sess != null) Info.IsAuth = true;
                     }
-                    HttpResponseGenerater.SendResponseBodyWS(Info, Response);
+                    HttpResponse.SendResponseBodyWS(Info, Response);
                 }
                 else if (UnMask.StartsWith("LOGOUT"))
                 {
@@ -77,25 +77,25 @@ namespace EpgTimer
                     Info.IsAuth = false;
                     byte[] Response = WebSocket.WebSocketMask(
                                 Encoding.UTF8.GetBytes("-LOK"), 0x1);
-                    HttpResponseGenerater.SendResponseBodyWS(Info, Response);
+                    HttpResponse.SendResponseBodyWS(Info, Response);
                 }
                 else if (UnMask.StartsWith("L-CHECK"))
                 {
                     byte[] Response = WebSocket.WebSocketMask(
                         Encoding.UTF8.GetBytes(Setting.Instance.ReqAuth ? "-LA" : "-LN"), 0x1);
-                    HttpResponseGenerater.SendResponseBodyWS(Info, Response);
+                    HttpResponse.SendResponseBodyWS(Info, Response);
                 }
                 else if (!Info.IsAuth)
                 {
                     byte[] Response = WebSocket.WebSocketMask(
                                 Encoding.UTF8.GetBytes("LERR"), 0x1);
-                    HttpResponseGenerater.SendResponseBodyWS(Info, Response);
+                    HttpResponse.SendResponseBodyWS(Info, Response);
                 }
                 else
                 {
                     byte[] Response = WebSocket.WebSocketMask(
                                 Encoding.UTF8.GetBytes("ERR"), 0x1);
-                    HttpResponseGenerater.SendResponseBodyWS(Info, Response);
+                    HttpResponse.SendResponseBodyWS(Info, Response);
                 }
             }
             Sockets.Remove(Info);
@@ -112,7 +112,7 @@ namespace EpgTimer
                     if (!Con.Client.Connected) Sockets.Remove(Con);
                     if (!Con.IsAuth) continue;
                     while (Con.IsWsSend) ;
-                    HttpResponseGenerater.SendResponseBody(Con, Response);
+                    HttpResponse.SendResponseBody(Con, Response);
                 }
             }
             catch (Exception ex)

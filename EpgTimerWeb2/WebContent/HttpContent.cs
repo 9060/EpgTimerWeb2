@@ -15,31 +15,7 @@ namespace EpgTimer
 {
     public class HttpContent
     {
-        private void SendResponse(HttpContext Context, byte[] Bytes)
-        {
-            if (!Context.Response.Headers.ContainsKey("Content-Length"))
-            {
-                Context.Response.Headers.Add("Content-Length", Bytes.LongLength.ToString());
-            }
-            Context.Response.OutputStream.Write(Bytes, 0, Bytes.Length);
-            Context.Response.Send();
-        }
-        private void SendResponse(HttpContext Context, string Str)
-        {
-            SendResponse(Context, Encoding.UTF8.GetBytes(Str));
-        }
-        public static void Redirect(HttpContext Context, string Url)
-        {
-            var Domain = "localhost:8080";
-            if (Context.Request.Headers.ContainsKey("host"))
-            {
-                Domain = Context.Request.Headers["host"];
-            }
-            Context.Response.StatusCode = 301;
-            Context.Response.StatusText = "Moved Permanently";
-            Context.Response.Headers["Location"] = "http://" + Domain + Url;
-            Context.Response.Send();
-        }
+        
         public bool RequestUrl(HttpContext Context)
         {
             var Ret = false;
@@ -52,7 +28,7 @@ namespace EpgTimer
                     if (!Mime.IsImage(PartName))
                         MimeType += "; charset=utf-8";
                     Context.Response.Headers.Add("Content-Type", MimeType);
-                    SendResponse(Context, File.ReadAllBytes(".\\web\\modules\\" + PartName));
+                    HttpContext.SendResponse(Context, File.ReadAllBytes(".\\web\\modules\\" + PartName));
                     Ret = true;
                 }
             }
@@ -64,24 +40,24 @@ namespace EpgTimer
                     case "/index.html":
                     case "/index.htm":
                         Context.Response.Headers.Add("Content-Type", "text/html; charset=UTF-8");
-                        SendResponse(Context, File.ReadAllBytes(".\\web\\index.html"));
+                        HttpContext.SendResponse(Context, File.ReadAllBytes(".\\web\\index.html"));
                         Ret = true;
                         break;
                     case "/css/bootstrap.css":
                         Context.Response.Headers.Add("Content-Type", "text/css");
-                        SendResponse(Context, Resources.BootStrapStyle);
+                        HttpContext.SendResponse(Context, Resources.BootStrapStyle);
                         Ret = true;
                         break;
                     case "/css/main.css":
                         Context.Response.Headers.Add("Content-Type", "text/css");
-                        SendResponse(Context, File.ReadAllBytes(".\\web\\css\\main.css"));
+                        HttpContext.SendResponse(Context, File.ReadAllBytes(".\\web\\css\\main.css"));
                         Ret = true;
                         break;
                     case "/img/not_thumb.png":
                         Context.Response.Headers.Add("Content-Type", "image/png");
                         var Stream = new MemoryStream();
                         Resources.NotThumbnail.Save(Stream, ImageFormat.Png);
-                        SendResponse(Context, Stream.GetBuffer());
+                        HttpContext.SendResponse(Context, Stream.GetBuffer());
                         Stream.Close();
                         Ret = true;
                         break;
@@ -89,25 +65,25 @@ namespace EpgTimer
                         Context.Response.Headers.Add("Content-Type", "image/gif");
                         var Stream1 = new MemoryStream();
                         Resources.loader.Save(Stream1, ImageFormat.Gif);
-                        SendResponse(Context, Stream1.GetBuffer());
+                        HttpContext.SendResponse(Context, Stream1.GetBuffer());
                         Stream1.Close();
                         Ret = true;
                         break;
                     case "/fonts/glyphicons-halflings-regular.eot":
                         Ret = true;
-                        SendResponse(Context, Resources.glyphicons_halflings_regular_eot);
+                        HttpContext.SendResponse(Context, Resources.glyphicons_halflings_regular_eot);
                         break;
                     case "/fonts/glyphicons-halflings-regular.svg":
                         Ret = true;
-                        SendResponse(Context, Resources.glyphicons_halflings_regular_svg);
+                        HttpContext.SendResponse(Context, Resources.glyphicons_halflings_regular_svg);
                         break;
                     case "/fonts/glyphicons-halflings-regular.ttf":
                         Ret = true;
-                        SendResponse(Context, Resources.glyphicons_halflings_regular_ttf);
+                        HttpContext.SendResponse(Context, Resources.glyphicons_halflings_regular_ttf);
                         break;
                     case "/fonts/glyphicons-halflings-regular.woff":
                         Ret = true;
-                        SendResponse(Context, Resources.glyphicons_halflings_regular_woff);
+                        HttpContext.SendResponse(Context, Resources.glyphicons_halflings_regular_woff);
                         break;
                 }
             }

@@ -64,7 +64,7 @@ namespace EpgTimer
             {
                 var SendFrame = MaskBuffer.ToArray();
                 SendFrame[0] = 0x8A;
-                HttpResponseGenerater.SendResponseBody(Context, SendFrame);
+                HttpResponse.SendResponseBody(Context, SendFrame);
                 return null;
             }
             return WebSocketUnMask(MaskBuffer.ToArray()); //全部まとめてアンマスク
@@ -82,8 +82,8 @@ namespace EpgTimer
                 Context.Response.StatusCode = 101;
                 Context.Response.StatusText = "Switching Protocols";
             }
-            HttpResponseGenerater.SendResponseCode(Context);
-            HttpResponseGenerater.SendResponseHeader(Context, Context.Response.Headers);
+            HttpResponse.SendResponseCode(Context);
+            HttpResponse.SendResponseHeader(Context, Context.Response.Headers);
         }
         private const string ACCEPT_KEY = "258EAFA5-E914-47DA-95CA-C5AB0DC85B11";
         /// <summary>

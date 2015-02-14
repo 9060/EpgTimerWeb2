@@ -51,5 +51,30 @@ namespace EpgTimer
             Response = null;
             Client.Close();
         }
+        public static void SendResponse(HttpContext Context, byte[] Bytes)
+        {
+            if (!Context.Response.Headers.ContainsKey("Content-Length"))
+            {
+                Context.Response.Headers.Add("Content-Length", Bytes.LongLength.ToString());
+            }
+            Context.Response.OutputStream.Write(Bytes, 0, Bytes.Length);
+            Context.Response.Send();
+        }
+        public static void SendResponse(HttpContext Context, string Str)
+        {
+            SendResponse(Context, Encoding.UTF8.GetBytes(Str));
+        }
+        public static void Redirect(HttpContext Context, string Url)
+        {
+            var Domain = "localhost:8080";
+            if (Context.Request.Headers.ContainsKey("host"))
+            {
+                Domain = Context.Request.Headers["host"];
+            }
+            Context.Response.StatusCode = 301;
+            Context.Response.StatusText = "Moved Permanently";
+            Context.Response.Headers["Location"] = "http://" + Domain + Url;
+            Context.Response.Send();
+        }
     }
 }

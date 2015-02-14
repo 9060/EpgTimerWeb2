@@ -121,7 +121,7 @@ namespace EpgTimer
                 }
                 if (!new HttpContent().RequestUrl(Info))
                 {
-                    HttpResponseGenerater.NotFound(Info);
+                    HttpResponse.NotFound(Info);
                 }
             }
             catch (Exception ex)

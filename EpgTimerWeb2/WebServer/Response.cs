@@ -26,7 +26,7 @@ namespace EpgTimer
         public void Send()
         {
             OutputStream.Flush();
-            HttpResponseGenerater.SendResponse(context);
+            HttpResponse.SendResponse(context);
         }
         public MemoryStream OutputStream { get; set; }
         public HttpHeaderArray Headers { get; set; }
@@ -38,9 +38,6 @@ namespace EpgTimer
             StatusCode = Code;
             StatusText = Text;
         }
-    }
-    public class HttpResponseGenerater
-    {
         public static void NotFound(HttpContext Context)
         {
             byte[] NotFound = Encoding.UTF8.GetBytes(@"<html>
