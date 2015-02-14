@@ -71,6 +71,16 @@ namespace EpgTimer
             else
                 return false;
         }
+        private static void LogoutURL(HttpContext Info)
+        {
+            Info.Response.Headers["Cache-Control"] = "no-cache";
+            Cookie removeCookie = new Cookie(){
+                {"session", "delete"}
+            };
+            removeCookie.Expire = DateTime.Now.AddYears(-5);
+            Info.Response.Headers["Set-Cookie"] = Cookie.Generate(removeCookie);
+            HttpContext.Redirect(Info, "/");
+        }
         //                                   API         CB
         static Regex r = new Regex(@"^\/api\/(.*)\/json\/(.*)\/$");
         //                                    API
@@ -80,6 +90,7 @@ namespace EpgTimer
             var Info = new HttpContext(Client);
             try
             {
+                if (Info.Request.Url == "/index.htm") Info.Request.Url = "/index.html";
                 if (Info.Request.Url == "/") Info.Request.Url = "/index.html";
                 if (PrivateSetting.Instance.SetupMode)
                 {
@@ -97,9 +108,14 @@ namespace EpgTimer
                     else
                     {
                         Info.Response.SetStatus(401, "Unauthorixed");
+                        Info.Response.Send();
                     }
                     Info.Close();
                     return;
+                }
+                if (Info.Request.Url.ToLower() == "/logout")
+                {
+                    LogoutURL(Info);
                 }
                 if (Info.Request.Url.ToLower() == "/login")
                 {
@@ -160,8 +176,12 @@ namespace EpgTimer
                     Info.Close();
                     return;
                 }
-
-                if (!new HttpContent().RequestUrl(Info))
+                if (Info.Request.Url == "/index.html" && !CheckCookie(Info))
+                {
+                    Info.Response.Headers["Cache-Control"] = "no-cache";
+                    HttpContext.Redirect(Info, "/login");
+                }
+                else if (!new HttpContent().RequestUrl(Info))
                 {
                     HttpResponse.NotFound(Info);
                 }

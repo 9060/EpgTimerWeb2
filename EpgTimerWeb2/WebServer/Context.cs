@@ -20,14 +20,12 @@ namespace EpgTimer
             Response = new HttpResponse(this);
             IpAddress = "0.0.0.0";
             IsWsSend = false;
-            IsAuth = Setting.Instance.LoginPassword == "";
             Request = HttpRequestParser.Parse(this.HttpStream);
             IpAddress = ((IPEndPoint)Client.Client.RemoteEndPoint).Address.ToString();
         }
         public HttpRequest Request { set; get; }
         public HttpResponse Response { set; get; }
         public string IpAddress { set; get; }
-        public bool IsAuth { set; get; }
         private TcpClient _Client;
         public TcpClient Client
         {
