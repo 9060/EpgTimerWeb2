@@ -28,5 +28,11 @@ namespace EpgTimer
             }
             return BufferList.ToArray();
         }
+        public static string RemoveStartSpace(string input)
+        {
+            int Pos = 0;
+            while ((Pos < input.Length) && (input[Pos] == ' ')) Pos++;
+            return input.Substring(Pos);
+        }
     }
 }
