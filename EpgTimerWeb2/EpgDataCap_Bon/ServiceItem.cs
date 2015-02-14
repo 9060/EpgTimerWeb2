@@ -11,8 +11,6 @@ namespace EpgTimer
 {
     public class ServiceItem
     {
-        private bool selected = false;
-
         public EpgServiceInfo ServiceInfo
         {
             get;
@@ -21,13 +19,6 @@ namespace EpgTimer
         public UInt64 ID
         {
             get { return CommonManager.Create64Key(ServiceInfo.ONID, ServiceInfo.TSID, ServiceInfo.SID); }
-        }
-        public string IDS
-        {
-            get
-            {
-                return ID.ToString();
-            }
         }
         public String ServiceName
         {
