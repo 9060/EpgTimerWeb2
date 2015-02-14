@@ -50,7 +50,7 @@ namespace EpgTimerWeb2
             }
             catch (Exception ex)
             {
-                Console.WriteLine("コマンドラインがおかしいです");
+                Console.WriteLine("コマンドラインがおかしいです({0})", ex.Message);
                 Environment.Exit(1);
             }
             if (File.Exists(PrivateSetting.Instance.ConfigPath))

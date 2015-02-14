@@ -43,7 +43,7 @@ namespace EpgTimer
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Webサーバ起動失敗");
+                Console.WriteLine("Webサーバ起動失敗: {0}", ex.Message);
                 Thread.Sleep(5000);
                 Environment.Exit(1);
             }
@@ -72,7 +72,7 @@ namespace EpgTimer
             }
             catch (TimeoutException to)
             {
-                
+                Debug.Print("Timeout: {0}", to.Message);
             }
             catch (Exception ex)
             {

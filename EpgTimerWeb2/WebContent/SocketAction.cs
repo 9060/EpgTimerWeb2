@@ -117,7 +117,7 @@ namespace EpgTimer
             }
             catch (Exception ex)
             {
-
+                Debug.Print("SocketAction Error: {0}", ex.Message);
             }
         }
     }

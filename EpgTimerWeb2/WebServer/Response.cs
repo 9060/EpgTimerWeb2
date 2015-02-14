@@ -67,6 +67,7 @@ EpgTimerWeb(v2) by YUKI
             }
             catch (Exception e)
             {
+                Debug.Print("Response Error: {0}", e.Message);
                 return false;
             }
         }
@@ -80,6 +81,7 @@ EpgTimerWeb(v2) by YUKI
             }
             catch (Exception e)
             {
+                Debug.Print("Response Error: {0}", e.Message);
                 return false;
             }
         }
@@ -95,6 +97,7 @@ EpgTimerWeb(v2) by YUKI
             }
             catch (Exception e)
             {
+                Debug.Print("Response Error: {0}", e.Message);
                 return false;
             }
         }

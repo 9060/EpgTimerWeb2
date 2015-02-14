@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -43,6 +44,7 @@ namespace EpgTimer
             }
             catch (Exception ex)
             {
+                Debug.Print("Cache Error: {0}", ex.Message);
                 return null;
             }
         }
@@ -59,7 +61,7 @@ namespace EpgTimer
             }
             catch (Exception ex)
             {
-
+                Debug.Print("Cache Error: {0}", ex.Message);
             }
         }
         public void ClearAll()
@@ -70,7 +72,7 @@ namespace EpgTimer
             }
             catch (Exception ex)
             {
-
+                Debug.Print("Cache Error: {0}", ex.Message);
             }
         }
         public bool Contains(string Url)

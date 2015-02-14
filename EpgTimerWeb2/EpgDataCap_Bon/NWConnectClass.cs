@@ -10,6 +10,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.IO;
 using System.Threading;
+using System.Diagnostics;
 
 namespace EpgTimer
 {
@@ -138,6 +139,7 @@ namespace EpgTimer
             }
             catch (Exception ex)
             {
+                Debug.Print("NWConnect Error: {0}", ex.Message);
                 return false;
             }
             return true;
@@ -209,7 +211,7 @@ namespace EpgTimer
             }
             catch (Exception ex)
             {
-
+                Debug.Print("NWConnect Error: {0}", ex.Message);
             }
         }
     
