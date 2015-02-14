@@ -182,7 +182,7 @@ namespace EpgTimer
                             if (Time1 == Time2) break;
                             Top += MinSize * 60;
                         }
-                        Top += EventStart.Minute * MinSize;
+                        Top += ((UnixTime.ToUnixTime(EventStart) - UnixTime.ToUnixTime(Start)) % 3600) / 60 * MinSize;
                         //long Top = (UnixTime.ToUnixTime(EventStart) - UnixTime.ToUnixTime(Start)) / 60 * MinSize;
                         var Reserve = CommonManager.Instance.DB.ReserveList.Values.Where(s =>
                             s.EventID == Event.EID &&
