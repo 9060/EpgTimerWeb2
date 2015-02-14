@@ -27,7 +27,7 @@ namespace EpgTimerWeb2
                 {
                     if (!arg.StartsWith("-"))
                     {
-                        Console.WriteLine("Invalid Paramatar");
+                        Console.WriteLine("コマンドラインがおかしいです");
                         Environment.Exit(1);
                     }
                     string varg = arg.Substring(1);
@@ -38,10 +38,10 @@ namespace EpgTimerWeb2
                         {
                             case "cfg":
                                 PrivateSetting.Instance.ConfigPath = val;
-                                Console.WriteLine("Config File: {0}", val);
+                                Console.WriteLine("設定ファイル: {0}", val);
                                 break;
                             default:
-                                Console.WriteLine("Invalid Paramatar");
+                                Console.WriteLine("コマンドラインがおかしいです");
                                 Environment.Exit(1);
                                 break;
                         }
@@ -50,7 +50,7 @@ namespace EpgTimerWeb2
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Invalid Paramatar");
+                Console.WriteLine("コマンドラインがおかしいです");
                 Environment.Exit(1);
             }
             if (File.Exists(PrivateSetting.Instance.ConfigPath))
@@ -59,7 +59,7 @@ namespace EpgTimerWeb2
             }
             else
             {
-                Console.WriteLine("Not found config file!");
+                Console.WriteLine("設定ファイルがありません");
                 PrivateSetting.Instance.SetupMode = true;
             }
             Console.ForegroundColor = Default;
@@ -79,18 +79,18 @@ namespace EpgTimerWeb2
                 PrivateSetting.Instance.Server.Stop();
                 if (!PrivateSetting.Instance.SetupMode)
                 {
-                    Console.WriteLine("Disconnecting EpgTimer...");
+                    Console.WriteLine("EpgTimerから切断...");
                     if (PrivateSetting.Instance.CmdConnect.StopConnect())
-                        Console.WriteLine("Disconnected EpgTimer");
+                        Console.WriteLine("EpgTimerから切断済み");
                     else
-                        Console.WriteLine("Error: Disconnect EpgTimer");
+                        Console.WriteLine("EpgTimerから切断できませんでした");
                 }
                 if (!PrivateSetting.Instance.SetupMode) Setting.SaveToXmlFile(PrivateSetting.Instance.ConfigPath);
             };
             if (PrivateSetting.Instance.SetupMode)
             {
-                Console.WriteLine("Please access to http://localhost:" + Setting.Instance.HttpPort);
-                Console.WriteLine("Pin Code: {0}", PrivateSetting.Instance.SetupCode);
+                Console.WriteLine("初期設定を行います。\nのURLに接続してください。http://localhost:" + Setting.Instance.HttpPort);
+                Console.WriteLine("PINコード: {0}", PrivateSetting.Instance.SetupCode);
                 while (PrivateSetting.Instance.SetupMode) Thread.Sleep(1);
             }
             while (true) Thread.Sleep(100);

@@ -53,14 +53,14 @@ namespace EpgTimer
         public static void Connect()
         {
 
-            Console.WriteLine("Connecting...");
+            Console.WriteLine("EpgTimer接続中...");
             if (!PrivateSetting.Instance.CmdConnect.
                 StartConnect(Setting.Instance.CtrlHost, (int)Setting.Instance.CallbackPort, (int)Setting.Instance.CtrlPort))
             {
-                Console.WriteLine("Server {0}:{1} ({2}) Connect Failed", Setting.Instance.CtrlHost, Setting.Instance.CtrlPort, Setting.Instance.CallbackPort);
+                Console.WriteLine("{0}:{1} ({2})に接続できません。", Setting.Instance.CtrlHost, Setting.Instance.CtrlPort, Setting.Instance.CallbackPort);
                 Environment.Exit(1);
             }
-            Console.WriteLine("Loading...");
+            Console.WriteLine("データ読み込み中...");
             CommonManager.Instance.DB.ClearAllDB();
             CommonManager.Instance.DB.ReloadEpgAutoAddInfo();
             CommonManager.Instance.DB.ReloadEpgData();
@@ -222,11 +222,11 @@ namespace EpgTimer
                     {
                         if (status.param1 == 1)
                         {
-                            Console.Title = "Recording: EpgTimerWeb2";
+                            Console.Title = "録画中: EpgTimerWeb2";
                         }
                         else if (status.param1 == 2)
                         {
-                            Console.Title = "EPG: EpgTimerWeb2";
+                            Console.Title = "EPG取得中: EpgTimerWeb2";
                         }
                         else
                         {
@@ -243,8 +243,8 @@ namespace EpgTimer
         public bool StopConnect()
         {
             if (!CommonManager.Instance.NW.IsConnected) return true;
-            if ((ErrCode)CommonManager.Instance.CtrlCmd.SendUnRegistTCP(CommonManager.Instance.NW.CallbackPort) != ErrCode.CMD_SUCCESS &&
-            CommonManager.Instance.NW.StopTCPServer()) return false;
+            if ((ErrCode)CommonManager.Instance.CtrlCmd.SendUnRegistTCP(CommonManager.Instance.NW.CallbackPort) != ErrCode.CMD_SUCCESS ||
+            !CommonManager.Instance.NW.StopTCPServer()) return false;
             return true;
         }
         public bool StartConnect(string IP, int TcpPort, int CtrlPort)
@@ -252,7 +252,7 @@ namespace EpgTimer
             var ping = new Ping();
             if (ping.Send(IP).Status != IPStatus.Success)
             {
-                Console.Write("Ping can not be sent. Do you want to connect? \nCancel after 10 seconds.(y/n):");
+                Console.Write("サーバーがPINGに応答しません。接続しますか？\n10秒でキャンセルされます。(y/n):");
                 string Res = new Reader().ReadLine(10000);
                 if (Res == null || !Res.ToLower().StartsWith("y"))
                     return false;

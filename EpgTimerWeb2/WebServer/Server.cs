@@ -33,29 +33,29 @@ namespace EpgTimer
 
             var EndPoint = new IPEndPoint(IPAddress.Any, Port);
             Listener = new TcpListener(EndPoint);
-            Console.WriteLine("Starting Web Server...");
+            Console.WriteLine("Webサーバ起動中...");
             try
             {
                 Listener.Start();
                 Listener.BeginAcceptTcpClient(AcceptRequest, Listener);
                 IsListen = true;
-                Console.WriteLine("Started Web Server");
+                Console.WriteLine("Webサーバ起動完了");
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Fail Start Web Server");
+                Console.WriteLine("Webサーバ起動失敗");
                 Thread.Sleep(5000);
                 Environment.Exit(1);
             }
         }
         public void Stop()
         {
-            Console.WriteLine("Stopping Web Server...");
+            Console.WriteLine("Webサーバ停止中");
             if (Listener == null) return;
             IsListen = false;
             Listener.Stop();
             Listener = null;
-            Console.WriteLine("Stopped Web Server");
+            Console.WriteLine("Webサーバ停止完了");
         }
         
         private void AcceptRequest(IAsyncResult Result)
@@ -76,7 +76,7 @@ namespace EpgTimer
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Error: {0}", ex.Message);
+                Console.WriteLine("エラー: {0}", ex.Message);
             }
         }
     }
