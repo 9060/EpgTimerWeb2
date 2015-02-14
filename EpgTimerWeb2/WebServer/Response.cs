@@ -17,7 +17,9 @@ namespace EpgTimer
             OutputStream = new MemoryStream();
             Headers = new HttpHeaderArray()
             {
-                {"Server", "EpgTimerWeb2/1.0"}
+                {"Server", "EpgTimerWeb2/1.0"},
+                {"Date", DateTime.Now.ToString("R")},
+                {"Content-Language", "ja"}
             };
             context = c;
         }
