@@ -11,11 +11,10 @@ namespace EpgTimer
         public HttpContext(TcpClient client)
         {
             Client = client;
-            Request = new HttpRequest();
             Response = new HttpResponse(this);
             IpAddress = "0.0.0.0";
             IsWsSend = false;
-            Request = HttpRequestParser.Parse(this.HttpStream);
+            Request = HttpRequest.Parse(this.HttpStream);
             IpAddress = ((IPEndPoint)Client.Client.RemoteEndPoint).Address.ToString();
         }
         public HttpRequest Request { set; get; }
