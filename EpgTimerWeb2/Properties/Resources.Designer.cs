@@ -66,14 +66,7 @@ namespace EpgTimerWeb2.Properties {
         /// * Copyright 2011-2014 Twitter, Inc.
         /// * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
         /// */
-        ///
-        ///if (typeof jQuery === &apos;undefined&apos;) { throw new Error(&apos;Bootstrap\&apos;s JavaScript requires jQuery&apos;) }
-        ///
-        ////* ========================================================================
-        /// * Bootstrap: transition.js v3.2.0
-        /// * http://getbootstrap.com/javascript/#transitions
-        /// * ========================================================================
-        /// * Co [残りの文字列は切り詰められました]&quot;; に類似しているローカライズされた文字列を検索します。
+        ///if(&quot;undefined&quot;==typeof jQuery)throw new Error(&quot;Bootstrap&apos;s JavaScript requires jQuery&quot;);+function(a){&quot;use strict&quot;;function b(){var a=document.createElement(&quot;bootstrap&quot;),b={WebkitTransition:&quot;webkitTransitionEnd&quot;,MozTransition:&quot;transitionend&quot;,OTransition:&quot;oTransitionEnd otransitionend&quot;,transition:&quot;transitionend&quot;};for(var c in b)if(void 0!==a.s [残りの文字列は切り詰められました]&quot;; に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string BootStrap {
             get {
@@ -82,36 +75,20 @@ namespace EpgTimerWeb2.Properties {
         }
         
         /// <summary>
+        ///   {&quot;version&quot;:3,&quot;file&quot;:&quot;bootstrap.css&quot;,&quot;sources&quot;:[&quot;bootstrap.css&quot;,&quot;less/normalize.less&quot;,&quot;less/print.less&quot;,&quot;less/glyphicons.less&quot;,&quot;less/scaffolding.less&quot;,&quot;less/mixins/vendor-prefixes.less&quot;,&quot;less/mixins/tab-focus.less&quot;,&quot;less/mixins/image.less&quot;,&quot;less/type.less&quot;,&quot;less/mixins/text-emphasis.less&quot;,&quot;less/mixins/background-variant.less&quot;,&quot;less/mixins/text-overflow.less&quot;,&quot;less/code.less&quot;,&quot;less/grid.less&quot;,&quot;less/mixins/grid.less&quot;,&quot;less/mixins/grid-framework.less&quot;,&quot;less/tables.less&quot;,&quot;less/mixins/table-row.less&quot;,&quot;less/forms. [残りの文字列は切り詰められました]&quot;; に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string BootStrapCssMap {
+            get {
+                return ResourceManager.GetString("BootStrapCssMap", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   /*!
         /// * Bootstrap v3.2.0 (http://getbootstrap.com)
         /// * Copyright 2011-2014 Twitter, Inc.
         /// * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
-        /// */
-        ///
-        ////*! normalize.css v3.0.1 | MIT License | git.io/normalize */
-        ///html {
-        ///  font-family: sans-serif;
-        ///  -webkit-text-size-adjust: 100%;
-        ///      -ms-text-size-adjust: 100%;
-        ///}
-        ///body {
-        ///  margin: 0;
-        ///}
-        ///article,
-        ///aside,
-        ///details,
-        ///figcaption,
-        ///figure,
-        ///footer,
-        ///header,
-        ///hgroup,
-        ///main,
-        ///nav,
-        ///section,
-        ///summary {
-        ///  display: block;
-        ///}
-        ///audio,        /// [残りの文字列は切り詰められました]&quot;; に類似しているローカライズされた文字列を検索します。
+        /// *//*! normalize.css v3.0.1 | MIT License | git.io/normalize */html{font-family:sans-serif;-webkit-text-size-adjust:100%;-ms-text-size-adjust:100%}body{margin:0}article,aside,details,figcaption,figure,footer,header,hgroup,main,nav,section,summary{display:block}audio,canvas,progress,video{display:inline-block;vertical-align:baseline}audio:not([co [残りの文字列は切り詰められました]&quot;; に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string BootStrapStyle {
             get {
@@ -160,15 +137,8 @@ namespace EpgTimerWeb2.Properties {
         }
         
         /// <summary>
-        ///   /* NUGET: BEGIN LICENSE TEXT
-        /// *
-        /// * Microsoft grants you the right to use these script files for the sole
-        /// * purpose of either: (i) interacting through your browser with the Microsoft
-        /// * website or online service, subject to the applicable licensing or use
-        /// * terms; or (ii) using the files as included with a Microsoft product subject
-        /// * to that product&apos;s license terms. Microsoft reserves all other rights to the
-        /// * files not expressly granted by Microsoft, whether by implication, estoppel
-        /// * or otherwise. Ins [残りの文字列は切り詰められました]&quot;; に類似しているローカライズされた文字列を検索します。
+        ///   /*! jQuery v2.1.3 | (c) 2005, 2014 jQuery Foundation, Inc. | jquery.org/license */
+        ///!function(a,b){&quot;object&quot;==typeof module&amp;&amp;&quot;object&quot;==typeof module.exports?module.exports=a.document?b(a,!0):function(a){if(!a.document)throw new Error(&quot;jQuery requires a window with a document&quot;);return b(a)}:b(a)}(&quot;undefined&quot;!=typeof window?window:this,function(a,b){var c=[],d=c.slice,e=c.concat,f=c.push,g=c.indexOf,h={},i=h.toString,j=h.hasOwnProperty,k={},l=a.document,m=&quot;2.1.3&quot;,n=function(a,b){return new n.fn.init(a,b)},o=/^[ [残りの文字列は切り詰められました]&quot;; に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string JQuery {
             get {
@@ -193,36 +163,19 @@ namespace EpgTimerWeb2.Properties {
         ///&lt;head&gt;
         ///    &lt;meta charset=&quot;utf-8&quot; /&gt;
         ///    &lt;title&gt;&lt;/title&gt;
-        ///    &lt;script src=&quot;/modules/jquery.js&quot;&gt;&lt;/script&gt;
-        ///    &lt;script src=&quot;/modules/bootstrap.js&quot;&gt;&lt;/script&gt;
+        ///    &lt;script src=&quot;/js/jquery.js&quot;&gt;&lt;/script&gt;
+        ///    &lt;script src=&quot;/js/bootstrap.js&quot;&gt;&lt;/script&gt;
         ///    &lt;link rel=&quot;stylesheet&quot; href=&quot;/css/bootstrap.css&quot; /&gt;
         ///    &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1, user-scalable=no&quot;&gt;
         ///    &lt;style&gt;
         ///        #user {
         ///            margin-bottom: -1px;
         ///            border-bottom-right-radius: 0;
-        ///            border-bott [残りの文字列は切り詰められました]&quot;; に類似しているローカライズされた文字列を検索します。
+        ///            border-bottom-left-ra [残りの文字列は切り詰められました]&quot;; に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string Login {
             get {
                 return ResourceManager.GetString("Login", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   //EpgDataCap_Bon
-        ///$(document).ready(function () {
-        ///    $(&quot;button[data-toggle=&apos;tooltip&apos;]&quot;).tooltip();
-        ///    $(&quot;button[data-target=&apos;#infoInner&apos;]&quot;).click(function () {
-        ///        $(&quot;#infoInner&quot;).collapse($(&quot;#epgInner&quot;).hasClass(&quot;col-sm-12&quot;) ? &quot;show&quot; : &quot;hide&quot;);
-        ///        if ($(&quot;#epgInner&quot;).hasClass(&quot;col-sm-12&quot;)) {
-        ///            $(&quot;#epgInner&quot;).removeClass(&quot;col-sm-12&quot;).addClass(&quot;col-sm-8&quot;);
-        ///            $(&quot;button[data-target=&apos;#infoInner&apos;] span&quot;).removeClass(&quot;glyphicon-chevron-down&quot;).addClass(&quot;glyphicon-chevron-up&quot;);
-        /// [残りの文字列は切り詰められました]&quot;; に類似しているローカライズされた文字列を検索します。
-        /// </summary>
-        public static string Main {
-            get {
-                return ResourceManager.GetString("Main", resourceCulture);
             }
         }
         

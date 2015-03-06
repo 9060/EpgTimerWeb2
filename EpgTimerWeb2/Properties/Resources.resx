@@ -122,7 +122,7 @@
     <value>..\Resources\js\bootstrap.js;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;shift_jis</value>
   </data>
   <data name="BootStrapStyle" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\css\bootstrap.css;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;shift_jis</value>
+    <value>..\Resources\css\bootstrap.min.css;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;shift_jis</value>
   </data>
   <data name="glyphicons_halflings_regular_eot" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\fonts\glyphicons-halflings-regular.eot;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
@@ -137,16 +137,13 @@
     <value>..\Resources\fonts\glyphicons-halflings-regular.woff;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="JQuery" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\js\jquery-1.10.2.js;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;shift_jis</value>
+    <value>..\Resources\js\jquery.js;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;shift_jis</value>
   </data>
   <data name="NotThumbnail" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\img\thumbnail_unavailable.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="Main" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\js\main.js;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
-  </data>
   <data name="Respond" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\js\respond.js;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;shift_jis</value>
+    <value>..\Resources\js\respond.min.js;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;shift_jis</value>
   </data>
   <data name="loader" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\loader.gif;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -158,8 +155,8 @@
 &lt;head&gt;
     &lt;meta charset="utf-8" /&gt;
     &lt;title&gt;&lt;/title&gt;
-    &lt;script src="/modules/jquery.js"&gt;&lt;/script&gt;
-    &lt;script src="/modules/bootstrap.js"&gt;&lt;/script&gt;
+    &lt;script src="/js/jquery.js"&gt;&lt;/script&gt;
+    &lt;script src="/js/bootstrap.js"&gt;&lt;/script&gt;
     &lt;link rel="stylesheet" href="/css/bootstrap.css" /&gt;
     &lt;meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"&gt;
     &lt;style&gt;
@@ -188,10 +185,18 @@
             padding: 10px;
             font-size: 16px;
         }
+        .container {
+            max-width: 500px;
+        }
+        .alert {
+            border-top-left-radius: 0;
+            border-top-right-radius: 0;
+        }
     &lt;/style&gt;
 &lt;/head&gt;
 &lt;body&gt;
     &lt;div class="container"&gt;
+        &lt;!--INSERT_MESSAGE_HERE--!&gt;
         &lt;form class="form-horizontal" role="form" method="post" action="/doLogin"&gt;
             &lt;h2&gt;ログイン&lt;/h2&gt;
             &lt;label for="user" class="sr-only"&gt;
@@ -209,5 +214,8 @@
     &lt;/div&gt;
 &lt;/body&gt;
 &lt;/html&gt;</value>
+  </data>
+  <data name="BootStrapCssMap" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\css\bootstrap.css.map;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;shift_jis</value>
   </data>
 </root>
