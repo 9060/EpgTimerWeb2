@@ -34,9 +34,29 @@ namespace EpgTimer
                         HttpContext.SendResponse(Context, File.ReadAllBytes(".\\web\\index.html"));
                         Ret = true;
                         break;
+                    case "/js/jquery.js":
+                        Context.Response.Headers.Add("Content-Type", "application/javascript");
+                        HttpContext.SendResponse(Context, Resources.JQuery);
+                        Ret = true;
+                        break;
+                    case "/js/bootstrap.js":
+                        Context.Response.Headers.Add("Content-Type", "application/javascript");
+                        HttpContext.SendResponse(Context, Resources.BootStrap);
+                        Ret = true;
+                        break;
+                    case "/js/respond.js":
+                        Context.Response.Headers.Add("Content-Type", "application/javascript");
+                        HttpContext.SendResponse(Context, Resources.Respond);
+                        Ret = true;
+                        break;
                     case "/css/bootstrap.css":
                         Context.Response.Headers.Add("Content-Type", "text/css");
                         HttpContext.SendResponse(Context, Resources.BootStrapStyle);
+                        Ret = true;
+                        break;
+                    case "/css/bootstrap.css.map":
+                        Context.Response.Headers.Add("Content-Type", "text/plain");
+                        HttpContext.SendResponse(Context, Resources.BootStrapCssMap);
                         Ret = true;
                         break;
                     case "/css/main.css":
