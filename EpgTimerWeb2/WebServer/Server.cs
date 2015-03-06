@@ -1,17 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Net.Sockets;
-using System.Net;
 using System.Diagnostics;
-using System.IO;
+using System.Net;
+using System.Net.Sockets;
 using System.Threading;
-using EpgTimer;
-using System.Runtime.Serialization.Json;
-using CtrlCmdCLI.Def;
-using System.Text.RegularExpressions;
 
 namespace EpgTimer
 {

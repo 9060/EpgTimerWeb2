@@ -1,16 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-using CtrlCmdCLI;
-using CtrlCmdCLI.Def;
-
+﻿using CtrlCmdCLI;
+using System;
+using System.Diagnostics;
+using System.IO;
 using System.Net;
 using System.Net.Sockets;
-using System.IO;
-using System.Threading;
-using System.Diagnostics;
 
 namespace EpgTimer
 {

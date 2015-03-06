@@ -1,15 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using CtrlCmdCLI;
-using CtrlCmdCLI.Def;
-using EpgTimer;
-using System.Threading;
-using System.Text.RegularExpressions;
+﻿using EpgTimer;
+using System;
 using System.IO;
-using System.Diagnostics;
+using System.Threading;
 namespace EpgTimerWeb2
 {
     class Program

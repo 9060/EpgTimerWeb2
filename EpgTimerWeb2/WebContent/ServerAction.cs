@@ -1,17 +1,9 @@
-﻿using EpgTimerWeb2;
-using EpgTimerWeb2.Properties;
+﻿using EpgTimerWeb2.Properties;
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Web;
-using System.Windows.Forms;
 namespace EpgTimer
 {
     public class ServerAction

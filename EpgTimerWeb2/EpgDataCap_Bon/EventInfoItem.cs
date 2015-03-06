@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using CtrlCmdCLI.Def;
-using System.Drawing;
+﻿using CtrlCmdCLI.Def;
+using System;
 namespace EpgTimer
 {
     public class EventInfoItem

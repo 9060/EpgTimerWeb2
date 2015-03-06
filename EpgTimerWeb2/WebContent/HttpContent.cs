@@ -1,15 +1,6 @@
-﻿using EpgTimerWeb2;
-using EpgTimerWeb2.Properties;
-using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Diagnostics;
-using System.Drawing;
+﻿using EpgTimerWeb2.Properties;
 using System.Drawing.Imaging;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Xml;
 
 namespace EpgTimer
 {

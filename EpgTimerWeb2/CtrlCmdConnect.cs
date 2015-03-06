@@ -1,15 +1,8 @@
-﻿using CtrlCmdCLI.Def;
-using EpgTimer;
-using EpgTimerWeb2;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Net.NetworkInformation;
-using System.Text;
 using System.Threading;
-using System.Windows.Forms;
 
 namespace EpgTimer
 {

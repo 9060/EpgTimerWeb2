@@ -1,11 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.ComponentModel;
-
-using CtrlCmdCLI;
-using CtrlCmdCLI.Def;
+﻿using CtrlCmdCLI.Def;
+using System;
 
 namespace EpgTimer
 {
