@@ -16,15 +16,19 @@ namespace EpgTimer
         }
         public DateTime Expire { set; get; }
         public string Path { set; get; }
-        public Cookie()
+        public Cookie(bool IsSession = true)
         {
-            Expire = DateTime.Now.AddYears(1);
+            if (!IsSession)
+                Expire = DateTime.Now.AddYears(1);
+            else
+                Expire = DateTime.MinValue;
             Path = "/";
         }
         public static string Generate(Cookie cookie)
         {
             cookie["path"] = cookie.Path;
-            cookie["expires"] = GetExpireHeader(cookie.Expire);
+            if (cookie.Expire != DateTime.MinValue)
+                cookie["expires"] = GetExpireHeader(cookie.Expire);
             string Cookie = "";
             foreach (var item in cookie)
             {
@@ -40,7 +44,7 @@ namespace EpgTimer
             Cookie cookie = new Cookie();
             foreach (string item in SplitCookieKVPair(Input))
             {
-                if(item.IndexOf("=") < 0)continue;
+                if (item.IndexOf("=") < 0) continue;
                 string name = item.Substring(0, item.IndexOf("="));
                 string value = item.Substring(item.IndexOf("=") + 1);
                 cookie[name] = value;
