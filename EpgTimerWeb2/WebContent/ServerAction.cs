@@ -27,7 +27,12 @@ namespace EpgTimer
             }
             Info.Response.Headers["Content-Type"] = "text/html";
             Info.Response.Headers["Cache-Control"] = "no-cache";
-            HttpContext.SendResponse(Info, Resources.Login);
+            string Login = Resources.Login;
+            if (Info.Request.GetParam.ToLower() == "error")
+                Login = Login.Replace("<!--INSERT_MESSAGE_HERE--!>", "<div class='alert alert-danger' role='alert'>ログイン失敗</div>");
+            else if(Info.Request.GetParam.ToLower() == "logout")
+                Login = Login.Replace("<!--INSERT_MESSAGE_HERE--!>", "<div class='alert alert-info' role='alert'>ログアウト済み</div>");
+            HttpContext.SendResponse(Info, Login);
         }
         private static void DoLoginURL(HttpContext Info)
         {
@@ -42,13 +47,13 @@ namespace EpgTimer
             string Password = Param["pass"];
             if (string.IsNullOrWhiteSpace(UserName) || string.IsNullOrWhiteSpace(Password))
             {
-                HttpContext.Redirect(Info, "/login");
+                HttpContext.Redirect(Info, "/login?error");
                 return;
             }
             HttpSession Session = new HttpSession(UserName, Password, Info.IpAddress);
             if (!Session.CheckAuth(Session.SessionKey, Info.IpAddress))
             {
-                HttpContext.Redirect(Info, "/login");
+                HttpContext.Redirect(Info, "/login?error");
                 return;
             }
             Info.Response.Headers["Set-Cookie"] = Cookie.Generate(new Cookie(){
@@ -65,13 +70,19 @@ namespace EpgTimer
         }
         private static void LogoutURL(HttpContext Info)
         {
+            if (!CheckCookie(Info))
+            {
+                HttpContext.Redirect(Info, "/login?error");
+                return;
+            }
+            HttpSession.Search(Info.Request.Cookie["session"], Info.IpAddress).LastTime = 0;
             Info.Response.Headers["Cache-Control"] = "no-cache";
             Cookie removeCookie = new Cookie(){
                 {"session", "delete"}
             };
             removeCookie.Expire = DateTime.Now.AddYears(-5);
             Info.Response.Headers["Set-Cookie"] = Cookie.Generate(removeCookie);
-            HttpContext.Redirect(Info, "/");
+            HttpContext.Redirect(Info, "/login?logout");
         }
         //                                   API         CB
         static Regex r = new Regex(@"^\/api\/(.*)\/json\/(.*)\/$");

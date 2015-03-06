@@ -10,24 +10,25 @@ namespace EpgTimer
     {
         public static bool IsMatch(string SessionKey, string IpAddr)
         {
-            foreach (HttpSession Tmp in PrivateSetting.Instance.Sessions)
-            {
-                if (Tmp.CheckAuth(SessionKey, IpAddr)) return true;
-            }
-            return false;
+            Optimize();
+            return Search(SessionKey, IpAddr) != null;
         }
         public static HttpSession Search(string SessionKey, string IpAddr)
         {
+            Optimize();
             foreach (HttpSession Tmp in PrivateSetting.Instance.Sessions)
             {
                 if (Tmp.CheckAuth(SessionKey, IpAddr)) return Tmp;
             }
+            return null;
+        }
+        public static void Optimize()
+        {
             foreach (HttpSession Tmp in PrivateSetting.Instance.Sessions.Where(s => s.IsExpired()))
             {
                 Debug.Print("Expire: {0}", Tmp.SessionKey);
             }
             PrivateSetting.Instance.Sessions = PrivateSetting.Instance.Sessions.Where(s => !s.IsExpired()).ToList();
-            return null;
         }
         private bool _IsAuth = false;
         private string _SessionKey = "";
@@ -57,6 +58,10 @@ namespace EpgTimer
         private bool IsExpired()
         {
             return LastTime < UnixTime.ToUnixTime(DateTime.Now) - Setting.Instance.SessionExpireSecond;
+        }
+        public void Logout()
+        {
+            PrivateSetting.Instance.Sessions.Remove(this);
         }
         public string SessionKey { get { return _SessionKey2; } }
         public long LastTime { get; set; }
