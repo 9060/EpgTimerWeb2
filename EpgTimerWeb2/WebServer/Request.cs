@@ -19,9 +19,6 @@ namespace EpgTimer
         {
             get { return PostData.Length == 0 ? "" : Encoding.UTF8.GetString(PostData); }
         }
-    }
-    public class HttpRequestParser
-    {
         public static HttpRequest Parse(Stream Input)
         {
             
