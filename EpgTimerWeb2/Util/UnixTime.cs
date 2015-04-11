@@ -7,7 +7,6 @@ namespace EpgTimer
         public readonly static DateTime UnixEpoch = new DateTime(1970, 1, 1, 0, 0, 0);
         public static long ToUnixTime(DateTime dateTime)
         {
-            //dateTime = dateTime.ToUniversalTime();
             return (long)dateTime.Subtract(UnixEpoch).TotalSeconds;
         }
 

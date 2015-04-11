@@ -50,23 +50,17 @@ namespace EpgTimer
                     {
                         string[] list = buff.Split('\t');
                         ChSet5Item item = new ChSet5Item();
-                        try
-                        {
-                            item.ServiceName = list[0];
-                            item.NetworkName = list[1];
-                            item.ONID = ushort.Parse(list[2]);
-                            item.TSID = ushort.Parse(list[3]);
-                            item.SID = ushort.Parse(list[4]);
-                            item.ServiceType = ushort.Parse(list[5]);
-                            item.PartialFlag = byte.Parse(list[6]);
-                            item.EpgCapFlag = byte.Parse(list[7]);
-                            item.SearchFlag = byte.Parse(list[8]);
-                        }
-                        finally
-                        {
-                            ulong key = ((ulong)item.ONID) << 32 | ((ulong)item.TSID) << 16 | ((ulong)item.SID);
-                            Instance.ChList.Add(key, item);
-                        }
+                        item.ServiceName = list[0];
+                        item.NetworkName = list[1];
+                        item.ONID = ushort.Parse(list[2]);
+                        item.TSID = ushort.Parse(list[3]);
+                        item.SID = ushort.Parse(list[4]);
+                        item.ServiceType = ushort.Parse(list[5]);
+                        item.PartialFlag = byte.Parse(list[6]);
+                        item.EpgCapFlag = byte.Parse(list[7]);
+                        item.SearchFlag = byte.Parse(list[8]);
+                        ulong key = ((ulong)item.ONID) << 32 | ((ulong)item.TSID) << 16 | ((ulong)item.SID);
+                        Instance.ChList.Add(key, item);
                     }
                 }
 

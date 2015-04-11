@@ -141,42 +141,24 @@ namespace EpgTimer
                 iPos += sizeof(uint);
 
                 if (size > cmd.bData.Length - 2)
-                {
                     return false;
-                }
 
                 if (ReadData(ver, ref value.notifyID, cmd.bData, ref iPos) == false)
-                {
                     return false;
-                }
                 if (ReadData(ver, ref value.time, cmd.bData, ref iPos) == false)
-                {
                     return false;
-                }
                 if (ReadData(ver, ref value.param1, cmd.bData, ref iPos) == false)
-                {
                     return false;
-                }
                 if (ReadData(ver, ref value.param2, cmd.bData, ref iPos) == false)
-                {
                     return false;
-                }
                 if (ReadData(ver, ref value.param3, cmd.bData, ref iPos) == false)
-                {
                     return false;
-                }
                 if (ReadData(ver, ref value.param4, cmd.bData, ref iPos) == false)
-                {
                     return false;
-                }
                 if (ReadData(ver, ref value.param5, cmd.bData, ref iPos) == false)
-                {
                     return false;
-                }
                 if (ReadData(ver, ref value.param6, cmd.bData, ref iPos) == false)
-                {
                     return false;
-                }
             }
             catch
             {
