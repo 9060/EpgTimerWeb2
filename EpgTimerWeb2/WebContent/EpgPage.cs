@@ -127,16 +127,7 @@ namespace EpgTimer
                 Debug.Print(Temp.ToString());
             }
             sb.Append("</div>\n");
-            /*
-            DateTime Temp = StartTime.AddSeconds(StartTime.Second * -1).AddMinutes(StartTime.Minute * -1);
-            for (int i = 0; i < MaxHour; i++)
-            {
-                string Text = (i == 0 || Temp.Hour == 0) ? "<p>" + Temp.Month + "/" + Temp.Day + "</p>" + Temp.Hour : Temp.Hour.ToString();
-                sb.AppendFormat("<div style=\"height: {1}px;top: {2}px;\">{0}</div>", Text, MinSize * 60, MinSize * 60 * i);
-                Temp = Temp.AddHours(1);
-            }
-            sb.Append("</div>");
-            */
+
             //Print EPG
             foreach (var Item in Out)
             {

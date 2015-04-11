@@ -10,12 +10,12 @@ namespace EpgTimer
     public class WebSocket
     {
 
-        public static byte[] GetWebSocketUnMaskedFrame(HttpContext Context)
+        public static byte[] GetUnMaskedFrame(HttpContext Context)
         {
             while (Context.Client.Available < 2) Thread.Sleep(10);
-            Int64 DataSize = 0;
-            Int64 NowSize = 0;
-            Int64 HdrSize = 2;
+            long DataSize = 0;
+            long NowSize = 0;
+            long HdrSize = 2;
             byte[] Buffer = new byte[1024];
             int Size;
             int TotalSize = 0;
@@ -26,7 +26,7 @@ namespace EpgTimer
                 MaskBuffer.AddRange(Buffer.Take(Size));
                 TotalSize += Size;
             }
-            HdrSize = WebSocketGetHdrLen(MaskBuffer.ToArray()); //Headerの全長
+            HdrSize = GetHeaderLength(MaskBuffer.ToArray()); //Headerの全長
             if (TotalSize < HdrSize) //Headerをすべて読んでいない
             {
                 HdrSize -= TotalSize; //今まで読んだ分
@@ -38,7 +38,7 @@ namespace EpgTimer
                     HdrSize -= Size;
                 }
             }
-            DataSize = WebSocketGetLen(MaskBuffer.ToArray()); //データの長さ
+            DataSize = GetLength(MaskBuffer.ToArray()); //データの長さ
             NowSize = DataSize - TotalSize; //読むべき残りデータ
             while (NowSize > 0)
             {
@@ -66,7 +66,7 @@ namespace EpgTimer
                 HttpResponse.SendResponseBody(Context, SendFrame);
                 return null;
             }
-            return WebSocketUnMask(MaskBuffer.ToArray()); //全部まとめてアンマスク
+            return UnMask(MaskBuffer.ToArray()); //全部まとめてアンマスク
         }
         public static void HandshakeResponseSend(HttpContext Context)
         {
@@ -98,18 +98,18 @@ namespace EpgTimer
                     Encoding.UTF8.GetBytes(Key + ACCEPT_KEY)
                 ));
         }
-        public static Int64 WebSocketGetHdrLen(byte[] Frame)
+        public static long GetHeaderLength(byte[] Frame)
         {
-            var PayloadLen = (Int64)(Frame[1] & 0x7f);
-            Int64 Len = 2;
+            var PayloadLen = (long)(Frame[1] & 0x7f);
+            long Len = 2;
             if (PayloadLen == 126) Len += 2;
             if (PayloadLen == 127) Len += 8;
             if ((Frame[1] & 0x80) == 0x80) Len += 4;
             return Len;
         }
-        public static Int64 WebSocketGetLen(byte[] Frame)
+        public static long GetLength(byte[] Frame)
         {
-            var PayloadLen = (Int64)(Frame[1] & 0x7f);
+            var PayloadLen = (long)(Frame[1] & 0x7f);
             int Offset = 2;
             if (PayloadLen == 126)
             {
@@ -131,14 +131,14 @@ namespace EpgTimer
             {
                 Offset += 4;
             }
-            return PayloadLen + (Int64)Offset;
+            return PayloadLen + (long)Offset;
         }
-        public static byte[] WebSocketUnMask(byte[] WebSocketFrame)
+        public static byte[] UnMask(byte[] WebSocketFrame)
         {
             var Fin = (WebSocketFrame[0] & 0x80) == 0x80;
             var OpCode = (byte)(WebSocketFrame[0] & 0x0f);
             var Mask = (WebSocketFrame[1] & 0x80) == 0x80;
-            var PayloadLen = (UInt64)(WebSocketFrame[1] & 0x7f);
+            var PayloadLen = (ulong)(WebSocketFrame[1] & 0x7f);
             int Offset = 2;
             if (PayloadLen == 126)
             {
@@ -173,7 +173,7 @@ namespace EpgTimer
             }
             return PayloadData;
         }
-        public static byte[] WebSocketMask(byte[] Data, byte OpCode)
+        public static byte[] Mask(byte[] Data, byte OpCode)
         {
             byte[] WebSocketFrame;
             byte[] Hd;

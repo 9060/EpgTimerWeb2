@@ -72,11 +72,6 @@ namespace EpgTimer
             get { return CommonManager.Create64PgKey(ONID, TSID, SID, EID).ToString(); }
         }
 
-
-        public string ServiceKeyS
-        {
-            get { return CommonManager.Create64Key(ONID, TSID, SID).ToString(); }
-        }
         public byte FreeCA
         {
             get

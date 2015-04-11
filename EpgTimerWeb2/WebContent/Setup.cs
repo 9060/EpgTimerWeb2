@@ -19,7 +19,8 @@ namespace EpgTimer
                     {
                         if (Param["ctrlhost"] == null || Param["ctrlport"] == null ||
                             Param["cbport"] == null || Param["http"] == null ||
-                            Param["user"] == null || Param["pass"] == null) throw new Exception("Bad Param");
+                            Param["user"] == null || Param["pass"] == null)
+                            throw new Exception("Bad Param");
                         string Host = Param["ctrlhost"];
                         int CtrlPort = int.Parse(Param["ctrlport"]);
                         int CbPort = int.Parse(Param["cbport"]);
@@ -78,22 +79,22 @@ namespace EpgTimer
             {
                 byte[] Form = Encoding.UTF8.GetBytes(@"
 <html>
- <head>
-  <title>Setup</title>
- </head>
- <body>
-  <h1>EpgTimerWeb2 Configure</h1>
-  <form action='/update' method='post'>
-   <p>EDCB Server:<input name='ctrlhost' placeholder='127.0.0.1' value='127.0.0.1' /></p>
-   <p>EDCB Port:<input name='ctrlport' placeholder='4510' value='4510' /></p>
-   <p>Callback Port:<input name='cbport' placeholder='4521' value='4521' /></p>
-   <p>Username:<input name='user' placeholder='user'  /></p>
-   <p>Password:<input name='pass' placeholder='pass'  /></p>
-   <p>Http Port:<input name='http' placeholder='8080' value='8080' /></p>
-   <p>Pin Code:<input name='code' /></p>
-   <p><input type='submit' value='Update config' /></p>
-  </form>
- </body>
+\t<head>
+\t\t<title>Setup</title>
+\t</head>
+\t<body>
+\t\t<h1>EpgTimerWeb2 Configure</h1>
+\t\t<form action='/update' method='post'>
+\t\t\t<p>EDCB Server:<input name='ctrlhost' placeholder='127.0.0.1' value='127.0.0.1' /></p>
+\t\t\t<p>EDCB Port:<input name='ctrlport' placeholder='4510' value='4510' /></p>
+\t\t\t<p>Callback Port:<input name='cbport' placeholder='4521' value='4521' /></p>
+\t\t\t<p>Username:<input name='user' placeholder='user'  /></p>
+\t\t\t<p>Password:<input name='pass' placeholder='pass'  /></p>
+\t\t\t<p>Http Port:<input name='http' placeholder='8080' value='8080' /></p>
+\t\t\t<p>Pin Code:<input name='code' /></p>
+\t\t\t<p><input type='submit' value='Update config' /></p>
+\t\t</form>
+\t</body>
 </html>
 ".Replace("'", "\""));
                 Context.Response.OutputStream.Write(Form, 0, Form.Length);

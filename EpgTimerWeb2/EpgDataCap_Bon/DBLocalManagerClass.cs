@@ -25,7 +25,7 @@ namespace EpgTimer
         public void ReloadRecFileInfo()
         {
             if (!Setting.Instance.LocalMode) return;
-            CommonManager.Instance.DB.ReloadrecFileInfo();
+            CommonManager.Instance.DB.ReloadRecFileInfo();
             ClearAllDB();
             foreach (KeyValuePair<uint, RecFileInfo> Info in CommonManager.Instance.DB.RecFileInfo)
             {

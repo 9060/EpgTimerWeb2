@@ -15,7 +15,7 @@ namespace EpgTimer
             Sockets.Add(Info);
             while (Info.Client.Connected)
             {
-                byte[] UnMaskBuf = WebSocket.GetWebSocketUnMaskedFrame(Info);
+                byte[] UnMaskBuf = WebSocket.GetUnMaskedFrame(Info);
                 if (UnMaskBuf == null) continue;
                 string UnMask = Encoding.UTF8.GetString(UnMaskBuf);
                 Debug.Print(UnMask);
@@ -25,18 +25,18 @@ namespace EpgTimer
                     string Command = match.Groups[2].Value;
                     string Id = match.Groups[1].Value;
                     string JsonData = Api.Call(Command, false);
-                    byte[] Response = WebSocket.WebSocketMask(
+                    byte[] Response = WebSocket.Mask(
                                 Encoding.UTF8.GetBytes("ERR No API"), 0x1);
                     if (JsonData != "")
                     {
                         Response = Encoding.UTF8.GetBytes("+OK" + Id + " " + JsonData);
                     }
-                    HttpResponse.SendResponseBodyWS(Info, WebSocket.WebSocketMask(
+                    HttpResponse.SendResponseBodyWS(Info, WebSocket.Mask(
                                     Response, 0x1));
                 }
                 else
                 {
-                    byte[] Response = WebSocket.WebSocketMask(
+                    byte[] Response = WebSocket.Mask(
                                 Encoding.UTF8.GetBytes("ERR"), 0x1);
                     HttpResponse.SendResponseBodyWS(Info, Response);
                 }
@@ -47,7 +47,7 @@ namespace EpgTimer
         {
             try
             {
-                byte[] Response = WebSocket.WebSocketMask(
+                byte[] Response = WebSocket.Mask(
                                 Encoding.UTF8.GetBytes(Mes), 0x1);
                 var a = Sockets.ToArray();
                 foreach (var Con in a)

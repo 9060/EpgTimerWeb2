@@ -59,7 +59,7 @@ namespace EpgTimer
             CommonManager.Instance.DB.ReloadEpgData();
             CommonManager.Instance.DB.ReloadManualAutoAddInfo();
             CommonManager.Instance.DB.ReloadPlugInFile();
-            CommonManager.Instance.DB.ReloadrecFileInfo();
+            CommonManager.Instance.DB.ReloadRecFileInfo();
             CommonManager.Instance.DB.ReloadReserveInfo();
         }
         private int OutsideCmdCallback(object pParam, CMD_STREAM pCmdParam, ref CMD_STREAM pResParam)
@@ -193,7 +193,7 @@ namespace EpgTimer
                 case UpdateNotifyItem.RecInfo:
                     {
                         CommonManager.Instance.DB.SetUpdateNotify((UInt32)UpdateNotifyItem.RecInfo);
-                        CommonManager.Instance.DB.ReloadrecFileInfo();
+                        CommonManager.Instance.DB.ReloadRecFileInfo();
                         SocketAction.SendAllMessage("UPDATED REC");
                     }
                     break;

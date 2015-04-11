@@ -210,7 +210,7 @@ namespace EpgTimer
             }
             if (ContentKindDictionary2 == null)
             {
-                ContentKindDictionary2 = new Dictionary<UInt16, ContentKindInfo>();
+                ContentKindDictionary2 = new Dictionary<ushort, ContentKindInfo>();
                 ContentKindDictionary2.Add(0x00FF, new ContentKindInfo("スポーツ", "", 0x00, 0xFF));
                 ContentKindDictionary2.Add(0x0000, new ContentKindInfo("スポーツ", "テニス", 0x00, 0x00));
                 ContentKindDictionary2.Add(0x0001, new ContentKindInfo("スポーツ", "バスケットボール", 0x00, 0x01));
