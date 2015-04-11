@@ -28,39 +28,24 @@ namespace EpgTimer
             get;
             set;
         }
-
-        public String TextView
+        public string EventName
         {
             get
             {
-                return CommonManager.Instance.ConvertReserveText(ReserveInfo);
-            }
-        }
-
-        public String EventName
-        {
-            get
-            {
-                String view = "";
                 if (ReserveInfo != null)
-                {
-                    view = ReserveInfo.Title;
-                }
-                return view;
+                    return ReserveInfo.Title;
+                return "";
             }
         }
 
         
-        public String ServiceName
+        public string ServiceName
         {
             get
             {
-                String view = "";
                 if (ReserveInfo != null)
-                {
-                    view = ReserveInfo.StationName;
-                }
-                return view;
+                    return ReserveInfo.StationName;
+                return "";
             }
         }
 
@@ -80,13 +65,6 @@ namespace EpgTimer
         {
             get { return ReserveInfo.EventID; }
         }
-        public string KeyS
-        {
-            get
-            {
-                return Key.ToString();
-            }
-        }
         public ulong Key
         {
             get
@@ -94,36 +72,13 @@ namespace EpgTimer
                 return CommonManager.Create64PgKey(ONID, TSID, SID, EventID);
             }
         }
-        public String NetworkName
+        public string NetworkName
         {
             get
             {
-                String view = "";
                 if (ReserveInfo != null)
-                {
-                    if (0x7880 <= ReserveInfo.OriginalNetworkID && ReserveInfo.OriginalNetworkID <= 0x7FE8)
-                    {
-                        view = "Digital";
-                    }
-                    else if (ReserveInfo.OriginalNetworkID == 0x0004)
-                    {
-                        view = "BS";
-                    }
-                    else if (ReserveInfo.OriginalNetworkID == 0x0006)
-                    {
-                        view = "CS1";
-                    }
-                    else if (ReserveInfo.OriginalNetworkID == 0x0007)
-                    {
-                        view = "CS2";
-                    }
-                    else
-                    {
-                        view = "その他";
-                    }
-
-                }
-                return view;
+                    return CommonManager.GetNetworkName(ReserveInfo.OriginalNetworkID);
+                return "";
             }
         }
 
@@ -147,109 +102,29 @@ namespace EpgTimer
                 return UnixTime.ToUnixTime(ReserveInfo.StartTimeEpg);
             }
         }
-
         
-        public String RecMode
+        public string Comment
         {
             get
             {
-                String view = "";
                 if (ReserveInfo != null)
                 {
-                    switch (ReserveInfo.RecSetting.RecMode)
-                    {
-                        case 0:
-                            view = "全サービス";
-                            break;
-                        case 1:
-                            view = "指定サービス";
-                            break;
-                        case 2:
-                            view = "全サービス（デコード処理なし）";
-                            break;
-                        case 3:
-                            view = "指定サービス（デコード処理なし）";
-                            break;
-                        case 4:
-                            view = "視聴";
-                            break;
-                        case 5:
-                            view = "無効";
-                            break;
-                        default:
-                            break;
-                    }
+                    return ReserveInfo.Comment;
                 }
-                return view;
-            }
-        }
-
-        public String Tuijyu
-        {
-            get
-            {
-                String view = "";
-                if (ReserveInfo != null)
-                {
-                    if (ReserveInfo.RecSetting.TuijyuuFlag == 0)
-                    {
-                        view = "しない";
-                    }
-                    else if (ReserveInfo.RecSetting.TuijyuuFlag == 1)
-                    {
-                        view = "する";
-                    }
-                }
-                return view;
+                return "";
             }
         }
 
         
-        public String Pittari
+        public string[] RecFileName
         {
             get
             {
-                String view = "";
                 if (ReserveInfo != null)
                 {
-                    if (ReserveInfo.RecSetting.PittariFlag == 0)
-                    {
-                        view = "しない";
-                    }
-                    else if (ReserveInfo.RecSetting.PittariFlag == 1)
-                    {
-                        view = "する";
-                    }
+                    return ReserveInfo.RecFileNameList.ToArray();
                 }
-                return view;
-            }
-        }
-
-        
-        public String Comment
-        {
-            get
-            {
-                String view = "";
-                if (ReserveInfo != null)
-                {
-                    view = ReserveInfo.Comment.ToString();
-                }
-                return view;
-            }
-        }
-
-        
-        public String[] RecFileName
-        {
-            get
-            {
-                List<String> list = new List<String>();
-                if (ReserveInfo != null)
-                {
-                    list = ReserveInfo.RecFileNameList;
-                }
-                return list.ToArray();
+                return null;
             }
         }
         public RecSettingData Setting

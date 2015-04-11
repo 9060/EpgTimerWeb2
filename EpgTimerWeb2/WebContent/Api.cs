@@ -122,7 +122,7 @@ namespace EpgTimer
             if (Arg.ContainsKey("priority") && byte.Parse(Arg["priority"]) >= 1 && byte.Parse(Arg["priority"]) <= 5)
                 pInfo.Priority = byte.Parse(Arg["priority"]);
             pInfo.RecMode = 1;
-            if (Arg.ContainsKey("recmode") && CommonManager.Instance.RecModeDictionary.Keys.Where(s => byte.Parse(Arg["recmode"]) == s).Count() > 0)
+            if (Arg.ContainsKey("recmode") && byte.Parse(Arg["recmode"]) >= 0 && byte.Parse(Arg["recmode"]) <= 5)
                 pInfo.RecMode = byte.Parse(Arg["recmode"]);
             return pInfo;
         }

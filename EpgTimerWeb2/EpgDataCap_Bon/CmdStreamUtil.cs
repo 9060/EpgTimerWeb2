@@ -5,14 +5,14 @@ namespace EpgTimer
 {
     public class NotifySrvInfo
     {
-        public UInt32 notifyID;
+        public uint notifyID;
         public DateTime time;
-        public UInt32 param1;
-        public UInt32 param2;
-        public UInt32 param3;
-        public String param4;
-        public String param5;
-        public String param6;
+        public uint param1;
+        public uint param2;
+        public uint param3;
+        public string param4;
+        public string param5;
+        public string param6;
 
         public NotifySrvInfo()
         {
@@ -29,7 +29,7 @@ namespace EpgTimer
 
     public class CmdStreamUtil
     {
-        private static bool ReadData(UInt16 ver, ref String val, byte[] buff, ref int startIndex)
+        private static bool ReadData(ushort ver, ref string val, byte[] buff, ref int startIndex)
         {
             try
             {
@@ -51,12 +51,12 @@ namespace EpgTimer
             }
             return true;
         }
-        private static bool ReadData(UInt16 ver, ref UInt32 val, byte[] buff, ref int startIndex)
+        private static bool ReadData(ushort ver, ref uint val, byte[] buff, ref int startIndex)
         {
             try
             {
                 val = BitConverter.ToUInt32(buff, startIndex);
-                startIndex += sizeof(UInt32);
+                startIndex += sizeof(uint);
             }
             catch
             {
@@ -64,26 +64,26 @@ namespace EpgTimer
             }
             return true;
         }
-        private static bool ReadData(UInt16 ver, ref DateTime val, byte[] buff, ref int startIndex)
+        private static bool ReadData(ushort ver, ref DateTime val, byte[] buff, ref int startIndex)
         {
             try
             {
-                Int16 yy = BitConverter.ToInt16(buff, startIndex);
-                startIndex += sizeof(Int16);
-                Int16 mm = BitConverter.ToInt16(buff, startIndex);
-                startIndex += sizeof(Int16);
+                short yy = BitConverter.ToInt16(buff, startIndex);
+                startIndex += sizeof(short);
+                short mm = BitConverter.ToInt16(buff, startIndex);
+                startIndex += sizeof(short);
                 //wDayOfWeek
-                startIndex += sizeof(Int16);
-                Int16 dd = BitConverter.ToInt16(buff, startIndex);
-                startIndex += sizeof(Int16);
-                Int16 h = BitConverter.ToInt16(buff, startIndex);
-                startIndex += sizeof(Int16);
-                Int16 m = BitConverter.ToInt16(buff, startIndex);
-                startIndex += sizeof(Int16);
-                Int16 s = BitConverter.ToInt16(buff, startIndex);
-                startIndex += sizeof(Int16);
-                Int16 ms = BitConverter.ToInt16(buff, startIndex);
-                startIndex += sizeof(Int16);
+                startIndex += sizeof(short);
+                short dd = BitConverter.ToInt16(buff, startIndex);
+                startIndex += sizeof(short);
+                short h = BitConverter.ToInt16(buff, startIndex);
+                startIndex += sizeof(short);
+                short m = BitConverter.ToInt16(buff, startIndex);
+                startIndex += sizeof(short);
+                short s = BitConverter.ToInt16(buff, startIndex);
+                startIndex += sizeof(short);
+                short ms = BitConverter.ToInt16(buff, startIndex);
+                startIndex += sizeof(short);
                 val = new DateTime(yy, mm, dd, h, m, s, ms, DateTimeKind.Utc);
             }
             catch
@@ -93,7 +93,7 @@ namespace EpgTimer
             return true;
         }
 
-        public static bool ReadStreamData(ref String value, CMD_STREAM cmd)
+        public static bool ReadStreamData(ref string value, CMD_STREAM cmd)
         {
             int iPos = 0;
             int iStrSize = 0;
@@ -114,7 +114,7 @@ namespace EpgTimer
             return true;
         }
 
-        public static bool ReadStreamData(ref UInt16 value, CMD_STREAM cmd)
+        public static bool ReadStreamData(ref ushort value, CMD_STREAM cmd)
         {
             int iPos = 0;
 
@@ -124,7 +124,7 @@ namespace EpgTimer
             }
 
             value = BitConverter.ToUInt16(cmd.bData, iPos);
-            iPos += sizeof(UInt16);
+            iPos += sizeof(ushort);
 
             return true;
         }
@@ -135,10 +135,10 @@ namespace EpgTimer
             {
                 int iPos = 0;
 
-                UInt16 ver = BitConverter.ToUInt16(cmd.bData, iPos);
-                iPos += sizeof(UInt16);
-                UInt32 size = BitConverter.ToUInt32(cmd.bData, iPos);
-                iPos += sizeof(UInt32);
+                ushort ver = BitConverter.ToUInt16(cmd.bData, iPos);
+                iPos += sizeof(ushort);
+                uint size = BitConverter.ToUInt32(cmd.bData, iPos);
+                iPos += sizeof(uint);
 
                 if (size > cmd.bData.Length - 2)
                 {

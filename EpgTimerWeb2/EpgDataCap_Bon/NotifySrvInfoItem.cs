@@ -16,11 +16,11 @@ namespace EpgTimer
                 return NotifyInfo.time;
             }
         }
-        public String Title
+        public string Title
         {
             get
             {
-                String text = "";
+                string text = "";
                 if (NotifyInfo != null)
                 {
                     switch ((UpdateNotifyItem)NotifyInfo.notifyID)
@@ -74,11 +74,11 @@ namespace EpgTimer
             }
         }
 
-        public String LogText
+        public string LogText
         {
             get
             {
-                String text = "";
+                string text = "";
                 if (NotifyInfo != null)
                 {
                     switch ((UpdateNotifyItem)NotifyInfo.notifyID)
@@ -132,11 +132,11 @@ namespace EpgTimer
             }
         }
 
-        public String FileLogText
+        public string FileLogText
         {
             get
             {
-                String text = "";
+                string text = "";
                 if (NotifyInfo != null)
                 {
                     text = NotifyInfo.time.ToString("yyyy/MM/dd HH:mm:ss.fff");

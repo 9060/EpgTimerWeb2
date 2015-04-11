@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Text;
 
 namespace EpgTimer
 {
     public class ChSet5
     {
-        public Dictionary<UInt64, ChSet5Item> ChList
+        public Dictionary<ulong, ChSet5Item> ChList
         {
             get;
             set;
@@ -25,7 +27,7 @@ namespace EpgTimer
 
         public ChSet5()
         {
-            ChList = new Dictionary<UInt64, ChSet5Item>();
+            ChList = new Dictionary<ulong, ChSet5Item>();
         }
         public static bool LoadFile()
         {
@@ -33,22 +35,18 @@ namespace EpgTimer
             {
                 if (Instance.ChList == null)
                 {
-                    Instance.ChList = new Dictionary<UInt64, ChSet5Item>();
+                    Instance.ChList = new Dictionary<ulong, ChSet5Item>();
                 }
                 else
                 {
                     Instance.ChList.Clear();
                 }
                 String filePath = @".\Setting\ChSet5.txt";
-                System.IO.StreamReader reader = (new System.IO.StreamReader(filePath, System.Text.Encoding.Default));
+                StreamReader reader = new StreamReader(filePath, Encoding.Default);
                 while (reader.Peek() >= 0)
                 {
                     string buff = reader.ReadLine();
-                    if (buff.IndexOf(";") == 0)
-                    {
-                        //コメント行
-                    }
-                    else
+                    if (!buff.StartsWith(";"))
                     {
                         string[] list = buff.Split('\t');
                         ChSet5Item item = new ChSet5Item();
@@ -56,24 +54,23 @@ namespace EpgTimer
                         {
                             item.ServiceName = list[0];
                             item.NetworkName = list[1];
-                            item.ONID = Convert.ToUInt16(list[2]);
-                            item.TSID = Convert.ToUInt16(list[3]);
-                            item.SID = Convert.ToUInt16(list[4]);
-                            item.ServiceType = Convert.ToUInt16(list[5]);
-                            item.PartialFlag = Convert.ToByte(list[6]);
-                            item.EpgCapFlag = Convert.ToByte(list[7]);
-                            item.SearchFlag = Convert.ToByte(list[8]);
+                            item.ONID = ushort.Parse(list[2]);
+                            item.TSID = ushort.Parse(list[3]);
+                            item.SID = ushort.Parse(list[4]);
+                            item.ServiceType = ushort.Parse(list[5]);
+                            item.PartialFlag = byte.Parse(list[6]);
+                            item.EpgCapFlag = byte.Parse(list[7]);
+                            item.SearchFlag = byte.Parse(list[8]);
                         }
                         finally
                         {
-                            UInt64 key = ((UInt64)item.ONID) << 32 | ((UInt64)item.TSID) << 16 | ((UInt64)item.SID);
+                            ulong key = ((ulong)item.ONID) << 32 | ((ulong)item.TSID) << 16 | ((ulong)item.SID);
                             Instance.ChList.Add(key, item);
                         }
                     }
                 }
 
                 reader.Close();
-
             }
             catch
             {
@@ -85,8 +82,8 @@ namespace EpgTimer
         {
             try
             {
-                String filePath = @".\Config\ChSet5.txt";
-                System.IO.StreamWriter writer = (new System.IO.StreamWriter(filePath, false, System.Text.Encoding.Default));
+                string filePath = @".\Config\ChSet5.txt";
+                StreamWriter writer = new StreamWriter(filePath, false, Encoding.Default);
                 if (Instance.ChList != null)
                 {
                     foreach (ChSet5Item info in Instance.ChList.Values)
@@ -119,66 +116,61 @@ namespace EpgTimer
         {
         }
 
-        public UInt64 Key
+        public ulong Key
         {
             get
             {
-                UInt64 key = ((UInt64)ONID) << 32 | ((UInt64)TSID) << 16 | (UInt64)SID;
-                return key;
+                return ((ulong)ONID) << 32 | ((ulong)TSID) << 16 | (ulong)SID;
             }
         }
-        public string KeyS
-        {
-            get { return Key.ToString(); }
-        }
 
-        public UInt16 ONID
+        public ushort ONID
         {
             get;
             set;
         }
-        public UInt16 TSID
+        public ushort TSID
         {
             get;
             set;
         }
 
-        public UInt16 SID
+        public ushort SID
         {
             get;
             set;
         }
-        public UInt16 ServiceType
+        public ushort ServiceType
         {
             get;
             set;
         }
-        public Byte PartialFlag
+        public byte PartialFlag
         {
             get;
             set;
         }
-        public String ServiceName
+        public string ServiceName
         {
             get;
             set;
         }
-        public String NetworkName
+        public string NetworkName
         {
             get;
             set;
         }
-        public Byte EpgCapFlag
+        public byte EpgCapFlag
         {
             get;
             set;
         }
-        public Byte SearchFlag
+        public byte SearchFlag
         {
             get;
             set;
         }
-        public Byte RemoconID
+        public byte RemoconID
         {
             get;
             set;

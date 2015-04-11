@@ -18,44 +18,44 @@ namespace EpgTimer
         private bool noAutoReloadEpg = false;
         private bool oneTimeReloadEpg = false;
 
-        Dictionary<UInt64, EpgServiceEventInfo> serviceEventList = new Dictionary<UInt64, EpgServiceEventInfo>();
-        Dictionary<UInt32, ReserveData> reserveList = new Dictionary<UInt32, ReserveData>();
-        Dictionary<UInt32, TunerReserveInfo> tunerReserveList = new Dictionary<UInt32, TunerReserveInfo>();
-        Dictionary<UInt32, RecFileInfo> recFileInfo = new Dictionary<UInt32, RecFileInfo>();
-        Dictionary<Int32, String> writePlugInList = new Dictionary<Int32, String>();
-        Dictionary<Int32, String> recNamePlugInList = new Dictionary<Int32, String>();
-        Dictionary<UInt32, ManualAutoAddData> manualAutoAddList = new Dictionary<UInt32, ManualAutoAddData>();
-        Dictionary<UInt32, EpgAutoAddData> epgAutoAddList = new Dictionary<UInt32, EpgAutoAddData>();
+        private Dictionary<ulong, EpgServiceEventInfo> serviceEventList = null;
+        private Dictionary<uint, ReserveData> reserveList = null;
+        private Dictionary<uint, TunerReserveInfo> tunerReserveList = null;
+        private Dictionary<uint, RecFileInfo> recFileInfo = null;
+        private Dictionary<int, string> writePlugInList = null;
+        private Dictionary<int, string> recNamePlugInList = null;
+        private Dictionary<uint, ManualAutoAddData> manualAutoAddList = null;
+        private Dictionary<uint, EpgAutoAddData> epgAutoAddList = null;
 
-        public Dictionary<UInt64, EpgServiceEventInfo> ServiceEventList
+        public Dictionary<ulong, EpgServiceEventInfo> ServiceEventList
         {
             get { return serviceEventList; }
         }
-        public Dictionary<UInt32, ReserveData> ReserveList
+        public Dictionary<uint, ReserveData> ReserveList
         {
             get { return reserveList; }
         }
-        public Dictionary<UInt32, TunerReserveInfo> TunerReserveList
+        public Dictionary<uint, TunerReserveInfo> TunerReserveList
         {
             get { return tunerReserveList; }
         }
-        public Dictionary<UInt32, RecFileInfo> RecFileInfo
+        public Dictionary<uint, RecFileInfo> RecFileInfo
         {
             get { return recFileInfo; }
         }
-        public Dictionary<Int32, String> WritePlugInList
+        public Dictionary<int, string> WritePlugInList
         {
             get { return writePlugInList; }
         }
-        public Dictionary<Int32, String> RecNamePlugInList
+        public Dictionary<int, string> RecNamePlugInList
         {
             get { return recNamePlugInList; }
         }
-        public Dictionary<UInt32, ManualAutoAddData> ManualAutoAddList
+        public Dictionary<uint, ManualAutoAddData> ManualAutoAddList
         {
             get { return manualAutoAddList; }
         }
-        public Dictionary<UInt32, EpgAutoAddData> EpgAutoAddList
+        public Dictionary<uint, EpgAutoAddData> EpgAutoAddList
         {
             get { return epgAutoAddList; }
         }
@@ -63,6 +63,14 @@ namespace EpgTimer
         public DBManager(CtrlCmdUtil ctrlCmd)
         {
             cmd = ctrlCmd;
+            serviceEventList = new Dictionary<ulong, EpgServiceEventInfo>();
+            reserveList = new Dictionary<uint, ReserveData>();
+            tunerReserveList = new Dictionary<uint, TunerReserveInfo>();
+            recFileInfo = new Dictionary<uint, RecFileInfo>();
+            writePlugInList = new Dictionary<int, string>();
+            recNamePlugInList = new Dictionary<int, string>();
+            manualAutoAddList = new Dictionary<uint, ManualAutoAddData>();
+            epgAutoAddList = new Dictionary<uint, EpgAutoAddData>();
         }
 
         public void ClearAllDB()
@@ -75,23 +83,6 @@ namespace EpgTimer
             recNamePlugInList.Clear();
             manualAutoAddList.Clear();
             epgAutoAddList.Clear();
-
-            serviceEventList = null;
-            serviceEventList = new Dictionary<ulong, EpgServiceEventInfo>();
-            reserveList = null;
-            reserveList = new Dictionary<uint, ReserveData>();
-            tunerReserveList = null;
-            tunerReserveList = new Dictionary<uint, TunerReserveInfo>();
-            recFileInfo = null;
-            recFileInfo = new Dictionary<uint, RecFileInfo>();
-            writePlugInList = null;
-            writePlugInList = new Dictionary<int, string>();
-            recNamePlugInList = null;
-            recNamePlugInList = new Dictionary<int, string>();
-            manualAutoAddList = null;
-            manualAutoAddList = new Dictionary<uint, ManualAutoAddData>();
-            epgAutoAddList = null;
-            epgAutoAddList = new Dictionary<uint, EpgAutoAddData>();
         }
 
         /// <summary>
@@ -112,29 +103,29 @@ namespace EpgTimer
         /// データの更新があったことを通知
         /// </summary>
         /// <param name="updateInfo">[IN]更新のあったデータのフラグ</param>
-        public void SetUpdateNotify(UInt32 updateInfo)
+        public void SetUpdateNotify(uint updateInfo)
         {
-            if (updateInfo == (UInt32)UpdateNotifyItem.EpgData)
+            if (updateInfo == (uint)UpdateNotifyItem.EpgData)
             {
                 updateEpgData = true;
             }
-            if (updateInfo == (UInt32)UpdateNotifyItem.ReserveInfo)
+            if (updateInfo == (uint)UpdateNotifyItem.ReserveInfo)
             {
                 updateReserveInfo = true;
             }
-            if (updateInfo == (UInt32)UpdateNotifyItem.RecInfo)
+            if (updateInfo == (uint)UpdateNotifyItem.RecInfo)
             {
                 updateRecInfo = true;
             }
-            if (updateInfo == (UInt32)UpdateNotifyItem.AutoAddEpgInfo)
+            if (updateInfo == (uint)UpdateNotifyItem.AutoAddEpgInfo)
             {
                 updateAutoAddEpgInfo = true;
             }
-            if (updateInfo == (UInt32)UpdateNotifyItem.AutoAddManualInfo)
+            if (updateInfo == (uint)UpdateNotifyItem.AutoAddManualInfo)
             {
                 updateAutoAddManualInfo = true;
             }
-            if (updateInfo == (UInt32)UpdateNotifyItem.PlugInFile)
+            if (updateInfo == (uint)UpdateNotifyItem.PlugInFile)
             {
                 updatePlugInFile = true;
             }
@@ -168,7 +159,7 @@ namespace EpgTimer
                             {
                                 foreach (EpgServiceEventInfo info in list)
                                 {
-                                    UInt64 id = CommonManager.Create64Key(
+                                    ulong id = CommonManager.Create64Key(
                                         info.serviceInfo.ONID,
                                         info.serviceInfo.TSID,
                                         info.serviceInfo.SID);
@@ -202,7 +193,7 @@ namespace EpgTimer
                             {
                                 foreach (EpgServiceEventInfo info in list)
                                 {
-                                    UInt64 id = CommonManager.Create64Key(
+                                    ulong id = CommonManager.Create64Key(
                                         info.serviceInfo.ONID,
                                         info.serviceInfo.TSID,
                                         info.serviceInfo.SID);
@@ -347,19 +338,19 @@ namespace EpgTimer
                         recNamePlugInList.Clear();
                         recNamePlugInList = null;
                         recNamePlugInList = new Dictionary<int, string>();
-                        List<String> writeList = new List<string>();
-                        List<String> recNameList = new List<string>();
+                        List<string> writeList = new List<string>();
+                        List<string> recNameList = new List<string>();
                         ret = (ErrCode)cmd.SendEnumPlugIn(2, ref writeList);
                         if (ret == ErrCode.CMD_SUCCESS)
                         {
                             ret = (ErrCode)cmd.SendEnumPlugIn(1, ref recNameList);
                             if (ret == ErrCode.CMD_SUCCESS)
                             {
-                                foreach (String info in writeList)
+                                foreach (string info in writeList)
                                 {
                                     writePlugInList.Add(writePlugInList.Count, info);
                                 }
-                                foreach (String info in recNameList)
+                                foreach (string info in recNameList)
                                 {
                                     recNamePlugInList.Add(recNamePlugInList.Count, info);
                                 }
@@ -471,13 +462,13 @@ namespace EpgTimer
         public bool GetNextReserve(ref ReserveData info)
         {
             bool ret = false;
-
-            SortedList<String, ReserveData> sortList = new SortedList<String, ReserveData>();
+            
+            SortedList<string, ReserveData> sortList = new SortedList<string, ReserveData>();
             foreach (ReserveData resInfo in reserveList.Values)
             {
                 if (resInfo.RecSetting.RecMode != 5)
                 {
-                    String key = resInfo.StartTime.ToString("yyyyMMddHHmmss");
+                    string key = resInfo.StartTime.ToString("yyyyMMddHHmmss");
                     key += resInfo.ReserveID.ToString("X8");
                     sortList.Add(key, resInfo);
                 }

@@ -7,23 +7,23 @@ namespace EpgTimer
         public ComponentKindInfo()
         {
         }
-        public ComponentKindInfo(Byte streamContent, Byte componentType, String componentName)
+        public ComponentKindInfo(byte streamContent, byte componentType, string componentName)
         {
             StreamContent = streamContent;
             ComponentType = componentType;
             ComponentName = componentName;
         }
-        public Byte StreamContent
+        public byte StreamContent
         {
             get;
             set;
         }
-        public Byte ComponentType
+        public byte ComponentType
         {
             get;
             set;
         }
-        public String ComponentName
+        public string ComponentName
         {
             get;
             set;

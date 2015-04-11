@@ -13,12 +13,12 @@ namespace EpgTimer
         private object cmdParam = null;
 
         private bool connectFlag;
-        private UInt32 serverPort;
+        private uint serverPort;
         private TcpListener server = null;
 
-        private String connectedIP;
-        private UInt32 connectedPort = 0;
-        private UInt32 callbackPort = 0;
+        private string connectedIP;
+        private uint connectedPort = 0;
+        private uint callbackPort = 0;
 
         private CtrlCmdUtil cmd = null;
 
@@ -30,7 +30,7 @@ namespace EpgTimer
             }
         }
 
-        public String ConnectedIP
+        public string ConnectedIP
         {
             get
             {
@@ -38,7 +38,7 @@ namespace EpgTimer
             }
         }
 
-        public UInt32 ConnectedPort
+        public uint ConnectedPort
         {
             get
             {
@@ -46,7 +46,7 @@ namespace EpgTimer
             }
         }
 
-        public UInt32 CallbackPort
+        public uint CallbackPort
         {
             get
             {
@@ -58,11 +58,6 @@ namespace EpgTimer
         {
             connectFlag = false;
             cmd = ctrlCmd;
-        }
-
-        public static void SendMagicPacket(byte[] physicalAddress)
-        {
-            SendMagicPacket(IPAddress.Broadcast, physicalAddress);
         }
 
         private static void SendMagicPacket(IPAddress broad, byte[] physicalAddress)
@@ -83,7 +78,7 @@ namespace EpgTimer
             client.Send(stream.ToArray(), (int)stream.Position, new IPEndPoint(broad, 0));
         }
 
-        public bool ConnectServer(String srvIP, UInt32 srvPort, UInt32 waitPort, CMD_CALLBACK_PROC pfnCmdProc, object pParam)
+        public bool ConnectServer(string srvIP, uint srvPort, uint waitPort, CMD_CALLBACK_PROC pfnCmdProc, object pParam)
         {
             if (srvIP.Length == 0)
             {
@@ -98,11 +93,7 @@ namespace EpgTimer
             cmd.SetConnectTimeOut(500);
             cmd.SetSendMode(true);
             cmd.SetNWSetting(srvIP, srvPort);
-            if (cmd.SendRegistTCP(waitPort) != (uint)ErrCode.CMD_SUCCESS)
-            {
-                return false;
-            }
-            else
+            if (cmd.SendRegistTCP(waitPort) == (uint)ErrCode.CMD_SUCCESS)
             {
                 connectFlag = true;
                 connectedIP = srvIP;
@@ -110,9 +101,10 @@ namespace EpgTimer
                 callbackPort = waitPort;
                 return true;
             }
+            return false;
         }
 
-        public bool StartTCPServer(UInt32 port)
+        public bool StartTCPServer(uint port)
         {
             if (serverPort == port && server != null)
             {
@@ -174,7 +166,7 @@ namespace EpgTimer
                         stCmd.uiSize = BitConverter.ToUInt32(bHead, 4);
                         if (stCmd.uiSize > 0)
                         {
-                            stCmd.bData = new Byte[stCmd.uiSize];
+                            stCmd.bData = new byte[stCmd.uiSize];
                         }
                         int readSize = 0;
                         while (readSize < stCmd.uiSize)

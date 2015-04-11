@@ -14,47 +14,17 @@ namespace EpgTimer
             set;
         }
 
-        public Dictionary<UInt16, ContentKindInfo> ContentKindDictionary
+        public Dictionary<ushort, ContentKindInfo> ContentKindDictionary
         {
             get;
             set;
         }
-        public Dictionary<UInt16, ContentKindInfo> ContentKindDictionary2
+        public Dictionary<ushort, ContentKindInfo> ContentKindDictionary2
         {
             get;
             set;
         }
-        public Dictionary<UInt16, ComponentKindInfo> ComponentKindDictionary
-        {
-            get;
-            set;
-        }
-        public Dictionary<byte, DayOfWeekInfo> DayOfWeekDictionary
-        {
-            get;
-            set;
-        }
-        public Dictionary<UInt16, UInt16> HourDictionary
-        {
-            get;
-            set;
-        }
-        public Dictionary<UInt16, UInt16> MinDictionary
-        {
-            get;
-            set;
-        }
-        public Dictionary<byte, RecModeInfo> RecModeDictionary
-        {
-            get;
-            set;
-        }
-        public Dictionary<byte, YesNoInfo> YesNoDictionary
-        {
-            get;
-            set;
-        }
-        public Dictionary<byte, PriorityInfo> PriorityDictionary
+        public Dictionary<ushort, ComponentKindInfo> ComponentKindDictionary
         {
             get;
             set;
@@ -107,7 +77,7 @@ namespace EpgTimer
             }
             if (ContentKindDictionary == null)
             {
-                ContentKindDictionary = new Dictionary<UInt16, ContentKindInfo>();
+                ContentKindDictionary = new Dictionary<ushort, ContentKindInfo>();
                 ContentKindDictionary.Add(0x00FF, new ContentKindInfo("ニュース／報道", "", 0x00, 0xFF));
                 ContentKindDictionary.Add(0x0000, new ContentKindInfo("ニュース／報道", "定時・総合", 0x00, 0x00));
                 ContentKindDictionary.Add(0x0001, new ContentKindInfo("ニュース／報道", "天気", 0x00, 0x01));
@@ -284,7 +254,7 @@ namespace EpgTimer
             }
             if (ComponentKindDictionary == null)
             {
-                ComponentKindDictionary = new Dictionary<UInt16, ComponentKindInfo>();
+                ComponentKindDictionary = new Dictionary<ushort, ComponentKindInfo>();
                 ComponentKindDictionary.Add(0x0101, new ComponentKindInfo(0x01, 0x01, "480i(525i)、アスペクト比4:3"));
                 ComponentKindDictionary.Add(0x0102, new ComponentKindInfo(0x01, 0x02, "480i(525i)、アスペクト比16:9 パンベクトルあり"));
                 ComponentKindDictionary.Add(0x0103, new ComponentKindInfo(0x01, 0x03, "480i(525i)、アスペクト比16:9 パンベクトルなし"));
@@ -361,58 +331,6 @@ namespace EpgTimer
                 ComponentKindDictionary.Add(0x05E3, new ComponentKindInfo(0x05, 0xE3, "H.264|MPEG-4 AVC、1080p(1125p)、アスペクト比16:9 パンベクトルなし"));
                 ComponentKindDictionary.Add(0x05E4, new ComponentKindInfo(0x05, 0xE4, "H.264|MPEG-4 AVC、1080p(1125p)、アスペクト比 > 16:9"));
             }
-            if (DayOfWeekDictionary == null)
-            {
-                DayOfWeekDictionary = new Dictionary<byte, DayOfWeekInfo>();
-                DayOfWeekDictionary.Add(0x00, new DayOfWeekInfo("日", 0x00));
-                DayOfWeekDictionary.Add(0x01, new DayOfWeekInfo("月", 0x01));
-                DayOfWeekDictionary.Add(0x02, new DayOfWeekInfo("火", 0x02));
-                DayOfWeekDictionary.Add(0x03, new DayOfWeekInfo("水", 0x03));
-                DayOfWeekDictionary.Add(0x04, new DayOfWeekInfo("木", 0x04));
-                DayOfWeekDictionary.Add(0x05, new DayOfWeekInfo("金", 0x05));
-                DayOfWeekDictionary.Add(0x06, new DayOfWeekInfo("土", 0x06));
-            }
-            if (HourDictionary == null)
-            {
-                HourDictionary = new Dictionary<UInt16, UInt16>();
-                for (UInt16 i = 0; i <= 23; i++)
-                {
-                    HourDictionary.Add(i, i);
-                }
-            }
-            if (MinDictionary == null)
-            {
-                MinDictionary = new Dictionary<UInt16, UInt16>();
-                for (UInt16 i = 0; i <= 59; i++)
-                {
-                    MinDictionary.Add(i, i);
-                }
-            }
-            if (RecModeDictionary == null)
-            {
-                RecModeDictionary = new Dictionary<byte, RecModeInfo>();
-                RecModeDictionary.Add(0x00, new RecModeInfo("全サービス", 0x00));
-                RecModeDictionary.Add(0x01, new RecModeInfo("指定サービス", 0x01));
-                RecModeDictionary.Add(0x02, new RecModeInfo("全サービス（デコード処理なし）", 0x02));
-                RecModeDictionary.Add(0x03, new RecModeInfo("指定サービス（デコード処理なし）", 0x03));
-                RecModeDictionary.Add(0x04, new RecModeInfo("視聴", 0x04));
-                RecModeDictionary.Add(0x05, new RecModeInfo("無効", 0x05));
-            }
-            if (YesNoDictionary == null)
-            {
-                YesNoDictionary = new Dictionary<byte, YesNoInfo>();
-                YesNoDictionary.Add(0x00, new YesNoInfo("しない", 0x00));
-                YesNoDictionary.Add(0x01, new YesNoInfo("する", 0x01));
-            }
-            if (PriorityDictionary == null)
-            {
-                PriorityDictionary = new Dictionary<byte, PriorityInfo>();
-                PriorityDictionary.Add(0x01, new PriorityInfo("1", 0x01));
-                PriorityDictionary.Add(0x02, new PriorityInfo("2", 0x02));
-                PriorityDictionary.Add(0x03, new PriorityInfo("3", 0x03));
-                PriorityDictionary.Add(0x04, new PriorityInfo("4", 0x04));
-                PriorityDictionary.Add(0x05, new PriorityInfo("5", 0x05));
-            }
             if (LocalDB == null)
             {
                 LocalDB = new DBLocalManager();
@@ -420,22 +338,14 @@ namespace EpgTimer
             NWMode = false;
         }
 
-        public static UInt64 Create64Key(UInt16 ONID, UInt16 TSID, UInt16 SID)
+        public static ulong Create64Key(ushort ONID, ushort TSID, ushort SID)
         {
-            UInt64 key = ((UInt64)ONID) << 32 | ((UInt64)TSID) << 16 | (UInt64)SID;
-            return key;
+            return ((ulong)ONID) << 32 | ((ulong)TSID) << 16 | (ulong)SID;
         }
 
-        public static UInt64 Create64PgKey(UInt16 ONID, UInt16 TSID, UInt16 SID, UInt16 EventID)
+        public static ulong Create64PgKey(ushort ONID, ushort TSID, ushort SID, ushort EventID)
         {
-            UInt64 key = ((UInt64)ONID) << 48 | ((UInt64)TSID) << 32 | ((UInt64)SID) << 16 | (UInt64)EventID;
-            return key;
-        }
-
-        public static UInt32 CreateARGBKey(byte a, byte r, byte g, byte b)
-        {
-            UInt32 key = ((UInt32)a) << 24 | ((UInt32)r) << 16 | ((UInt32)g) << 8 | (UInt32)b;
-            return key;
+            return ((ulong)ONID) << 48 | ((ulong)TSID) << 32 | ((ulong)SID) << 16 | (ulong)EventID;
         }
 
         public static EpgServiceInfo ConvertChSet5To(ChSet5Item item)
@@ -461,7 +371,7 @@ namespace EpgTimer
             return info;
         }
 
-        public static String ReplaceUrl(String url)
+        public static string ReplaceUrl(string url)
         {
             string retText = url;
 
@@ -557,404 +467,25 @@ namespace EpgTimer
 
             return retText;
         }
-
-        public String ConvertReserveText(ReserveData reserveInfo)
+        public static string GetNetworkName(ushort ONID)
         {
-            String view = "";
-            view = reserveInfo.StartTime.ToString("yyyy/MM/dd(ddd) HH:mm:ss ～ ");
-            DateTime endTime = reserveInfo.StartTime + TimeSpan.FromSeconds(reserveInfo.DurationSecond);
-            view += endTime.ToString("yyyy/MM/dd(ddd) HH:mm:ss") + "\r\n";
-
-            String recMode = "";
-            switch (reserveInfo.RecSetting.RecMode)
+            if (0x7880 <= ONID && ONID <= 0x7FE8)
             {
-                case 0:
-                    recMode = "全サービス";
-                    break;
-                case 1:
-                    recMode = "指定サービス";
-                    break;
-                case 2:
-                    recMode = "全サービス（デコード処理なし）";
-                    break;
-                case 3:
-                    recMode = "指定サービス（デコード処理なし）";
-                    break;
-                case 4:
-                    recMode = "視聴";
-                    break;
-                case 5:
-                    recMode = "無効";
-                    break;
-                default:
-                    break;
+                return "地デジ";
             }
-            String tuijyu = "";
-            if (reserveInfo.RecSetting.TuijyuuFlag == 0)
+            else if (ONID == 0x0004)
             {
-                tuijyu = "しない";
+                return "BS";
             }
-            else if (reserveInfo.RecSetting.TuijyuuFlag == 1)
+            else if (ONID == 0x0006)
             {
-                tuijyu = "する";
+                return "CS1";
             }
-            String pittari = "";
-            if (reserveInfo.RecSetting.PittariFlag == 0)
+            else if (ONID == 0x0007)
             {
-                pittari = "しない";
+                return "CS2";
             }
-            else if (reserveInfo.RecSetting.PittariFlag == 1)
-            {
-                pittari = "する";
-            }
-
-            view += reserveInfo.StationName;
-            if (0x7880 <= reserveInfo.OriginalNetworkID && reserveInfo.OriginalNetworkID <= 0x7FE8)
-            {
-                view += " (地デジ)";
-            }
-            else if (reserveInfo.OriginalNetworkID == 0x0004)
-            {
-                view += " (BS)";
-            }
-            else if (reserveInfo.OriginalNetworkID == 0x0006)
-            {
-                view += " (CS1)";
-            }
-            else if (reserveInfo.OriginalNetworkID == 0x0007)
-            {
-                view += " (CS2)";
-            }
-            else
-            {
-                view += " (その他)";
-            }
-            view += "\r\n";
-
-            view += reserveInfo.Title + "\r\n\r\n";
-            view += "録画モード : " + recMode + "\r\n";
-            view += "優先度 : " + reserveInfo.RecSetting.Priority.ToString() + "\r\n";
-            view += "追従 : " + tuijyu + "\r\n";
-            view += "ぴったり（？） : " + pittari + "\r\n";
-            if ((reserveInfo.RecSetting.ServiceMode & 0x01) == 0)
-            {
-                view += "指定サービス対象データ : デフォルト\r\n";
-            }
-            else
-            {
-                view += "指定サービス対象データ : ";
-                if ((reserveInfo.RecSetting.ServiceMode & 0x10) > 0)
-                {
-                    view += "字幕含む ";
-                }
-                if ((reserveInfo.RecSetting.ServiceMode & 0x20) > 0)
-                {
-                    view += "データカルーセル含む";
-                }
-                view += "\r\n";
-            }
-
-            view += "録画実行bat : " + reserveInfo.RecSetting.BatFilePath + "\r\n";
-
-            if (reserveInfo.RecSetting.RecFolderList.Count == 0)
-            {
-                view += "録画フォルダ : デフォルト\r\n";
-            }
-            else
-            {
-                view += "録画フォルダ : \r\n";
-                foreach (RecFileSetInfo info in reserveInfo.RecSetting.RecFolderList)
-                {
-                    view += info.RecFolder + " (WritePlugIn:" + info.WritePlugIn + " ファイル名PlugIn:" + info.RecNamePlugIn + ")\r\n";
-                }
-            }
-
-            if (reserveInfo.RecSetting.UseMargineFlag == 0)
-            {
-                view += "録画マージン : デフォルト\r\n";
-            }
-            else
-            {
-                view += "録画マージン : 開始 " + reserveInfo.RecSetting.StartMargine.ToString() +
-                    " 終了 " + reserveInfo.RecSetting.EndMargine.ToString() + "\r\n";
-            }
-
-            if (reserveInfo.RecSetting.SuspendMode == 0)
-            {
-                view += "録画後動作 : デフォルト\r\n";
-            }
-            else
-            {
-                view += "録画後動作 : ";
-                switch (reserveInfo.RecSetting.SuspendMode)
-                {
-                    case 1:
-                        view += "スタンバイ";
-                        break;
-                    case 2:
-                        view += "休止";
-                        break;
-                    case 3:
-                        view += "シャットダウン";
-                        break;
-                    case 4:
-                        view += "何もしない";
-                        break;
-                }
-                if (reserveInfo.RecSetting.RebootFlag == 1)
-                {
-                    view += " 復帰後再起動する";
-                }
-                view += "\r\n";
-            }
-            if (reserveInfo.RecSetting.PartialRecFlag == 0)
-            {
-                view += "部分受信 : 同時出力なし\r\n";
-            }
-            else
-            {
-                view += "部分受信 : 同時出力あり\r\n";
-                view += "部分受信　録画フォルダ : \r\n";
-                foreach (RecFileSetInfo info in reserveInfo.RecSetting.PartialRecFolder)
-                {
-                    view += info.RecFolder + " (WritePlugIn:" + info.WritePlugIn + " ファイル名PlugIn:" + info.RecNamePlugIn + ")\r\n";
-                }
-            }
-            if (reserveInfo.RecSetting.ContinueRecFlag == 0)
-            {
-                view += "連続録画動作 : 分割\r\n";
-            }
-            else
-            {
-                view += "連続録画動作 : 同一ファイル出力\r\n";
-            }
-            if (reserveInfo.RecSetting.TunerID == 0)
-            {
-                view += "使用チューナー強制指定 : 自動\r\n";
-            }
-            else
-            {
-                view += "使用チューナー強制指定 : ID:" + reserveInfo.RecSetting.TunerID.ToString("X8") + "\r\n";
-            }
-
-            view += "予約状況 : " + reserveInfo.Comment;
-            return view;
-        }
-
-        public String ConvertProgramText(EpgEventInfo eventInfo, EventInfoTextMode textMode)
-        {
-            string retText = "";
-            string basicInfo = "";
-            string extInfo = "";
-            if (eventInfo != null)
-            {
-                UInt64 key = ((UInt64)eventInfo.original_network_id) << 32 |
-                    ((UInt64)eventInfo.transport_stream_id) << 16 |
-                    ((UInt64)eventInfo.service_id);
-                if (ChSet5.Instance.ChList.ContainsKey(key) == true)
-                {
-                    basicInfo += ChSet5.Instance.ChList[key].ServiceName + "(" + ChSet5.Instance.ChList[key].NetworkName + ")" + "\r\n";
-                }
-
-                if (eventInfo.StartTimeFlag == 1)
-                {
-                    basicInfo += eventInfo.start_time.ToString("yyyy/MM/dd(ddd) HH:mm:ss ～ ");
-                }
-                else
-                {
-                    basicInfo += "未定 ～ ";
-                }
-                if (eventInfo.DurationFlag == 1)
-                {
-                    DateTime endTime = eventInfo.start_time + TimeSpan.FromSeconds(eventInfo.durationSec);
-                    basicInfo += endTime.ToString("yyyy/MM/dd(ddd) HH:mm:ss") + "\r\n";
-                }
-                else
-                {
-                    basicInfo += "未定\r\n";
-                }
-
-                if (eventInfo.ShortInfo != null)
-                {
-                    basicInfo += eventInfo.ShortInfo.event_name + "\r\n\r\n";
-                    extInfo += eventInfo.ShortInfo.text_char + "\r\n\r\n";
-                }
-
-                if (eventInfo.ExtInfo != null)
-                {
-                    extInfo += eventInfo.ExtInfo.text_char + "\r\n\r\n";
-                }
-
-                //ジャンル
-                extInfo += "ジャンル :\r\n";
-                if (eventInfo.ContentInfo != null)
-                {
-                    foreach (EpgContentData info in eventInfo.ContentInfo.nibbleList)
-                    {
-                        String content = "";
-                        int nibble1 = info.content_nibble_level_1;
-                        int nibble2 = info.content_nibble_level_2;
-                        if (nibble1 == 0x0E && nibble2 == 0x01)
-                        {
-                            nibble1 = info.user_nibble_1;
-                            nibble2 = info.user_nibble_2;
-                            UInt16 contentKey1 = (UInt16)(nibble1 << 8 | 0xFF);
-                            UInt16 contentKey2 = (UInt16)(nibble1 << 8 | nibble2);
-                            if (ContentKindDictionary2.ContainsKey(contentKey1) == true)
-                            {
-                                content += ContentKindDictionary2[contentKey1];
-                            }
-                            if (ContentKindDictionary2.ContainsKey(contentKey2) == true)
-                            {
-                                content += " - " + ContentKindDictionary2[contentKey2];
-                            }
-                            if (content.Length == 0 || nibble1 == 0x0F)
-                            {
-                                content += "(0x" + info.user_nibble_1.ToString("X2") + info.user_nibble_2.ToString("X2") + ")" + "(0x" + info.user_nibble_1.ToString("X2") + info.user_nibble_2.ToString("X2") + ")";
-                            }
-                            extInfo += content + "\r\n";
-                        }
-                        else
-                        {
-                            UInt16 contentKey1 = (UInt16)(nibble1 << 8 | 0xFF);
-                            UInt16 contentKey2 = (UInt16)(nibble1 << 8 | nibble2);
-                            if (ContentKindDictionary.ContainsKey(contentKey1) == true)
-                            {
-                                content += ContentKindDictionary[contentKey1];
-                            }
-                            if (ContentKindDictionary.ContainsKey(contentKey2) == true)
-                            {
-                                content += " - " + ContentKindDictionary[contentKey2];
-                            }
-                            if (content.Length == 0 || nibble1 == 0x0F)
-                            {
-                                content += "(0x" + nibble1.ToString("X2") + nibble2.ToString("X2") + ")" + "(0x" + info.user_nibble_1.ToString("X2") + info.user_nibble_2.ToString("X2") + ")";
-                            }
-                            extInfo += content + "\r\n";
-                        }
-                    }
-                }
-                extInfo += "\r\n";
-
-                //映像
-                extInfo += "映像 :";
-                if (eventInfo.ComponentInfo != null)
-                {
-                    int streamContent = eventInfo.ComponentInfo.stream_content;
-                    int componentType = eventInfo.ComponentInfo.component_type;
-                    UInt16 componentKey = (UInt16)(streamContent << 8 | componentType);
-                    if (ComponentKindDictionary.ContainsKey(componentKey) == true)
-                    {
-                        extInfo += ComponentKindDictionary[componentKey];
-                    }
-                    if (eventInfo.ComponentInfo.text_char.Length > 0)
-                    {
-                        extInfo += "\r\n";
-                        extInfo += eventInfo.ComponentInfo.text_char;
-                    }
-                }
-                extInfo += "\r\n";
-
-                //音声
-                extInfo += "音声 :\r\n";
-                if (eventInfo.AudioInfo != null)
-                {
-                    foreach (EpgAudioComponentInfoData info in eventInfo.AudioInfo.componentList)
-                    {
-                        int streamContent = info.stream_content;
-                        int componentType = info.component_type;
-                        UInt16 componentKey = (UInt16)(streamContent << 8 | componentType);
-                        if (ComponentKindDictionary.ContainsKey(componentKey) == true)
-                        {
-                            extInfo += ComponentKindDictionary[componentKey];
-                        }
-                        if (info.text_char.Length > 0)
-                        {
-                            extInfo += "\r\n";
-                            extInfo += info.text_char;
-                        }
-                        extInfo += "\r\n";
-                        extInfo += "サンプリングレート :";
-                        switch (info.sampling_rate)
-                        {
-                            case 1:
-                                extInfo += "16kHz";
-                                break;
-                            case 2:
-                                extInfo += "22.05kHz";
-                                break;
-                            case 3:
-                                extInfo += "24kHz";
-                                break;
-                            case 5:
-                                extInfo += "32kHz";
-                                break;
-                            case 6:
-                                extInfo += "44.1kHz";
-                                break;
-                            case 7:
-                                extInfo += "48kHz";
-                                break;
-                            default:
-                                break;
-                        }
-                        extInfo += "\r\n";
-                    }
-                }
-                extInfo += "\r\n";
-
-                //スクランブル
-                if (!(0x7880 <= eventInfo.original_network_id && eventInfo.original_network_id <= 0x7FE8))
-                {
-                    if (eventInfo.FreeCAFlag == 0)
-                    {
-                        extInfo += "無料放送\r\n";
-                    }
-                    else
-                    {
-                        extInfo += "有料放送\r\n";
-                    }
-                    extInfo += "\r\n";
-                }
-
-                //イベントリレー
-                if (eventInfo.EventRelayInfo != null)
-                {
-                    if (eventInfo.EventRelayInfo.eventDataList.Count > 0)
-                    {
-                        extInfo += "イベントリレーあり：\r\n";
-                        foreach (EpgEventData info in eventInfo.EventRelayInfo.eventDataList)
-                        {
-                            key = ((UInt64)info.original_network_id) << 32 |
-                                ((UInt64)info.transport_stream_id) << 16 |
-                                ((UInt64)info.service_id);
-                            if (ChSet5.Instance.ChList.ContainsKey(key) == true)
-                            {
-                                extInfo += ChSet5.Instance.ChList[key].ServiceName + "(" + ChSet5.Instance.ChList[key].NetworkName + ")" + " ";
-                            }
-                            else
-                            {
-                                extInfo += "OriginalNetworkID : " + info.original_network_id.ToString() + " (0x" + info.original_network_id.ToString("X4") + ") ";
-                                extInfo += "TransportStreamID : " + info.transport_stream_id.ToString() + " (0x" + info.transport_stream_id.ToString("X4") + ") ";
-                                extInfo += "ServiceID : " + info.service_id.ToString() + " (0x" + info.service_id.ToString("X4") + ") ";
-                            }
-                            extInfo += "EventID : " + info.event_id.ToString() + " (0x" + info.event_id.ToString("X4") + ")\r\n";
-                            extInfo += "\r\n";
-                        }
-                        extInfo += "\r\n";
-                    }
-                }
-            }
-
-            if (textMode == EventInfoTextMode.All || textMode == EventInfoTextMode.BasicOnly)
-            {
-                retText = basicInfo;
-            }
-            if (textMode == EventInfoTextMode.All || textMode == EventInfoTextMode.ExtOnly)
-            {
-                retText += extInfo;
-            }
-            return retText;
+            return "その他";
         }
     }
 }

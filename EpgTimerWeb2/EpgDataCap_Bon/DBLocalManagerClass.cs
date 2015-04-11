@@ -8,11 +8,11 @@ namespace EpgTimer
     //ローカルモードでのみ使う。録画ファイルDL用
     public class DBLocalManager
     {
-        private Dictionary<UInt32, RecFileInfo> _existRecFileInfo;
-        private Dictionary<UInt32, RecFileInfo> _noExistRecFileInfo;
+        private Dictionary<uint, RecFileInfo> _existRecFileInfo;
+        private Dictionary<uint, RecFileInfo> _noExistRecFileInfo;
 
-        public Dictionary<UInt32, RecFileInfo> ExistRecFileInfo { set; get; }
-        public Dictionary<UInt32, RecFileInfo> NoExistRecFileInfo { set; get; }
+        public Dictionary<uint, RecFileInfo> ExistRecFileInfo { set; get; }
+        public Dictionary<uint, RecFileInfo> NoExistRecFileInfo { set; get; }
         public DBLocalManager()
         {
             ClearAllDB();
@@ -27,7 +27,7 @@ namespace EpgTimer
             if (!Setting.Instance.LocalMode) return;
             CommonManager.Instance.DB.ReloadrecFileInfo();
             ClearAllDB();
-            foreach (KeyValuePair<UInt32, RecFileInfo> Info in CommonManager.Instance.DB.RecFileInfo)
+            foreach (KeyValuePair<uint, RecFileInfo> Info in CommonManager.Instance.DB.RecFileInfo)
             {
                 if (File.Exists(Info.Value.RecFilePath))
                 {

@@ -140,30 +140,5 @@ namespace EpgTimer
                 return EventInfo.ShortInfo;
             }
         }
-        /*
-        public string TextViewAll
-        {
-            get
-            {
-                return CommonManager.Instance.ConvertProgramText(EventInfo, EventInfoTextMode.All);
-            }
-        }
-
-        public string TextViewBasic
-        {
-            get
-            {
-                return CommonManager.Instance.ConvertProgramText(EventInfo, EventInfoTextMode.BasicOnly);
-            }
-        }
-
-        public string TextViewExt
-        {
-            get
-            {
-                return CommonManager.Instance.ConvertProgramText(EventInfo, EventInfoTextMode.ExtOnly);
-            }
-        }
-        */
     }
 }

@@ -7,35 +7,35 @@ namespace EpgTimer
         public ContentKindInfo()
         {
         }
-        public ContentKindInfo(String contentName, String subName, Byte nibble1, Byte nibble2)
+        public ContentKindInfo(string contentName, string subName, byte nibble1, byte nibble2)
         {
             this.ContentName = contentName;
             this.SubName = subName;
             this.Nibble1 = nibble1;
             this.Nibble2 = nibble2;
-            this.ID = (UInt16)(((UInt16)nibble1) << 8 | nibble2);
+            this.ID = (ushort)(((ushort)nibble1) << 8 | nibble2);
         }
-        public UInt16 ID
+        public ushort ID
         {
             get;
             set;
         }
-        public String ContentName
+        public string ContentName
         {
             get;
             set;
         }
-        public String SubName
+        public string SubName
         {
             get;
             set;
         }
-        public Byte Nibble1
+        public byte Nibble1
         {
             get;
             set;
         }
-        public Byte Nibble2
+        public byte Nibble2
         {
             get;
             set;
@@ -51,11 +51,11 @@ namespace EpgTimer
                 return "  " + SubName;
             }
         }
-        public String ToolTipView
+        public string ToolTipView
         {
             get
             {
-                String viewTip = "";
+                string viewTip = "";
                 if (Nibble2 == 0xFF)
                 {
                     viewTip = ContentName;

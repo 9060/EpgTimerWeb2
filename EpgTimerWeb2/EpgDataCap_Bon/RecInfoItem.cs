@@ -23,7 +23,7 @@ namespace EpgTimer
         {
             get { return RecInfo.ID; }
         }
-        public String ProgramInfo
+        public string ProgramInfo
         {
             get
             {
@@ -31,7 +31,7 @@ namespace EpgTimer
             }
         }
 
-        public String ErrInfo
+        public string ErrInfo
         {
             get
             {
@@ -61,13 +61,6 @@ namespace EpgTimer
                 return CommonManager.Create64PgKey(ONID, TSID, SID, EventID);
             }
         }
-        public string KeyS
-        {
-            get
-            {
-                return Key.ToString();
-            }
-        }
         public bool IsProtect
         {
             set
@@ -91,30 +84,24 @@ namespace EpgTimer
                 return chk;
             }
         }
-        
-        public String EventName
+
+        public string EventName
         {
             get
             {
-                String view = "";
                 if (RecInfo != null)
-                {
-                    view = RecInfo.Title;
-                }
-                return view;
+                    return RecInfo.Title;
+                return "";
             }
         }
-        
-        public String ServiceName
+
+        public string ServiceName
         {
             get
             {
-                String view = "";
                 if (RecInfo != null)
-                {
-                    view = RecInfo.ServiceName;
-                }
-                return view;
+                    return RecInfo.ServiceName;
+                return "";
             }
         }
         public uint DurationSecond
@@ -126,7 +113,7 @@ namespace EpgTimer
             get
             {
                 if (RecInfo == null)
-                    return DateTime.Now;
+                    return DateTime.MinValue;
                 return RecInfo.StartTime;
             }
         }
@@ -136,136 +123,60 @@ namespace EpgTimer
             get
             {
                 if (RecInfo == null)
-                    return DateTime.Now;
+                    return DateTime.MinValue;
                 return RecInfo.StartTimeEpg;
             }
         }
-        
-        public String Drops
-        {
-            get
-            {
-                String view = "";
-                if (RecInfo != null)
-                {
-                    view = RecInfo.Drops.ToString();
-                }
-                return view;
-            }
-        }
-        
-        public String Scrambles
-        {
-            get
-            {
-                String view = "";
-                if (RecInfo != null)
-                {
-                    view = RecInfo.Scrambles.ToString();
-                }
-                return view;
-            }
-        }
-        
-        public String Result
-        {
-            get
-            {
-                String view = "";
-                if (RecInfo != null)
-                {
-                    view = RecInfo.Comment;
-                }
-                return view;
-            }
-        }
-        
-        public String NetworkName
-        {
-            get
-            {
-                String view = "";
-                if (RecInfo != null)
-                {
-                    if (0x7880 <= RecInfo.OriginalNetworkID && RecInfo.OriginalNetworkID <= 0x7FE8)
-                    {
-                        view = "Digital";
-                    }
-                    else if (RecInfo.OriginalNetworkID == 0x0004)
-                    {
-                        view = "BS";
-                    }
-                    else if (RecInfo.OriginalNetworkID == 0x0006)
-                    {
-                        view = "CS1";
-                    }
-                    else if (RecInfo.OriginalNetworkID == 0x0007)
-                    {
-                        view = "CS2";
-                    }
-                    else
-                    {
-                        view = "その他";
-                    }
 
-                }
-                return view;
-            }
-        }
-        
-        public String RecFilePath
+        public ulong Drops
         {
             get
             {
-                String view = "";
                 if (RecInfo != null)
-                {
-                    view = RecInfo.RecFilePath;
-                }
-                return view;
+                    return RecInfo.Drops;
+                return 0;
             }
         }
-        
-        public String TextView
+
+        public ulong Scrambles
         {
             get
             {
-                String view = "";
+                if (RecInfo != null)
+                    return RecInfo.Scrambles;
+                return 0;
+            }
+        }
+
+        public string Result
+        {
+            get
+            {
+                if (RecInfo != null)
+                    return RecInfo.Comment;
+                return "";
+            }
+        }
+        
+        public string NetworkName
+        {
+            get
+            {
                 if (RecInfo != null)
                 {
-                    view = RecInfo.StartTime.ToString("yyyy/MM/dd(ddd) HH:mm:ss ～ ");
-                    DateTime endTime = RecInfo.StartTime + TimeSpan.FromSeconds(RecInfo.DurationSecond);
-                    view += endTime.ToString("yyyy/MM/dd(ddd) HH:mm:ss") + "\r\n";
-
-                    view += ServiceName;
-                    if (0x7880 <= RecInfo.OriginalNetworkID && RecInfo.OriginalNetworkID <= 0x7FE8)
-                    {
-                        view += " (地デジ)";
-                    }
-                    else if (RecInfo.OriginalNetworkID == 0x0004)
-                    {
-                        view += " (BS)";
-                    }
-                    else if (RecInfo.OriginalNetworkID == 0x0006)
-                    {
-                        view += " (CS1)";
-                    }
-                    else if (RecInfo.OriginalNetworkID == 0x0007)
-                    {
-                        view += " (CS2)";
-                    }
-                    else
-                    {
-                        view += " (その他)";
-                    }
-                    view += "\r\n";
-                    view += EventName + "\r\n";
-                    view += "\r\n";
-                    view += "録画結果 : " + RecInfo.Comment + "\r\n";
-                    view += "録画ファイルパス : " + RecInfo.RecFilePath;
+                    return CommonManager.GetNetworkName(RecInfo.OriginalNetworkID);
                 }
+                return "";
+            }
+        }
 
-                return view;
+        public string RecFilePath
+        {
+            get
+            {
+                if (RecInfo != null)
+                    return RecInfo.RecFilePath;
+                return "";
             }
         }
     }
