@@ -116,7 +116,7 @@ namespace EpgTimer
                 }
             }
 
-            sb.Append("</div><div id=\"body\">\n");
+            sb.Append("</div>\n<div id=\"body\">\n");
             //Print Time
             sb.Append("<div id=\"timeline\" class=\"list\">\n");
             for (int i = 0; i < TimeList.Values.Count; i++)
@@ -158,7 +158,7 @@ namespace EpgTimer
                         Size = (UnixTime.ToUnixTime(EventEnd) - UnixTime.ToUnixTime(EventStart)) / 60 * MinSize;
                         if (Size <= 0) continue;
                         string StartTimeStr = Event.Start.ToString("HH:mm");
-                        var EventName = String.Format("{0} <span title=\"{1}\">{1}</span><p>{2}</p>", StartTimeStr,
+                        var EventName = String.Format("{0} <span title=\"{1}\">{1}</span>\n<p>{2}</p>\n", StartTimeStr,
                             HttpUtility.HtmlEncode(Event.Short.event_name),
                             HttpUtility.HtmlEncode(Event.Short.text_char));
                         DateTime Time1 = EventStart;
@@ -183,16 +183,16 @@ namespace EpgTimer
                             if (Event.Content != null && Event.Content.nibbleList != null && Event.Content.nibbleList.Count != 0 &&
                                 Setting.Instance.ContentToColorTable
                                         .Count(s => s.ContentLevel1 == Event.Content.nibbleList[0].content_nibble_level_1) > 0)
-                                sb2.AppendFormat("<div class=\"event{5}\" data-e=\"{0}\" style=\"background: {2};top: {4}px;min-height: {3}px;max-height: {3}px;z-index: {6};\">{1}</div>", Event.EID, EventName,
+                                sb2.AppendFormat("<div class=\"event{5}\" data-e=\"{0}\" style=\"background: {2};top: {4}px;min-height: {3}px;max-height: {3}px;z-index: {6};\">{1}</div>\n", Event.EID, EventName,
                                     Setting.Instance.ContentToColorTable
                                         .Where(s => s.ContentLevel1 == Event.Content.nibbleList[0].content_nibble_level_1).First().Color, Size, Top, AddClass, ItemCount);
                             else
-                                sb2.AppendFormat("<div class=\"event{4}\" data-e=\"{0}\" style=\"top: {3}px;min-height: {2}px;max-height: {2}px;z-index: {5};\">{1}</div>",
+                                sb2.AppendFormat("<div class=\"event{4}\" data-e=\"{0}\" style=\"top: {3}px;min-height: {2}px;max-height: {2}px;z-index: {5};\">{1}</div>\n",
                                     Event.EID, EventName, Size, Top, AddClass, ItemCount);
                         }
                         else
                         {
-                            sb2.AppendFormat("<div class=\"event {4}\" data-e=\"{0}\" style=\"top: {3}px;min-height: {2}px;max-height: {2}px;z-index: {5};\">{1}</div>",
+                            sb2.AppendFormat("<div class=\"event{4}\" data-e=\"{0}\" style=\"top: {3}px;min-height: {2}px;max-height: {2}px;z-index: {5};\">{1}</div>\n",
                                 Event.EID, EventName, Size, Top, AddClass, ItemCount);
                         }
                         ItemCount++;
