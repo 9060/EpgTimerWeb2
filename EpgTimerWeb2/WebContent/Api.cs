@@ -280,15 +280,9 @@ namespace EpgTimer
         {
             string JsonData = "";
             JsonResult Data = new JsonResult(null, false, ErrCode.CMD_NO_ARG);
-            bool NotAddCache = false;
             try
             {
                 string Command = Str;
-                if (!NotUseCache && ContentCache.Instance.Contains(Command))
-                {
-                    Debug.Print("{0}: load cache", Command);
-                    return ContentCache.Instance.Get(Command);
-                }
                 var Arg = new Dictionary<string, string>();
                 if (Str.IndexOf("/") > 0)
                 {
@@ -354,7 +348,6 @@ namespace EpgTimer
                         search = GetEpgSKey(Arg);
                     string Page = EpgPage.Generate(Start, MaxHour, ServiceKeys, MinSize, EpgCapOnly: EpgCapOnly, SetBgColor: SetBgColor, Search: search);
                     Data = new JsonResult(Page, Page != null || Page != "");
-                    NotAddCache = true;
                 }
                 else if (Command == "EnumServiceEvent")
                 {
@@ -450,13 +443,11 @@ namespace EpgTimer
                 }
                 else if (Command == "EpgCapNow")
                 {
-                    NotAddCache = true;
                     ErrCode Err = (ErrCode)CommonManager.Instance.CtrlCmd.SendEpgCapNow();
                     Data = new JsonResult(null, Err);
                 }
                 else if (Command == "EpgReload")
                 {
-                    NotAddCache = true;
                     ErrCode Err = (ErrCode)CommonManager.Instance.CtrlCmd.SendReloadEpg();
                     Data = new JsonResult(null, Err);
                 }
@@ -475,17 +466,14 @@ namespace EpgTimer
                 }
                 else if (Command == "GetSetting")
                 {
-                    NotAddCache = true;
                     Data = new JsonResult(Setting.Instance);
                 }
                 else if (Command == "GetCommonManager")
                 {
-                    NotAddCache = true;
                     Data = new JsonResult(CommonManagerJson.Instance);
                 }
                 else if (Command == "AddReserve")
                 {
-                    NotAddCache = true;
                     if (Arg.ContainsKey("tsid")
                         && Arg.ContainsKey("onid") && Arg.ContainsKey("sid")
                         && Arg.ContainsKey("eid")) //最低限必要
@@ -562,19 +550,16 @@ namespace EpgTimer
                         searchInfo = Search,
                         recSetting = Preset
                     }, err);
-                    NotAddCache = true;
                 }
                 else if (Command == "EnumPresets")
                 {
                     Data = new JsonResult(PresetDb.Instance.Presets);
-                    NotAddCache = true;
                 }
                 else if (Command == "AddPreset")
                 {
                     if (!Arg.ContainsKey("name")) return JsonData;
                     uint ID = PresetDb.Instance.AddPreset(GetPreset(Arg, new RecSettingData()), Arg["name"]);
                     Data = new JsonResult(PresetDb.Instance.Presets[ID]);
-                    NotAddCache = true;
                 }
                 else if (Command == "EpgSearch")
                 {
@@ -592,12 +577,10 @@ namespace EpgTimer
                 else if (Command == "EnumEvents")
                 {
                     Data = new JsonResult(EventStore.Instance.Events);
-                    NotAddCache = true;
                 }
                 else if (Command == "GetContentColorTable")
                 {
                     Data = new JsonResult(Setting.Instance.ContentToColorTable);
-                    NotAddCache = true;
                 }
                 else if (Command == "SetContentColorTable")
                 {
@@ -616,7 +599,6 @@ namespace EpgTimer
 
                         Data = new JsonResult(null);
                     }
-                    NotAddCache = true;
                 }
                 else if (Command == "RemoveReserve")
                 {
@@ -625,7 +607,6 @@ namespace EpgTimer
                         ErrCode err = (ErrCode)CommonManager.Instance.CtrlCmd.SendDelReserve(new List<uint> { uint.Parse(Arg["id"]) });
                         Data = new JsonResult(null, err);
                     }
-                    NotAddCache = true;
                 }
                 else if (Command == "RemoveAutoReserve")
                 {
@@ -634,7 +615,6 @@ namespace EpgTimer
                         ErrCode err = (ErrCode)CommonManager.Instance.CtrlCmd.SendDelEpgAutoAdd(new List<uint> { uint.Parse(Arg["id"]) });
                         Data = new JsonResult(null, err);
                     }
-                    NotAddCache = true;
                 }
                 else if (Command == "RemoveManualReserve")
                 {
@@ -643,7 +623,6 @@ namespace EpgTimer
                         ErrCode err = (ErrCode)CommonManager.Instance.CtrlCmd.SendDelManualAdd(new List<uint> { uint.Parse(Arg["id"]) });
                         Data = new JsonResult(null, err);
                     }
-                    NotAddCache = true;
                 }
                 else if (Command == "RemoveRecFile")
                 {
@@ -652,7 +631,6 @@ namespace EpgTimer
                         ErrCode err = (ErrCode)CommonManager.Instance.CtrlCmd.SendDelRecInfo(new List<uint> { uint.Parse(Arg["id"]) });
                         Data = new JsonResult(null, err);
                     }
-                    NotAddCache = true;
                 }
                 else if (Command == "UpdateReserve")
                 {
@@ -664,14 +642,11 @@ namespace EpgTimer
                         ErrCode err = (ErrCode)CommonManager.Instance.CtrlCmd.SendChgReserve(new List<ReserveData> { Target });
                         Data = new JsonResult(Target, err);
                     }
-                    NotAddCache = true;
                 }
                 else if (Command == "Hello")
                 {
                     Data = new JsonResult(VersionInfo.Instance);
                 }
-                if (!NotAddCache)
-                    ContentCache.Instance.Set(Str, JsonData, TimeSpan.FromMinutes(10));
                 JsonData = JsonUtil.Serialize(Data, Indent);
             }
             catch (Exception ex)

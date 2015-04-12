@@ -24,7 +24,6 @@ namespace EpgTimer
         public void AddMessage(NotifySrvInfoItem item)
         {
             _events.Add(item);
-            ContentCache.Instance.ClearAll();
         }
     }
 }

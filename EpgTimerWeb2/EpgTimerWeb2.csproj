@@ -94,7 +94,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="Util\ContentCache.cs" />
     <Compile Include="Util\EventStore.cs" />
     <Compile Include="Util\JsonUtil.cs" />
     <Compile Include="Util\PresetDb.cs" />
@@ -106,6 +105,7 @@
     <Compile Include="WebContent\HttpContent.cs" />
     <Compile Include="WebContent\HttpSession.cs" />
     <Compile Include="WebContent\Api.cs" />
+    <Compile Include="WebContent\JsonResult.cs" />
     <Compile Include="WebContent\SettingPage.cs" />
     <Compile Include="WebContent\Setup.cs" />
     <Compile Include="WebServer\Common.cs" />

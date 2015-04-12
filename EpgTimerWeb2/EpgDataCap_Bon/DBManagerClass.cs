@@ -138,7 +138,6 @@ namespace EpgTimer
                             }
                             list.Clear();
                             list = null;
-                            ContentCache.Instance.ClearAll();
                         }
                     }
                 }
@@ -171,7 +170,6 @@ namespace EpgTimer
                             }
                             list.Clear();
                             list = null;
-                            ContentCache.Instance.ClearAll();
                         }
                     }
                 }
@@ -229,7 +227,6 @@ namespace EpgTimer
                         list2.Clear();
                         list = null;
                         list2 = null;
-                        ContentCache.Instance.ClearAll();
                     }
                 }
             }
@@ -272,7 +269,6 @@ namespace EpgTimer
                         }
                         list.Clear();
                         list = null;
-                        ContentCache.Instance.ClearAll();
                     }
                 }
             }
@@ -329,7 +325,6 @@ namespace EpgTimer
                         recNameList.Clear();
                         writeList = null;
                         recNameList = null;
-                        ContentCache.Instance.ClearAll();
                     }
                 }
             }
@@ -372,7 +367,6 @@ namespace EpgTimer
                         }
                         list.Clear();
                         list = null;
-                        ContentCache.Instance.ClearAll();
                     }
                 }
             }
@@ -416,7 +410,6 @@ namespace EpgTimer
                         }
                         list.Clear();
                         list = null;
-                        ContentCache.Instance.ClearAll();
                     }
                 }
             }
