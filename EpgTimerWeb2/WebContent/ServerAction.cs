@@ -87,7 +87,7 @@ namespace EpgTimer
         //                                   API         CB
         static Regex r = new Regex(@"^\/api\/(.*)\/json\/(.*)\/$");
         //                                    API
-        static Regex r1 = new Regex(@"^\/api\/(.*)\/$");
+        static Regex r1 = new Regex(@"^\/api\/(.*)\/?$");
         public static void DoProcess(TcpClient Client)
         {
             var Info = new HttpContext(Client);

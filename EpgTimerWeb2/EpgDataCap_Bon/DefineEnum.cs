@@ -14,7 +14,8 @@ namespace EpgTimer
         CMD_ERR_DISCONNECT = 206, //サーバーから切断された
         CMD_ERR_TIMEOUT = 207, //タイムアウト発生
         CMD_ERR_BUSY = 208, //ビジー状態で現在処理できない（EPGデータ読み込み中、録画中など）
-        CMD_NO_RES = 250 //Post用でレスポンスの必要なし
+        CMD_NO_RES = 250, //Post用でレスポンスの必要なし
+        CMD_NO_ARG = 255 //何か不足している
     };
 
     public enum UpdateNotifyItem : uint
