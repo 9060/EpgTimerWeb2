@@ -218,4 +218,13 @@
   <data name="BootStrapCssMap" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\css\bootstrap.css.map;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;shift_jis</value>
   </data>
+  <data name="dataTables_bootstrap" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\js\dataTables.bootstrap.js;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="jquery_dataTables_css" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\css\jquery.dataTables.min.css;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;shift_jis</value>
+  </data>
+  <data name="jqury_dataTables_js" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\js\jquery.dataTables.min.js;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
 </root>

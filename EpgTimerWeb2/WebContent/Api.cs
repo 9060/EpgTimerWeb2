@@ -584,17 +584,17 @@ namespace EpgTimer
                 }
                 else if (Command == "SetContentColorTable")
                 {
-                    Regex ColorRegex = new Regex(@"#[0-9a-fA-F]{6}");
+                    Regex ColorRegex = new Regex(@"[0-9a-fA-F]{6}");
                     if (Arg.ContainsKey("id") && Arg.ContainsKey("color") && uint.Parse(Arg["id"]) >= 0 && ColorRegex.IsMatch(Arg["color"]))
                     {
                         if (Setting.Instance.ContentToColorTable.Count(s => s.ContentLevel1 == uint.Parse(Arg["id"])) == 0)
                         {
-                            Setting.Instance.ContentToColorTable.Add(new ContentColorItem(uint.Parse(Arg["id"]), Arg["color"]));
+                            Setting.Instance.ContentToColorTable.Add(new ContentColorItem(uint.Parse(Arg["id"]), "#" + Arg["color"]));
                         }
                         else
                         {
                             Setting.Instance.ContentToColorTable.RemoveAll(s => s.ContentLevel1 == uint.Parse(Arg["id"]));
-                            Setting.Instance.ContentToColorTable.Add(new ContentColorItem(uint.Parse(Arg["id"]), Arg["color"]));
+                            Setting.Instance.ContentToColorTable.Add(new ContentColorItem(uint.Parse(Arg["id"]), "#" + Arg["color"]));
                         }
 
                         Data = new JsonResult(null);

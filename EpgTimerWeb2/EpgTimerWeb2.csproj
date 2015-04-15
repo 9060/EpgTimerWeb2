@@ -58,6 +58,7 @@
       <HintPath>F:\edcb_src\x86\Release\CtrlCmdCLI.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Runtime.Serialization" />
@@ -133,6 +134,13 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="CtrlCmdCLI.dll" />
+    <Content Include="Resources\css\bootstrap.min.css" />
+    <Content Include="Resources\js\bootstrap.js" />
+    <Content Include="Resources\js\jquery.js" />
+    <Content Include="Resources\js\respond.min.js" />
+    <None Include="Resources\js\jquery.dataTables.min.js" />
+    <None Include="Resources\js\dataTables.bootstrap.js" />
+    <None Include="Resources\css\jquery.dataTables.min.css" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

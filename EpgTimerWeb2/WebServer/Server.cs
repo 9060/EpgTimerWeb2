@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Configuration;
 using System.Diagnostics;
 using System.Net;
 using System.Net.Sockets;
@@ -58,6 +59,8 @@ namespace EpgTimer
                 RequsetListener.BeginAcceptTcpClient(AcceptRequest, RequsetListener);
                 var Client = RequsetListener.EndAcceptTcpClient(Result);
                 var IP = ((IPEndPoint)Client.Client.RemoteEndPoint).Address;
+                if (ConfigurationManager.AppSettings["DEBUG"] != null)
+                    Console.WriteLine("New Client: {0}", IP);
                 try
                 {
                     ServerAction.DoProcess(Client);

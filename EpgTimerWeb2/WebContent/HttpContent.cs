@@ -49,6 +49,21 @@ namespace EpgTimer
                         HttpContext.SendResponse(Context, Resources.Respond);
                         Ret = true;
                         break;
+                    case "/js/jquery.datatables.min.js":
+                        Context.Response.Headers.Add("Content-Type", "application/javascript");
+                        HttpContext.SendResponse(Context, Resources.jqury_dataTables_js);
+                        Ret = true;
+                        break;
+                    case "/js/datatables.bootstrap.js":
+                        Context.Response.Headers.Add("Content-Type", "application/javascript");
+                        HttpContext.SendResponse(Context, Resources.dataTables_bootstrap);
+                        Ret = true;
+                        break;
+                    case "/js/jquery.datatables.min.css":
+                        Context.Response.Headers.Add("Content-Type", "text/css");
+                        HttpContext.SendResponse(Context, Resources.jquery_dataTables_css);
+                        Ret = true;
+                        break;
                     case "/css/bootstrap.css":
                         Context.Response.Headers.Add("Content-Type", "text/css");
                         HttpContext.SendResponse(Context, Resources.BootStrapStyle);

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Configuration;
 
 namespace EpgTimer
 {
@@ -63,6 +64,8 @@ namespace EpgTimer
                 int Separator = Line.IndexOf(":");
                 if (Separator == -1) throw new Exception("Invalid Http Header " + Line);
                 var Name = Line.Substring(0, Separator);
+                if (ConfigurationManager.AppSettings["DEBUG"] != null)
+                    Console.WriteLine("Header: {0}", Line);
                 Dict[Name] = Util.RemoveStartSpace(Line.Substring(Separator + 1));
             }
             return Dict;

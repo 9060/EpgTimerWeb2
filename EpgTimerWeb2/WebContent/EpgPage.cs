@@ -124,7 +124,6 @@ namespace EpgTimer
                 DateTime Temp = TimeList.Values[i];
                 string Text = (TimeList.Values.Count(s => s < Temp && s > Temp.AddHours(-1 * Temp.Hour)) == 0) ? "<p>" + Temp.Month + "/" + Temp.Day + "</p>" + Temp.Hour : Temp.Hour.ToString();
                 sb.AppendFormat("<div style=\"height: {1}px;top: {2}px;\">{0}</div>\n", Text, MinSize * 60, MinSize * 60 * i);
-                Debug.Print(Temp.ToString());
             }
             sb.Append("</div>\n");
 
@@ -183,16 +182,16 @@ namespace EpgTimer
                             if (Event.Content != null && Event.Content.nibbleList != null && Event.Content.nibbleList.Count != 0 &&
                                 Setting.Instance.ContentToColorTable
                                         .Count(s => s.ContentLevel1 == Event.Content.nibbleList[0].content_nibble_level_1) > 0)
-                                sb2.AppendFormat("<div class=\"event{5}\" data-e=\"{0}\" style=\"background: {2};top: {4}px;min-height: {3}px;max-height: {3}px;z-index: {6};\">{1}</div>\n", Event.EID, EventName,
+                                sb2.AppendFormat("<div class=\"event{5}\" data-e=\"{0}\" style=\"background:{2};top:{4}px;min-height:{3}px;max-height:{3}px;z-index:{6};\">{1}</div>\n", Event.EID, EventName,
                                     Setting.Instance.ContentToColorTable
                                         .Where(s => s.ContentLevel1 == Event.Content.nibbleList[0].content_nibble_level_1).First().Color, Size, Top, AddClass, ItemCount);
                             else
-                                sb2.AppendFormat("<div class=\"event{4}\" data-e=\"{0}\" style=\"top: {3}px;min-height: {2}px;max-height: {2}px;z-index: {5};\">{1}</div>\n",
+                                sb2.AppendFormat("<div class=\"event{4}\" data-e=\"{0}\" style=\"top:{3}px;min-height:{2}px;max-height:{2}px;z-index:{5};\">{1}</div>\n",
                                     Event.EID, EventName, Size, Top, AddClass, ItemCount);
                         }
                         else
                         {
-                            sb2.AppendFormat("<div class=\"event{4}\" data-e=\"{0}\" style=\"top: {3}px;min-height: {2}px;max-height: {2}px;z-index: {5};\">{1}</div>\n",
+                            sb2.AppendFormat("<div class=\"event{4}\" data-e=\"{0}\" style=\"top:{3}px;min-height:{2}px;max-height:{2}px;z-index:{5};\">{1}</div>\n",
                                 Event.EID, EventName, Size, Top, AddClass, ItemCount);
                         }
                         ItemCount++;

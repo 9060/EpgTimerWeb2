@@ -97,6 +97,33 @@ namespace EpgTimerWeb2.Properties {
         }
         
         /// <summary>
+        ///   /*! DataTables Bootstrap 3 integration
+        /// * ©2011-2014 SpryMedia Ltd - datatables.net/license
+        /// */
+        ///
+        ////**
+        /// * DataTables integration for Bootstrap 3. This requires Bootstrap 3 and
+        /// * DataTables 1.10 or newer.
+        /// *
+        /// * This file sets the defaults and adds options to DataTables to style its
+        /// * controls using Bootstrap. See http://datatables.net/manual/styling/bootstrap
+        /// * for further information.
+        /// */
+        ///(function(window, document, undefined){
+        ///
+        ///var factory = function( $, DataTable ) {
+        ///&quot;use strict&quot;;
+        ///
+        ///
+        ////*  [残りの文字列は切り詰められました]&quot;; に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string dataTables_bootstrap {
+            get {
+                return ResourceManager.GetString("dataTables_bootstrap", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   型 System.Byte[] のローカライズされたリソースを検索します。
         /// </summary>
         public static byte[] glyphicons_halflings_regular_eot {
@@ -143,6 +170,58 @@ namespace EpgTimerWeb2.Properties {
         public static string JQuery {
             get {
                 return ResourceManager.GetString("JQuery", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   div.dataTables_length label {
+        ///	font-weight: normal;
+        ///	text-align: left;
+        ///	white-space: nowrap;
+        ///}
+        ///
+        ///div.dataTables_length select {
+        ///	width: 75px;
+        ///	display: inline-block;
+        ///}
+        ///
+        ///div.dataTables_filter {
+        ///	text-align: right;
+        ///}
+        ///
+        ///div.dataTables_filter label {
+        ///	font-weight: normal;
+        ///	white-space: nowrap;
+        ///	text-align: left;
+        ///}
+        ///
+        ///div.dataTables_filter input {
+        ///	margin-left: 0.5em;
+        ///	display: inline-block;
+        ///}
+        ///
+        ///div.dataTables_info {
+        ///	padding-top: 8px;
+        ///	white-space: nowrap;
+        ///}
+        ///
+        ///div.dataTables_paginate {        /// [残りの文字列は切り詰められました]&quot;; に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string jquery_dataTables_css {
+            get {
+                return ResourceManager.GetString("jquery_dataTables_css", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   /*! DataTables 1.10.4
+        /// * ©2008-2014 SpryMedia Ltd - datatables.net/license
+        /// */
+        ///(function(Da,P,l){var O=function(g){function V(a){var b,c,e={};g.each(a,function(d){if((b=d.match(/^([^A-Z]+?)([A-Z])/))&amp;&amp;-1!==&quot;a aa ai ao as b fn i m o s &quot;.indexOf(b[1]+&quot; &quot;))c=d.replace(b[0],b[2].toLowerCase()),e[c]=d,&quot;o&quot;===b[1]&amp;&amp;V(a[d])});a._hungarianMap=e}function G(a,b,c){a._hungarianMap||V(a);var e;g.each(b,function(d){e=a._hungarianMap[d];if(e!==l&amp;&amp;(c||b[e]===l))&quot;o&quot;===e.charAt(0)?(b[e]||(b[e]={}),g.extend(!0,b[e],b[d]),G(a[ [残りの文字列は切り詰められました]&quot;; に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string jqury_dataTables_js {
+            get {
+                return ResourceManager.GetString("jqury_dataTables_js", resourceCulture);
             }
         }
         
