@@ -20,57 +20,31 @@ namespace EpgTimer
         {
             get
             {
-                string text = "";
                 if (NotifyInfo != null)
                 {
                     switch ((UpdateNotifyItem)NotifyInfo.notifyID)
                     {
                         case UpdateNotifyItem.PreRecStart:
-                            {
-                                text = "予約録画開始準備";
-                            }
-                            break;
+                            return "予約録画開始準備";
                         case UpdateNotifyItem.RecStart:
-                            {
-                                text = "録画開始";
-                            }
-                            break;
+                            return "録画開始";
                         case UpdateNotifyItem.RecEnd:
-                            {
-                                text = "録画終了";
-                            }
-                            break;
+                            return "録画終了";
                         case UpdateNotifyItem.RecTuijyu:
-                            {
-                                text = "追従発生";
-                            }
-                            break;
+                            return "追従発生";
                         case UpdateNotifyItem.ChgTuijyu:
-                            {
-                                text = "番組変更";
-                            }
-                            break;
+                            return "番組変更";
                         case UpdateNotifyItem.PreEpgCapStart:
-                            {
-                                text = "EPG取得";
-                            }
-                            break;
+                            return "EPG取得";
                         case UpdateNotifyItem.EpgCapStart:
-                            {
-                                text = "EPG取得";
-                            }
-                            break;
+                            return "EPG取得";
                         case UpdateNotifyItem.EpgCapEnd:
-                            {
-                                text = "EPG取得";
-                            }
-                            break;
+                            return "EPG取得";
                         default:
-                            text = "";
-                            break;
+                            return "";
                     }
                 }
-                return text;
+                return "";
             }
         }
 
@@ -78,57 +52,31 @@ namespace EpgTimer
         {
             get
             {
-                string text = "";
                 if (NotifyInfo != null)
                 {
                     switch ((UpdateNotifyItem)NotifyInfo.notifyID)
                     {
                         case UpdateNotifyItem.PreRecStart:
-                            {
-                                text = NotifyInfo.param4;
-                            }
-                            break;
+                            return NotifyInfo.param4;
                         case UpdateNotifyItem.RecStart:
-                            {
-                                text = NotifyInfo.param4;
-                            }
-                            break;
+                            return NotifyInfo.param4;
                         case UpdateNotifyItem.RecEnd:
-                            {
-                                text = NotifyInfo.param4;
-                            }
-                            break;
+                            return NotifyInfo.param4;
                         case UpdateNotifyItem.RecTuijyu:
-                            {
-                                text = NotifyInfo.param4;
-                            }
-                            break;
+                            return NotifyInfo.param4;
                         case UpdateNotifyItem.ChgTuijyu:
-                            {
-                                text = NotifyInfo.param4;
-                            }
-                            break;
+                            return NotifyInfo.param4;
                         case UpdateNotifyItem.PreEpgCapStart:
-                            {
-                                text = NotifyInfo.param4;
-                            }
-                            break;
+                            return NotifyInfo.param4;
                         case UpdateNotifyItem.EpgCapStart:
-                            {
-                                text = "開始";
-                            }
-                            break;
+                            return "開始";
                         case UpdateNotifyItem.EpgCapEnd:
-                            {
-                                text = "終了";
-                            }
-                            break;
+                            return "終了";
                         default:
-                            text = "";
-                            break;
+                            return NotifyInfo.notifyID.ToString();
                     }
                 }
-                return text;
+                return "";
             }
         }
 
@@ -136,109 +84,12 @@ namespace EpgTimer
         {
             get
             {
-                string text = "";
                 if (NotifyInfo != null)
                 {
-                    text = NotifyInfo.time.ToString("yyyy/MM/dd HH:mm:ss.fff");
-
-                    text += " [";
-                    switch ((UpdateNotifyItem)NotifyInfo.notifyID)
-                    {
-                        case UpdateNotifyItem.PreRecStart:
-                            {
-                                text += "予約録画開始準備";
-                            }
-                            break;
-                        case UpdateNotifyItem.RecStart:
-                            {
-                                text += "録画開始";
-                            }
-                            break;
-                        case UpdateNotifyItem.RecEnd:
-                            {
-                                text += "録画終了";
-                            }
-                            break;
-                        case UpdateNotifyItem.RecTuijyu:
-                            {
-                                text += "追従発生";
-                            }
-                            break;
-                        case UpdateNotifyItem.ChgTuijyu:
-                            {
-                                text += "番組変更";
-                            }
-                            break;
-                        case UpdateNotifyItem.PreEpgCapStart:
-                            {
-                                text += "EPG取得";
-                            }
-                            break;
-                        case UpdateNotifyItem.EpgCapStart:
-                            {
-                                text += "EPG取得";
-                            }
-                            break;
-                        case UpdateNotifyItem.EpgCapEnd:
-                            {
-                                text += "EPG取得";
-                            }
-                            break;
-                        default:
-                            text += NotifyInfo.notifyID.ToString();
-                            break;
-                    }
-                    text += "] ";
-
-                    switch ((UpdateNotifyItem)NotifyInfo.notifyID)
-                    {
-                        case UpdateNotifyItem.PreRecStart:
-                            {
-                                text += NotifyInfo.param4;
-                            }
-                            break;
-                        case UpdateNotifyItem.RecStart:
-                            {
-                                text += NotifyInfo.param4;
-                            }
-                            break;
-                        case UpdateNotifyItem.RecEnd:
-                            {
-                                text += NotifyInfo.param4;
-                            }
-                            break;
-                        case UpdateNotifyItem.RecTuijyu:
-                            {
-                                text += NotifyInfo.param4;
-                            }
-                            break;
-                        case UpdateNotifyItem.ChgTuijyu:
-                            {
-                                text += NotifyInfo.param4;
-                            }
-                            break;
-                        case UpdateNotifyItem.PreEpgCapStart:
-                            {
-                                text += NotifyInfo.param4;
-                            }
-                            break;
-                        case UpdateNotifyItem.EpgCapStart:
-                            {
-                                text += "開始";
-                            }
-                            break;
-                        case UpdateNotifyItem.EpgCapEnd:
-                            {
-                                text += "終了";
-                            }
-                            break;
-                        default:
-                            text += NotifyInfo.notifyID.ToString();
-                            break;
-                    }
-                    text += "\r\n";
+                    return NotifyInfo.time.ToString("yyyy/MM/dd HH:mm:ss.fff") + 
+                        " [" + Title + "] " + LogText + "\n";
                 }
-                return text;
+                return "";
             }
         }
     }

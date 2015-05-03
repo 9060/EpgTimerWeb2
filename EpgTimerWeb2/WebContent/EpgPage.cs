@@ -72,15 +72,20 @@ namespace EpgTimer
             }
             foreach (var a in List)
             {
+                if (a.Value.eventList.Count == 0) continue;
                 if (ServiceKeys != null && ServiceKeys.Count != 0 && !ServiceKeys.Contains(a.Key)) continue;
                 if (EpgCapOnly && (!ChSet5.Instance.ChList.ContainsKey(a.Key) || ChSet5.Instance.ChList[a.Key].EpgCapFlag != 1)) continue;
                 if (Search == null)
                 {
+                    var Events = a.Value.eventList
+                            .Where(x => x.ShortInfo != null)
+                            .Where(b => b.start_time < End && b.start_time.AddSeconds(b.durationSec) > Start)
+                            .OrderBy(d => d.start_time);
+                    Debug.Print("{0}: {1}", a.Value.serviceInfo.service_name, Events.Count());
+                    if (Events.Count() == 0) continue;
                     Out.Add(
                         a.Value.serviceInfo,
-                        a.Value.eventList
-                            .Where(b => b.start_time < End && b.start_time.AddSeconds(b.durationSec) > Start)
-                            .OrderBy(d => d.start_time)
+                            Events
                             .Select(e => new EventInfoItem(e))
                             .ToList()
                         );
@@ -95,6 +100,7 @@ namespace EpgTimer
                         );
                 }
             }
+            
             SortedList<DateTime, DateTime> TimeList = new SortedList<DateTime, DateTime>(); ;
             foreach (var Item3 in Out.Values)
             {
@@ -123,7 +129,7 @@ namespace EpgTimer
             {
                 DateTime Temp = TimeList.Values[i];
                 string Text = (TimeList.Values.Count(s => s < Temp && s > Temp.AddHours(-1 * Temp.Hour)) == 0) ? "<p>" + Temp.Month + "/" + Temp.Day + "</p>" + Temp.Hour : Temp.Hour.ToString();
-                sb.AppendFormat("<div style=\"height: {1}px;top: {2}px;\">{0}</div>\n", Text, MinSize * 60, MinSize * 60 * i);
+                sb.AppendFormat("<div style=\"height:{1}px;top:{2}px;\">{0}</div>\n", Text, MinSize * 60, MinSize * 60 * i);
             }
             sb.Append("</div>\n");
 
