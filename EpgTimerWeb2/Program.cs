@@ -76,10 +76,10 @@ namespace EpgTimerWeb2
             {
                 CtrlCmdConnect.Connect();
             }
-            var r = new Random(new Random().Next(100));
+            var r = new Random(new Random().Next(0xFFFFFF));
             for (int i = 0; i < 5; i++)
             {
-                PrivateSetting.Instance.SetupCode += r.Next(0 + r.Next(0, 5), 9).ToString();
+                PrivateSetting.Instance.SetupCode += r.Next(0, 99).ToString();
             }
             PrivateSetting.Instance.Server = new WebServer((int)Setting.Instance.HttpPort);
             PrivateSetting.Instance.Server.Start();
