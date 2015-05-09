@@ -26,7 +26,7 @@ namespace EpgTimer
     public class SocketAction
     {
         static List<HttpContext> Sockets = new List<HttpContext>();
-        static Regex r2 = new Regex(@"^(.*) (.*)$");
+        static Regex r2 = new Regex(@"^([^ ]*) (.*)$");
         public static void Process(HttpContext Info)
         {
             Sockets.Add(Info);
