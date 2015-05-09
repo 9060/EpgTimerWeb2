@@ -88,6 +88,8 @@
     <Compile Include="EpgDataCap_Bon\RecPresetItem.cs" />
     <Compile Include="EpgDataCap_Bon\ReserveItem.cs" />
     <Compile Include="EpgDataCap_Bon\ServiceItem.cs" />
+    <Compile Include="LocationFree\LibVlcEnums.cs" />
+    <Compile Include="LocationFree\LibVlcMethods.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
