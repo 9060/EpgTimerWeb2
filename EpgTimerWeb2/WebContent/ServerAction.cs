@@ -47,7 +47,7 @@ namespace EpgTimer
             string Login = Resources.Login;
             if (Info.Request.GetParam.ToLower() == "error")
                 Login = Login.Replace("<!--INSERT_MESSAGE_HERE--!>", "<div class='alert alert-danger' role='alert'>ログイン失敗</div>");
-            else if(Info.Request.GetParam.ToLower() == "logout")
+            else if (Info.Request.GetParam.ToLower() == "logout")
                 Login = Login.Replace("<!--INSERT_MESSAGE_HERE--!>", "<div class='alert alert-info' role='alert'>ログアウト済み</div>");
             HttpContext.SendResponse(Info, Login);
         }
@@ -117,7 +117,7 @@ namespace EpgTimer
                     Setup.SetupProcess(Info);
                     return;
                 }
-                if (Info.Request.Url.ToLower() == "/ws") //WebSocket
+                else if (Info.Request.Url.ToLower() == "/ws") //WebSocket
                 {
                     Info.Response.Headers["Cache-Control"] = "no-cache";
                     if (CheckCookie(Info))
@@ -127,25 +127,36 @@ namespace EpgTimer
                     }
                     else
                     {
-                        Info.Response.SetStatus(401, "Unauthorixed");
+                        Info.Response.SetStatus(401, "Unauthorized");
                         Info.Response.Send();
                     }
                     Info.Close();
                     return;
                 }
-                if (Info.Request.Url.ToLower() == "/logout")
+                else if (Info.Request.Url.ToLower() == "/logout")
                 {
                     LogoutURL(Info);
                 }
-                if (Info.Request.Url.ToLower() == "/login")
+                else if (Info.Request.Url.ToLower() == "/login")
                 {
                     LoginURL(Info);
                 }
-                if (Info.Request.Url.ToLower() == "/dologin")
+                else if (Info.Request.Url.ToLower() == "/dologin")
                 {
                     DoLoginURL(Info);
                 }
-                if (r.IsMatch(Info.Request.Url))
+                else if (Info.Request.Url.ToLower() == "/resource")
+                {
+                    Info.Response.Headers["Content-Type"] = "application/javascript; charset=utf8";
+                    string cb = "if(typeof(ETW)==='undefined')ETW={};\nETW.Resource=" + JsonUtil.Serialize(CommonManagerJson.Instance, false) + ";";
+                    byte[] Res = Encoding.UTF8.GetBytes(cb);
+                    Info.Response.Headers["Content-Type"] = "application/javascript; charset=utf8";
+                    Info.Response.OutputStream.Write(Res, 0, Res.Length);
+                    Info.Response.Send();
+                    Info.Close();
+                    return;
+                }
+                else if (r.IsMatch(Info.Request.Url))
                 {
                     Info.Response.Headers["Cache-Control"] = "no-cache";
                     if (CheckCookie(Info))
@@ -165,7 +176,7 @@ namespace EpgTimer
                     }
                     else
                     {
-                        Info.Response.SetStatus(401, "Unauthorixed");
+                        Info.Response.SetStatus(401, "Unauthorized");
                     }
                     Info.Response.Send();
                     Info.Close();
@@ -190,13 +201,13 @@ namespace EpgTimer
                     }
                     else
                     {
-                        Info.Response.SetStatus(401, "Unauthorixed");
+                        Info.Response.SetStatus(401, "Unauthorized");
                     }
                     Info.Response.Send();
                     Info.Close();
                     return;
                 }
-                if (Info.Request.Url == "/index.html" && !CheckCookie(Info))
+                else if (Info.Request.Url == "/index.html" && !CheckCookie(Info))
                 {
                     Info.Response.Headers["Cache-Control"] = "no-cache";
                     HttpContext.Redirect(Info, "/login");
@@ -220,7 +231,7 @@ EpgTimerWeb(v2) by YUKI
                 Info.Response.Send();
                 Console.WriteLine("\n!!!! Exception !!!!");
             }
-            
+
             Info.Close();
         }
 
