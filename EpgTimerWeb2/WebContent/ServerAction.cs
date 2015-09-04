@@ -111,12 +111,13 @@ namespace EpgTimer
             {
                 if (Info.Request.Url == "/index.htm") Info.Request.Url = "/index.html";
                 if (Info.Request.Url == "/") Info.Request.Url = "/index.html";
+                bool IsAuth = CheckCookie(Info);
+
                 if (PrivateSetting.Instance.SetupMode)
                 {
                     Setup.SetupProcess(Info);
                     return;
                 }
-
                 else if (Info.Request.Url.ToLower() == "/logout")
                 {
                     LogoutURL(Info);
@@ -129,18 +130,18 @@ namespace EpgTimer
                 {
                     DoLoginURL(Info);
                 }
-                else if (Info.Request.Url == "/index.html" && !CheckCookie(Info))
+                else if (Info.Request.Url == "/index.html" && !IsAuth)
                 {
                     Info.Response.Headers["Cache-Control"] = "no-cache";
                     HttpContext.Redirect(Info, "/login");
                 }
-                else if (new HttpContent().RequestUrl(Info))
+                else if (new HttpContent().RequestUrl(Info, IsAuth))
                 {
                     //Do not something...
                 }
                 else
                 {
-                    if (!CheckCookie(Info)) throw new HttpResponseException(401, "Unauthorized");
+                    if (!IsAuth) throw new HttpResponseException(401, "Unauthorized", "You need to login");
                     if (Info.Request.Url.ToLower() == "/resource")
                     {
                         Info.Response.Headers["Content-Type"] = "application/javascript; charset=utf8";
@@ -174,11 +175,16 @@ namespace EpgTimer
                         Info.Response.OutputStream.Write(Res, 0, Res.Length);
                         Info.Response.Send();
                     }
+                    else
+                    {
+                        throw new HttpResponseException(404, "Not Found", "File not found");
+                    }
                 }
             }
             catch (HttpResponseException http)
             {
                 Info.Response.SetStatus(http.StatusCode, http.StatusText);
+                HttpResponse.StatusPage(Info, http.Reason);
                 Info.Response.Send();
             }
             catch (Exception ex)

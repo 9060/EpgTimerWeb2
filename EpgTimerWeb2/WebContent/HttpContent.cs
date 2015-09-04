@@ -23,34 +23,24 @@ namespace EpgTimer
 {
     public class HttpContent
     {
-        
-        public bool RequestUrl(HttpContext Context)
+
+        public bool RequestUrl(HttpContext Context, bool IsAuth)
         {
             var Ret = false;
-            if (Context.Request.Url.ToLower().StartsWith("/modules/"))
+            var PartName = Context.Request.Url.ToLower().Replace("/", "\\");
+            if (PartName.IndexOf("..\\") < 0 && File.Exists(".\\web\\" + PartName) && IsAuth)
             {
-                var PartName = Context.Request.Url.ToLower().Replace("/modules/", "").Replace("/", "\\");
-                if (PartName.IndexOf("..\\") < 0 && File.Exists(".\\web\\modules\\" + PartName))
-                {
-                    string MimeType = Mime.Get(PartName, "application/javascript");
-                    if (!Mime.IsImage(PartName))
-                        MimeType += "; charset=utf-8";
-                    Context.Response.Headers.Add("Content-Type", MimeType);
-                    HttpContext.SendResponse(Context, File.ReadAllBytes(".\\web\\modules\\" + PartName));
-                    Ret = true;
-                }
+                string MimeType = Mime.Get(PartName, "application/javascript");
+                if (!Mime.IsImage(PartName))
+                    MimeType += "; charset=utf-8";
+                Context.Response.Headers.Add("Content-Type", MimeType);
+                HttpContext.SendResponse(Context, File.ReadAllBytes(".\\web\\" + PartName));
+                Ret = true;
             }
             else
             {
                 switch (Context.Request.Url.ToLower())
                 {
-                    case "/":
-                    case "/index.html":
-                    case "/index.htm":
-                        Context.Response.Headers.Add("Content-Type", "text/html; charset=UTF-8");
-                        HttpContext.SendResponse(Context, File.ReadAllBytes(".\\web\\index.html"));
-                        Ret = true;
-                        break;
                     case "/js/jquery.js":
                         Context.Response.Headers.Add("Content-Type", "application/javascript");
                         HttpContext.SendResponse(Context, Resources.JQuery);

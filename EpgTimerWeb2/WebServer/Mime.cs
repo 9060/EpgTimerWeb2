@@ -42,11 +42,13 @@ namespace EpgTimer
             if (path.IndexOf(".") < 0) return mimeProposed;
             var split = path.Split(new char[] { '.' });
             var ext = split[split.Length - 1];
+            if (ext == "css") return "text/css";
+            if (ext == "html") return "text/html";
+            if (ext == "js") return "application/javascript";
             var key = Registry.ClassesRoot.OpenSubKey("." + ext);
             if (key == null)
                 return mimeProposed;
             var mime = key.GetValue("Content Type");
-            if (ext == ".css") mime = "text/css";
             if (mime == null)
                 return mimeProposed;
             else

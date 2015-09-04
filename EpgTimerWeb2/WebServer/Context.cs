@@ -27,10 +27,19 @@ namespace EpgTimer
     {
         public int StatusCode { set; get; }
         public string StatusText { set; get; }
+        public string Reason { set; get; }
         public HttpResponseException(int code, string text)
         {
             StatusCode = code;
             StatusText = text;
+            Reason = "Something...";
+        }
+
+        public HttpResponseException(int code, string text, string reason)
+        {
+            StatusCode = code;
+            StatusText = text;
+            Reason = reason;
         }
     }
     public class HttpContext
