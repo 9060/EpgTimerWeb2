@@ -32,7 +32,7 @@ namespace EpgTimer
             {
                 return Json;
             }
-            return "\x00";
+            throw new HttpResponseException(500, "API Error");
         }
         private static void LoginURL(HttpContext Info)
         {
@@ -43,7 +43,6 @@ namespace EpgTimer
                 return;
             }
             Info.Response.Headers["Content-Type"] = "text/html";
-            Info.Response.Headers["Cache-Control"] = "no-cache";
             string Login = Resources.Login;
             if (Info.Request.GetParam.ToLower() == "error")
                 Login = Login.Replace("<!--INSERT_MESSAGE_HERE--!>", "<div class='alert alert-danger' role='alert'>ログイン失敗</div>");
@@ -117,22 +116,7 @@ namespace EpgTimer
                     Setup.SetupProcess(Info);
                     return;
                 }
-                else if (Info.Request.Url.ToLower() == "/ws") //WebSocket
-                {
-                    Info.Response.Headers["Cache-Control"] = "no-cache";
-                    if (CheckCookie(Info))
-                    {
-                        WebSocket.HandshakeResponseSend(Info);
-                        SocketAction.Process(Info);
-                    }
-                    else
-                    {
-                        Info.Response.SetStatus(401, "Unauthorized");
-                        Info.Response.Send();
-                    }
-                    Info.Close();
-                    return;
-                }
+
                 else if (Info.Request.Url.ToLower() == "/logout")
                 {
                     LogoutURL(Info);
@@ -145,77 +129,57 @@ namespace EpgTimer
                 {
                     DoLoginURL(Info);
                 }
-                else if (Info.Request.Url.ToLower() == "/resource")
-                {
-                    Info.Response.Headers["Content-Type"] = "application/javascript; charset=utf8";
-                    string cb = "if(typeof(ETW)==='undefined')ETW={};\nETW.Resource=" + JsonUtil.Serialize(CommonManagerJson.Instance, false) + ";";
-                    byte[] Res = Encoding.UTF8.GetBytes(cb);
-                    Info.Response.Headers["Content-Type"] = "application/javascript; charset=utf8";
-                    Info.Response.OutputStream.Write(Res, 0, Res.Length);
-                    Info.Response.Send();
-                    Info.Close();
-                    return;
-                }
-                else if (r.IsMatch(Info.Request.Url))
-                {
-                    Info.Response.Headers["Cache-Control"] = "no-cache";
-                    if (CheckCookie(Info))
-                    {
-                        string Result = HTTPAPIRequest(r.Match(Info.Request.Url).Groups[1].Value);
-                        if (Result == "\x00")
-                        {
-                            Info.Response.SetStatus(404, "Not Found");
-                        }
-                        else
-                        {
-                            string cb = r.Match(Info.Request.Url).Groups[2].Value + "(";
-                            byte[] Res = Encoding.UTF8.GetBytes(cb + Result + ");");
-                            Info.Response.Headers["Content-Type"] = "application/javascript; charset=utf8";
-                            Info.Response.OutputStream.Write(Res, 0, Res.Length);
-                        }
-                    }
-                    else
-                    {
-                        Info.Response.SetStatus(401, "Unauthorized");
-                    }
-                    Info.Response.Send();
-                    Info.Close();
-                    return;
-                }
-                else if (r1.IsMatch(Info.Request.Url))
-                {
-                    Info.Response.Headers["Cache-Control"] = "no-cache";
-                    if (CheckCookie(Info))
-                    {
-                        string Result = HTTPAPIRequest(r1.Match(Info.Request.Url).Groups[1].Value);
-                        if (Result == "\x00")
-                        {
-                            Info.Response.SetStatus(404, "Not Found");
-                        }
-                        else
-                        {
-                            byte[] Res = Encoding.UTF8.GetBytes(Result);
-                            Info.Response.Headers["Content-Type"] = "application/javascript; charset=utf8";
-                            Info.Response.OutputStream.Write(Res, 0, Res.Length);
-                        }
-                    }
-                    else
-                    {
-                        Info.Response.SetStatus(401, "Unauthorized");
-                    }
-                    Info.Response.Send();
-                    Info.Close();
-                    return;
-                }
                 else if (Info.Request.Url == "/index.html" && !CheckCookie(Info))
                 {
                     Info.Response.Headers["Cache-Control"] = "no-cache";
                     HttpContext.Redirect(Info, "/login");
                 }
-                else if (!new HttpContent().RequestUrl(Info))
+                else if (new HttpContent().RequestUrl(Info))
                 {
-                    HttpResponse.NotFound(Info);
+                    //Do not something...
                 }
+                else
+                {
+                    if (!CheckCookie(Info)) throw new HttpResponseException(401, "Unauthorized");
+                    if (Info.Request.Url.ToLower() == "/resource")
+                    {
+                        Info.Response.Headers["Content-Type"] = "application/javascript; charset=utf8";
+                        string cb = "if(typeof(ETW)==='undefined')ETW={};\nETW.Resource=" + JsonUtil.Serialize(CommonManagerJson.Instance, false) + ";";
+                        byte[] Res = Encoding.UTF8.GetBytes(cb);
+                        Info.Response.OutputStream.Write(Res, 0, Res.Length);
+                        Info.Response.Send();
+                    }
+                    else if (Info.Request.Url.ToLower() == "/ws") //WebSocket
+                    {
+                        Info.Response.Headers["Cache-Control"] = "no-cache";
+                        WebSocket.HandshakeResponseSend(Info);
+                        SocketAction.Process(Info);
+                    }
+                    else if (r.IsMatch(Info.Request.Url))
+                    {
+                        Info.Response.Headers["Cache-Control"] = "no-cache";
+                        string Result = HTTPAPIRequest(r.Match(Info.Request.Url).Groups[1].Value);
+                        string cb = r.Match(Info.Request.Url).Groups[2].Value + "(";
+                        byte[] Res = Encoding.UTF8.GetBytes(cb + Result + ");");
+                        Info.Response.Headers["Content-Type"] = "application/javascript; charset=utf8";
+                        Info.Response.OutputStream.Write(Res, 0, Res.Length);
+                        Info.Response.Send();
+                    }
+                    else if (r1.IsMatch(Info.Request.Url))
+                    {
+                        Info.Response.Headers["Cache-Control"] = "no-cache";
+                        string Result = HTTPAPIRequest(r1.Match(Info.Request.Url).Groups[1].Value);
+                        byte[] Res = Encoding.UTF8.GetBytes(Result);
+                        Info.Response.Headers["Content-Type"] = "application/javascript; charset=utf8";
+                        Info.Response.OutputStream.Write(Res, 0, Res.Length);
+                        Info.Response.Send();
+                    }
+                }
+            }
+            catch (HttpResponseException http)
+            {
+                Info.Response.SetStatus(http.StatusCode, http.StatusText);
+                Info.Response.Send();
             }
             catch (Exception ex)
             {

@@ -15,6 +15,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+using System;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
@@ -22,6 +23,16 @@ using System.Text;
 
 namespace EpgTimer
 {
+    public class HttpResponseException : Exception
+    {
+        public int StatusCode { set; get; }
+        public string StatusText { set; get; }
+        public HttpResponseException(int code, string text)
+        {
+            StatusCode = code;
+            StatusText = text;
+        }
+    }
     public class HttpContext
     {
         public bool IsWsSend { set; get; }
