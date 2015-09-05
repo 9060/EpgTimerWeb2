@@ -36,14 +36,14 @@ namespace EpgTimer
         private bool noAutoReloadEpg = false;
         private bool oneTimeReloadEpg = false;
 
-        public Dictionary<ulong, EpgServiceEventInfo> ServiceEventList{set;get;}
-        public Dictionary<uint, ReserveData> ReserveList{set;get;}
-        public Dictionary<uint, TunerReserveInfo> TunerReserveList{set;get;}
-        public Dictionary<uint, RecFileInfo> RecFileInfo{set;get;}
-        public Dictionary<int, string> WritePlugInList{set;get;}
-        public Dictionary<int, string> RecNamePlugInList{set;get;}
-        public Dictionary<uint, ManualAutoAddData> ManualAutoAddList{set;get;}
-        public Dictionary<uint, EpgAutoAddData> EpgAutoAddList{set;get;}
+        public Dictionary<ulong, EpgServiceEventInfo> ServiceEventList { set; get; }
+        public Dictionary<uint, ReserveData> ReserveList { set; get; }
+        public Dictionary<uint, TunerReserveInfo> TunerReserveList { set; get; }
+        public Dictionary<uint, RecFileInfo> RecFileInfo { set; get; }
+        public Dictionary<int, string> WritePlugInList { set; get; }
+        public Dictionary<int, string> RecNamePlugInList { set; get; }
+        public Dictionary<uint, ManualAutoAddData> ManualAutoAddList { set; get; }
+        public Dictionary<uint, EpgAutoAddData> EpgAutoAddList { set; get; }
 
         public DBManager(CtrlCmdUtil ctrlCmd)
         {
@@ -77,6 +77,23 @@ namespace EpgTimer
         public void SetNoAutoReloadEPG(bool noReload)
         {
             noAutoReloadEpg = noReload;
+        }
+
+        public void ReloadAll(bool force = false)
+        {
+            updateEpgData = force;
+            updateReserveInfo = force;
+            updateRecInfo = force;
+            updateAutoAddEpgInfo = force;
+            updateAutoAddManualInfo = force;
+            updatePlugInFile = force;
+            this.ClearAllDB();
+            this.ReloadEpgAutoAddInfo();
+            this.ReloadEpgData();
+            this.ReloadManualAutoAddInfo();
+            this.ReloadPlugInFile();
+            this.ReloadRecFileInfo();
+            this.ReloadReserveInfo();
         }
 
         public void SetOneTimeReloadEpg()
@@ -170,7 +187,7 @@ namespace EpgTimer
                         {
                             ServiceEventList.Clear();
                             ServiceEventList = null;
-                            ServiceEventList = new Dictionary<ulong,EpgServiceEventInfo>();
+                            ServiceEventList = new Dictionary<ulong, EpgServiceEventInfo>();
                             List<EpgServiceEventInfo> list = new List<EpgServiceEventInfo>();
                             ret = (ErrCode)cmd.SendEnumPgAll(ref list);
                             if (ret == ErrCode.CMD_SUCCESS)

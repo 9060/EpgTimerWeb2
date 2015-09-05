@@ -664,6 +664,10 @@ namespace EpgTimer
                 {
                     Data = new JsonResult(VersionInfo.Instance);
                 }
+                else if (Command == "ReloadLocal")
+                {
+                    CommonManager.Instance.DB.ReloadAll(Arg.ContainsKey("force"));
+                }
                 JsonData = JsonUtil.Serialize(Data, Indent);
             }
             catch (Exception ex)

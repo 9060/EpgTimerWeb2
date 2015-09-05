@@ -71,13 +71,7 @@ namespace EpgTimer
                 Environment.Exit(1);
             }
             Console.WriteLine("データ読み込み中...");
-            CommonManager.Instance.DB.ClearAllDB();
-            CommonManager.Instance.DB.ReloadEpgAutoAddInfo();
-            CommonManager.Instance.DB.ReloadEpgData();
-            CommonManager.Instance.DB.ReloadManualAutoAddInfo();
-            CommonManager.Instance.DB.ReloadPlugInFile();
-            CommonManager.Instance.DB.ReloadRecFileInfo();
-            CommonManager.Instance.DB.ReloadReserveInfo();
+            CommonManager.Instance.DB.ReloadAll(true);
         }
         private int OutsideCmdCallback(object pParam, CMD_STREAM pCmdParam, ref CMD_STREAM pResParam)
         {
