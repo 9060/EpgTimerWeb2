@@ -38,7 +38,6 @@ namespace EpgTimer
         }
         public static HttpRequest Parse(Stream Input)
         {
-            
             var Start = HttpCommon.StreamReadLine(Input);
             var Request = Start.Split(' ');
             if (Request.Length != 3)
@@ -59,14 +58,12 @@ namespace EpgTimer
             };
             if (Headers.ContainsKey("content-length")) //POSTかも
             {
-                Input.ReadTimeout = 1000;
                 var ContentLength = 0;
                 if (int.TryParse(Headers["content-length"], out ContentLength))
                 {
                     if(ContentLength < Setting.Instance.MaxUploadSize && ContentLength > 0)
                         Res.PostData = Util.ReadStream(Input, ContentLength);
                 }
-                Input.ReadTimeout = Timeout.Infinite;
             }
             if (Res.RawUrl.IndexOf("?") > 0) //GETかも
             {

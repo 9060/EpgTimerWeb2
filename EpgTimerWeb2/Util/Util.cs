@@ -31,6 +31,7 @@ namespace EpgTimer
             int Size = 0, AllSize = 0, NextSize = Buffer.Length;
             if (NextSize > size) //size < 1024
                 NextSize = size; //size のみ
+            stream.ReadTimeout = 1000;
             while ((Size = stream.Read(Buffer, 0, NextSize)) != 0)
             {
                 Debug.Print("{0}byte中{1}byte 合計{2}byte", size, NextSize, AllSize);
