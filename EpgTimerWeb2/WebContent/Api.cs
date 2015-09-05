@@ -27,6 +27,14 @@ namespace EpgTimer
 {
     public class Api
     {
+        private static bool ContainsMultipleKeys(IDictionary<string, string> Arg, params string[] Keys)
+        {
+            foreach (string Key in Keys)
+            {
+                if (!Arg.ContainsKey(Key)) return false;
+            }
+            return true;
+        }
         private static RecSettingData GetPreset(Dictionary<string, string> Arg, RecSettingData Old)
         {
             RecSettingData pInfo = Old;
@@ -43,7 +51,7 @@ namespace EpgTimer
                     pInfo.SuspendMode = byte.Parse(Arg["suspendmode"]);
             }
             pInfo.UseMargineFlag = (byte)(Arg.ContainsKey("marginestart") && Arg.ContainsKey("margineend") ? 1 : 0);
-            if (Arg.ContainsKey("marginestart") && Arg.ContainsKey("margineend"))
+            if (ContainsMultipleKeys(Arg, "marginestart", "margineend"))
             {
                 int startSec = 0;
                 int startMinus = 1;
@@ -94,7 +102,7 @@ namespace EpgTimer
                 pInfo.StartMargine = startSec;
                 pInfo.EndMargine = endSec;
             }
-            if (Arg.ContainsKey("usepartial") && Arg.ContainsKey("partialdir"))
+            if (ContainsMultipleKeys(Arg, "usepartial", "partialdir"))
             {
                 pInfo.PartialRecFlag = 1;
                 if (Arg["partialdir"].IndexOf("*") > 0)
@@ -413,8 +421,7 @@ namespace EpgTimer
                     {
                         Key = ulong.Parse(Arg["key"]);
                     }
-                    else if (Arg.ContainsKey("o") && Arg.ContainsKey("t")
-                        && Arg.ContainsKey("s") && Arg.ContainsKey("e"))
+                    else if (ContainsMultipleKeys(Arg, "o", "t", "s", "e"))
                     {
                         Key = CommonManager.Create64PgKey(ushort.Parse(Arg["o"]), ushort.Parse(Arg["t"]),
                             ushort.Parse(Arg["s"]), ushort.Parse(Arg["e"]));
@@ -491,9 +498,7 @@ namespace EpgTimer
                 }
                 else if (Command == "AddReserve")
                 {
-                    if (Arg.ContainsKey("tsid")
-                        && Arg.ContainsKey("onid") && Arg.ContainsKey("sid")
-                        && Arg.ContainsKey("eid")) //最低限必要
+                    if (ContainsMultipleKeys(Arg, "tsid", "onid", "sid", "eid")) //最低限必要
                     {
                         ushort ONID = ushort.Parse(Arg["onid"]);
                         ushort SID = ushort.Parse(Arg["sid"]);
@@ -550,7 +555,7 @@ namespace EpgTimer
                 {
                     var Preset = GetPreset(Arg, new RecSettingData());
                     var Search = GetEpgSKey(Arg);
-                    if (Arg.ContainsKey("overlap_check") && Arg.ContainsKey("overlap_day"))
+                    if (ContainsMultipleKeys(Arg, "overlap", "overlap_day"))
                     {
                         Search.chkRecDay = ushort.Parse(Arg["overlap_day"]);
                         Search.chkRecEnd = 1;
@@ -602,7 +607,7 @@ namespace EpgTimer
                 else if (Command == "SetContentColorTable")
                 {
                     Regex ColorRegex = new Regex(@"[0-9a-fA-F]{6}");
-                    if (Arg.ContainsKey("id") && Arg.ContainsKey("color") && uint.Parse(Arg["id"]) >= 0 && ColorRegex.IsMatch(Arg["color"]))
+                    if (ContainsMultipleKeys(Arg, "id", "color") && uint.Parse(Arg["id"]) >= 0 && ColorRegex.IsMatch(Arg["color"]))
                     {
                         if (Setting.Instance.ContentToColorTable.Count(s => s.ContentLevel1 == uint.Parse(Arg["id"])) == 0)
                         {
