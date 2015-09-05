@@ -78,7 +78,6 @@
     <Compile Include="EpgDataCap_Bon\CommonManagerJson.cs" />
     <Compile Include="EpgDataCap_Bon\ComponentKindInfo.cs" />
     <Compile Include="EpgDataCap_Bon\ContentKindInfo.cs" />
-    <Compile Include="EpgDataCap_Bon\DBLocalManagerClass.cs" />
     <Compile Include="EpgDataCap_Bon\DBManagerClass.cs" />
     <Compile Include="EpgDataCap_Bon\DefineEnum.cs" />
     <Compile Include="EpgDataCap_Bon\EventInfoItem.cs" />

@@ -61,11 +61,6 @@ namespace EpgTimer
             get;
             set;
         }
-        public DBLocalManager LocalDB
-        {
-            get;
-            set;
-        }
         private static CommonManager _instance;
         public static CommonManager Instance
         {
@@ -347,10 +342,6 @@ namespace EpgTimer
                 ComponentKindDictionary.Add(0x05E2, new ComponentKindInfo(0x05, 0xE2, "H.264|MPEG-4 AVC、1080p(1125p)、アスペクト比16:9 パンベクトルあり"));
                 ComponentKindDictionary.Add(0x05E3, new ComponentKindInfo(0x05, 0xE3, "H.264|MPEG-4 AVC、1080p(1125p)、アスペクト比16:9 パンベクトルなし"));
                 ComponentKindDictionary.Add(0x05E4, new ComponentKindInfo(0x05, 0xE4, "H.264|MPEG-4 AVC、1080p(1125p)、アスペクト比 > 16:9"));
-            }
-            if (LocalDB == null)
-            {
-                LocalDB = new DBLocalManager();
             }
             NWMode = false;
         }
