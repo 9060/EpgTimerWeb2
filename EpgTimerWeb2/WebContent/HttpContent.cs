@@ -28,7 +28,11 @@ namespace EpgTimer
         {
             var Ret = false;
             var PartName = Context.Request.Url.ToLower().Replace("/", "\\");
-            if (PartName.IndexOf("..\\") < 0 && File.Exists(".\\web\\" + PartName) && IsAuth)
+            if (PartName.IndexOf("..\\") >= 0)
+            {
+                throw new HttpResponseException(403, "Forbidden", "Security risk detected...");
+            }
+            if (File.Exists(".\\web\\" + PartName) && IsAuth)
             {
                 string MimeType = Mime.Get(PartName, "application/javascript");
                 if (!Mime.IsImage(PartName))
