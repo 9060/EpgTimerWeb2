@@ -34,7 +34,7 @@ namespace EpgTimer
             }
             if (File.Exists(".\\web\\" + PartName) && IsAuth)
             {
-                string MimeType = Mime.Get(PartName, "application/javascript");
+                string MimeType = Mime.Get(PartName, "text/html");
                 if (!Mime.IsImage(PartName))
                     MimeType += "; charset=utf-8";
                 Context.Response.Headers.Add("Content-Type", MimeType);
@@ -83,11 +83,6 @@ namespace EpgTimer
                     case "/css/bootstrap.css.map":
                         Context.Response.Headers.Add("Content-Type", "text/plain");
                         HttpContext.SendResponse(Context, Resources.BootStrapCssMap);
-                        Ret = true;
-                        break;
-                    case "/css/main.css":
-                        Context.Response.Headers.Add("Content-Type", "text/css");
-                        HttpContext.SendResponse(Context, File.ReadAllBytes(".\\web\\css\\main.css"));
                         Ret = true;
                         break;
                     case "/img/not_thumb.png":
