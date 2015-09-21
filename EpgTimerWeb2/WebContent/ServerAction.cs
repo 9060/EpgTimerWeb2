@@ -153,7 +153,7 @@ namespace EpgTimer
                     else if (Info.Request.Url.ToLower() == "/ws") //WebSocket
                     {
                         Info.Response.Headers["Cache-Control"] = "no-cache";
-                        WebSocket.HandshakeResponseSend(Info);
+                        
                         SocketAction.Process(Info);
                     }
                     else if (r.IsMatch(Info.Request.Url))

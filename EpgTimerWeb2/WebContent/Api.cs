@@ -19,6 +19,7 @@ using CtrlCmdCLI.Def;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -673,10 +674,36 @@ namespace EpgTimer
                 {
                     CommonManager.Instance.DB.ReloadAll(Arg.ContainsKey("force"));
                 }
+                else if (Command == "FileBrowse")
+                {
+                    if (Arg.ContainsKey("path"))
+                    {
+                        if (Arg["path"].IndexOf(":") == 1
+                            && Arg["path"].IndexOf("..") < 0
+                            && Arg["path"].IndexOf("\\.\\") < 0
+                            && Arg["path"].EndsWith("\\")
+                            && Directory.Exists(Arg["path"]))
+                        {
+                            List<string> Items = new List<string>();
+                            Items.AddRange(Directory.GetFiles(Arg["path"]));
+                            Items.AddRange(Directory.GetDirectories(Arg["path"]).Select(s => s + "\\"));
+                            Data = new JsonResult(Items);
+                        }
+                        else
+                        {
+                            Data = new JsonResult(null, ErrCode.CMD_NO_ARG);
+                        }
+                    }
+                    else
+                    {
+                        Data = new JsonResult(Directory.GetLogicalDrives());
+                    }
+                }
                 JsonData = JsonUtil.Serialize(Data, Indent);
             }
             catch (Exception ex)
             {
+                JsonData = JsonUtil.Serialize(new JsonResult(null, ErrCode.CMD_ERR), Indent);
                 Debug.Print(ex.Message);
             }
             return JsonData;

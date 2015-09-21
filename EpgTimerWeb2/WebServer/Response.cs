@@ -75,7 +75,10 @@ EpgTimerWeb(v2) by YUKI
             try
             {
                 if (!Context.Client.Connected) return false;
-                Input.CopyTo(Context.HttpStream);
+                lock (Context.LockObject)
+                {
+                    Input.CopyTo(Context.HttpStream);
+                }
                 return true;
             }
             catch (Exception e)
@@ -89,7 +92,10 @@ EpgTimerWeb(v2) by YUKI
             try
             {
                 if (!Context.Client.Connected) return false;
-                Context.HttpStream.Write(Input, 0, Input.Length);
+                lock (Context.LockObject)
+                {
+                    Context.HttpStream.Write(Input, 0, Input.Length);
+                }
                 return true;
             }
             catch (Exception e)
@@ -103,9 +109,10 @@ EpgTimerWeb(v2) by YUKI
             try
             {
                 if (!Context.Client.Connected) return false;
-                Context.IsWsSend = true;
-                Context.HttpStream.Write(Input, 0, Input.Length);
-                Context.IsWsSend = false;
+                lock (Context.LockObject)
+                {
+                    Context.HttpStream.Write(Input, 0, Input.Length);
+                }
                 return true;
             }
             catch (Exception e)

@@ -26,7 +26,18 @@ namespace EpgTimer
 {
     public class WebSocket
     {
-
+        public static void EventLoop(HttpContext Context, Action<string> Handler)
+        {
+            HandshakeResponseSend(Context);
+            while (Context.Client.Connected)
+            {
+                byte[] UnMaskBuf = WebSocket.GetUnMaskedFrame(Context);
+                if (UnMaskBuf == null) continue;
+                string UnMask = Encoding.UTF8.GetString(UnMaskBuf);
+                Handler(UnMask);
+            }
+            return;
+        }
         public static byte[] GetUnMaskedFrame(HttpContext Context)
         {
             while (Context.Client.Available < 2) Thread.Sleep(10);

@@ -44,13 +44,12 @@ namespace EpgTimer
     }
     public class HttpContext
     {
-        public bool IsWsSend { set; get; }
         public HttpContext(TcpClient client)
         {
             Client = client;
             Response = new HttpResponse(this);
             IpAddress = "0.0.0.0";
-            IsWsSend = false;
+            LockObject = new object();
             Request = HttpRequest.Parse(this.HttpStream);
             IpAddress = ((IPEndPoint)Client.Client.RemoteEndPoint).Address.ToString();
         }
@@ -58,6 +57,7 @@ namespace EpgTimer
         public HttpResponse Response { set; get; }
         public string IpAddress { set; get; }
         private TcpClient _Client;
+        public object LockObject { set; get; }
         public TcpClient Client
         {
             get

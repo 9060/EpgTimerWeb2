@@ -30,11 +30,8 @@ namespace EpgTimer
         public static void Process(HttpContext Info)
         {
             Sockets.Add(Info);
-            while (Info.Client.Connected)
+            WebSocket.EventLoop(Info, UnMask =>
             {
-                byte[] UnMaskBuf = WebSocket.GetUnMaskedFrame(Info);
-                if (UnMaskBuf == null) continue;
-                string UnMask = Encoding.UTF8.GetString(UnMaskBuf);
                 Debug.Print(UnMask);
                 if (r2.IsMatch(UnMask))
                 {
@@ -57,7 +54,7 @@ namespace EpgTimer
                                 Encoding.UTF8.GetBytes("ERR"), 0x1);
                     HttpResponse.SendResponseBodyWS(Info, Response);
                 }
-            }
+            });
             Sockets.Remove(Info);
         }
         public static void SendAllMessage(string Mes)
@@ -70,8 +67,7 @@ namespace EpgTimer
                 foreach (var Con in a)
                 {
                     if (!Con.Client.Connected) Sockets.Remove(Con);
-                    while (Con.IsWsSend) ;
-                    HttpResponse.SendResponseBody(Con, Response);
+                    HttpResponse.SendResponseBodyWS(Con, Response);
                 }
             }
             catch (Exception ex)
