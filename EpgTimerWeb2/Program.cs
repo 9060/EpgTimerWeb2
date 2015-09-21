@@ -83,6 +83,7 @@ namespace EpgTimerWeb2
             }
             PrivateSetting.Instance.Server = new WebServer((int)Setting.Instance.HttpPort);
             PrivateSetting.Instance.Server.Start();
+            var reset = new ManualResetEvent(false);
             Console.CancelKeyPress += (a, b) =>
             {
                 PrivateSetting.Instance.Server.Stop();
@@ -95,6 +96,7 @@ namespace EpgTimerWeb2
                         Console.WriteLine("EpgTimerから切断できませんでした");
                 }
                 if (!PrivateSetting.Instance.SetupMode) Setting.SaveToXmlFile(PrivateSetting.Instance.ConfigPath);
+                reset.Set();
             };
             if (PrivateSetting.Instance.SetupMode)
             {
@@ -102,8 +104,8 @@ namespace EpgTimerWeb2
                 Console.WriteLine("PINコード: {0}", PrivateSetting.Instance.SetupCode);
                 while (PrivateSetting.Instance.SetupMode) Thread.Sleep(1);
             }
-            
-            while (true) Thread.Sleep(100);
+
+            reset.WaitOne();
         }
     }
 }
